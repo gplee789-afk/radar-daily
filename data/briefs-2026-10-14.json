@@ -1,0 +1,267 @@
+{
+ "date": "2026-10-14",
+ "n_themes": 11,
+ "method": "每個元素先算題材值（成分公司百分位的中位數；新聞、賣鏟子是題材間百分位），再依權重平均：穩健元素各 1、只在多頭元素各 0.5、賣鏟子 0.25，法說會、估值、關係、股價動能不計分；缺值不進平均。",
+ "synthesis": {
+  "id": "synth",
+  "name": "合成報告",
+  "file": "briefs/2026-10-14/synth.md",
+  "metric": "大盤 +37%・多頭權重"
+ },
+ "elements": [
+  {
+   "id": "el-rev_accel",
+   "name": "營收加速",
+   "short": "營收加速",
+   "evidence": "穩健",
+   "weight": 1.0,
+   "metric": "中位數 +4pp",
+   "file": "briefs/2026-10-14/el-rev_accel.md"
+  },
+  {
+   "id": "el-rev_high12",
+   "name": "營收創新高",
+   "short": "創新高",
+   "evidence": "穩健",
+   "weight": 1.0,
+   "metric": "創高 21%",
+   "file": "briefs/2026-10-14/el-rev_high12.md"
+  },
+  {
+   "id": "el-gm_chg",
+   "name": "毛利率改善",
+   "short": "毛利率",
+   "evidence": "穩健",
+   "weight": 1.0,
+   "metric": "中位數 +0.6pp",
+   "file": "briefs/2026-10-14/el-gm_chg.md"
+  },
+  {
+   "id": "el-inv_chg",
+   "name": "存貨去化",
+   "short": "存貨",
+   "evidence": "穩健",
+   "weight": 1.0,
+   "metric": "中位數 +0.5pp",
+   "file": "briefs/2026-10-14/el-inv_chg.md"
+  },
+  {
+   "id": "el-consensus",
+   "name": "券商共識修正",
+   "short": "共識修正",
+   "evidence": "只在多頭",
+   "weight": 0.5,
+   "metric": "中位數 +0.0%",
+   "file": "briefs/2026-10-14/el-consensus.md"
+  },
+  {
+   "id": "el-news",
+   "name": "新聞熱度",
+   "short": "新聞",
+   "evidence": "只在多頭",
+   "weight": 0.5,
+   "metric": "中位數 5.5",
+   "file": "briefs/2026-10-14/el-news.md"
+  },
+  {
+   "id": "el-ff",
+   "name": "外資買賣超",
+   "short": "外資",
+   "evidence": "只在多頭",
+   "weight": 0.5,
+   "metric": "中位數 -0.17%",
+   "file": "briefs/2026-10-14/el-ff.md"
+  },
+  {
+   "id": "el-deals",
+   "name": "賣鏟子（資本支出賣方）",
+   "short": "賣鏟子",
+   "evidence": "線索",
+   "weight": 0.25,
+   "metric": "被點名 12%",
+   "file": "briefs/2026-10-14/el-deals.md"
+  },
+  {
+   "id": "el-presentations",
+   "name": "法說會",
+   "short": "法說會",
+   "evidence": "參考",
+   "weight": 0.0,
+   "metric": "共 342 則",
+   "file": "briefs/2026-10-14/el-presentations.md"
+  },
+  {
+   "id": "el-valuation",
+   "name": "估值",
+   "short": "估值",
+   "evidence": "參考",
+   "weight": 0.0,
+   "metric": "中位數 +20%",
+   "file": "briefs/2026-10-14/el-valuation.md"
+  },
+  {
+   "id": "el-relations",
+   "name": "公司關係",
+   "short": "關係",
+   "evidence": "參考",
+   "weight": 0.0,
+   "metric": "有客戶 94 家",
+   "file": "briefs/2026-10-14/el-relations.md"
+  },
+  {
+   "id": "el-px_mom",
+   "name": "股價動能",
+   "short": "動能",
+   "evidence": "參考",
+   "weight": 0.0,
+   "metric": "中位數 +26%",
+   "file": "briefs/2026-10-14/el-px_mom.md"
+  }
+ ],
+ "themes": [
+  {
+   "id": "theme-memory",
+   "rank": 1,
+   "name": "記憶體／儲存",
+   "score": 79.6,
+   "delta": null,
+   "companies": [
+    "華邦電",
+    "群聯",
+    "旺宏"
+   ],
+   "file": "briefs/2026-10-14/theme-memory.md"
+  },
+  {
+   "id": "theme-pcb_substrate",
+   "rank": 2,
+   "name": "PCB／載板／銅箔基板",
+   "score": 68.7,
+   "delta": null,
+   "companies": [
+    "欣興",
+    "富喬",
+    "德宏"
+   ],
+   "file": "briefs/2026-10-14/theme-pcb_substrate.md"
+  },
+  {
+   "id": "theme-adv_packaging",
+   "rank": 3,
+   "name": "先進封裝",
+   "score": 64.7,
+   "delta": null,
+   "companies": [
+    "家登",
+    "萬潤",
+    "中砂"
+   ],
+   "file": "briefs/2026-10-14/theme-adv_packaging.md"
+  },
+  {
+   "id": "theme-interposer",
+   "rank": 4,
+   "name": "矽中介層",
+   "score": 64.0,
+   "delta": null,
+   "companies": [
+    "力積電",
+    "聯電",
+    "世界"
+   ],
+   "file": "briefs/2026-10-14/theme-interposer.md"
+  },
+  {
+   "id": "theme-testing",
+   "rank": 5,
+   "name": "半導體測試",
+   "score": 63.4,
+   "delta": null,
+   "companies": [
+    "漢測",
+    "致茂",
+    "矽格"
+   ],
+   "file": "briefs/2026-10-14/theme-testing.md"
+  }
+ ],
+ "all_themes": [
+  {
+   "id": "memory",
+   "name": "記憶體／儲存",
+   "score": 79.6,
+   "rank": 1,
+   "fact_rank": 3
+  },
+  {
+   "id": "pcb_substrate",
+   "name": "PCB／載板／銅箔基板",
+   "score": 68.7,
+   "rank": 2,
+   "fact_rank": 1
+  },
+  {
+   "id": "adv_packaging",
+   "name": "先進封裝",
+   "score": 64.7,
+   "rank": 3,
+   "fact_rank": 4
+  },
+  {
+   "id": "interposer",
+   "name": "矽中介層",
+   "score": 64.0,
+   "rank": 4,
+   "fact_rank": 2
+  },
+  {
+   "id": "testing",
+   "name": "半導體測試",
+   "score": 63.4,
+   "rank": 5,
+   "fact_rank": 6
+  },
+  {
+   "id": "asic_ip",
+   "name": "ASIC／矽智財",
+   "score": 60.3,
+   "rank": 6,
+   "fact_rank": 8
+  },
+  {
+   "id": "server_system",
+   "name": "伺服器組裝／機櫃／機構",
+   "score": 56.6,
+   "rank": 7,
+   "fact_rank": 7
+  },
+  {
+   "id": "cooling",
+   "name": "散熱／液冷",
+   "score": 53.5,
+   "rank": 8,
+   "fact_rank": 5
+  },
+  {
+   "id": "optical",
+   "name": "光通訊／CPO",
+   "score": 51.4,
+   "rank": 9,
+   "fact_rank": 9
+  },
+  {
+   "id": "power",
+   "name": "電源／電力",
+   "score": 43.2,
+   "rank": 10,
+   "fact_rank": 11
+  },
+  {
+   "id": "interconnect",
+   "name": "高速傳輸／連接器",
+   "score": 35.6,
+   "rank": 11,
+   "fact_rank": 10
+  }
+ ]
+}

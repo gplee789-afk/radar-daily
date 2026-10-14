@@ -168,6 +168,8 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 24px; }
       <p class="sub" style="margin:4px 0 0">事實分數 = 營收加速、營收創 12 月新高、毛利率年變化、存貨營收比變化（反向）四項等權，和全部上市櫃公司比的百分位。研究輔助，不是投資建議。</p>
     </div>
     <div class="controls">
+      <a href="index.html">📡 日報</a>
+      <a href="lab.html">⚗️ 煉金室</a>
       <label for="day" class="sub" style="margin:0">日期</label>
       <select id="day"></select>
       <button id="themeBtn" title="切換深色／淺色">◐</button>
@@ -447,9 +449,16 @@ function select(code, scroll = true) {
       <div><b>${c.news == null ? "—" : c.news.toFixed(1)}</b><span>新聞分數（參考）</span></div>
       <div><b>${c.implied == null ? "—" : pct(c.implied)}</b><span>股價隱含 5 年 EPS 成長</span></div>
     </div>
+    ${c.academic ? `<div class="facts">
+      <div><b>${pct(c.academic.vp)}</b><span>V/P 百分位（剩餘收益）</span></div>
+      <div><b>${pct(c.academic.gls)}</b><span>GLS 隱含報酬百分位</span></div>
+      <div><b>${pct(c.academic.ml)}</b><span>ML 綜合分數百分位</span></div>
+    </div>
+    <div class="sub" style="margin:0">學界估值：全市場百分位，越高越便宜；回測主要用途是避開昂貴股（後 20%），不是目標價</div>` : ""}
     ${hs.length > 1 ? `<div class="sub" style="margin:0">一年分數走勢</div>${spark(hs)}` : ""}
     ${c.avoid ? `<div class="warn">⛔ 事實分數在全市場後 20%，排名規則建議避開</div>` : ""}
-    ${c.warn ? `<div class="warn">⚠️ ${esc(c.warn)}</div>` : ""}`;
+    ${c.warn ? `<div class="warn">⚠️ ${esc(c.warn)}</div>` : ""}
+    ${c.academic && c.academic.trap ? `<div class="warn">⚠️ 學界模型判定昂貴，但營收年增超過 30%：模型假設盈餘回歸產業平均，對結構性成長會低估</div>` : ""}`;
   requestAnimationFrame(() => document.querySelectorAll("#detail .fill").forEach(f => f.style.width = f.dataset.w + "%"));
   const sp = $("#detail .spark");
   if (sp) sp.querySelectorAll("circle").forEach(p => {

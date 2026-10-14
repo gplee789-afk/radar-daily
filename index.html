@@ -3,263 +3,153 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>事實分數煉金室</title>
-<meta name="description" content="把營收加速、創新高、毛利率、存貨四種元素丟進鍋裡，一步一步看事實分數怎麼合成出來。">
+<title>供應鏈雷達日報</title>
+<meta name="description" content="每天把所有資料元素合成一份分析：左邊是各元素的分析報告，右邊是當天最值得看的 5 個題材。">
 <style>
 :root {
   color-scheme: light;
   --bg: #f4f5f2; --panel: #ffffff; --line: #dfe2dc; --grid: #ccd3cc;
   --ink: #12170f; --ink-2: #4c5549; --ink-3: #80887d;
-  --e1: #2a78d6; --e2: #eb6834; --e3: #1baf7a; --e4: #4a3aa7;
-  --g-s: #0f5c3c; --g-a: #2f8a63; --g-b: #5aa785; --g-c: #9cc9b4; --g-d: #d03b3b;
-  --pot: #3a3f38; --pot-2: #2a2e28; --bar: #d9ddd5;
+  --ev-1: #0f5c3c; --ev-2: #2f8a63; --ev-3: #5aa785; --ev-4: #a9b3a6;
+  --hub: #12170f; --hub-ink: #f4f5f2; --accent: #2a78d6; --up: #1d7a50; --down: #c0392b;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
     --bg: #0c0f0b; --panel: #141913; --line: #232b21; --grid: #2a3528;
     --ink: #eaf1e6; --ink-2: #a7b3a2; --ink-3: #6f7b6b;
-    --e1: #3987e5; --e2: #d95926; --e3: #199e70; --e4: #9085e9;
-    --g-s: #9af5c8; --g-a: #5cc999; --g-b: #3f9a76; --g-c: #2f6b55; --g-d: #e66767;
-    --pot: #2b322a; --pot-2: #1b201a; --bar: #26301f;
+    --ev-1: #9af5c8; --ev-2: #5cc999; --ev-3: #3f9a76; --ev-4: #4a5547;
+    --hub: #eaf1e6; --hub-ink: #0c0f0b; --accent: #3987e5; --up: #5cc999; --down: #e66767;
   }
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
   --bg: #0c0f0b; --panel: #141913; --line: #232b21; --grid: #2a3528;
   --ink: #eaf1e6; --ink-2: #a7b3a2; --ink-3: #6f7b6b;
-  --e1: #3987e5; --e2: #d95926; --e3: #199e70; --e4: #9085e9;
-  --g-s: #9af5c8; --g-a: #5cc999; --g-b: #3f9a76; --g-c: #2f6b55; --g-d: #e66767;
-  --pot: #2b322a; --pot-2: #1b201a; --bar: #26301f;
+  --ev-1: #9af5c8; --ev-2: #5cc999; --ev-3: #3f9a76; --ev-4: #4a5547;
+  --hub: #eaf1e6; --hub-ink: #0c0f0b; --accent: #3987e5; --up: #5cc999; --down: #e66767;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
-body { background: var(--bg); color: var(--ink); font: 15px/1.55 system-ui, -apple-system, "Segoe UI", "Noto Sans TC", "Microsoft JhengHei", sans-serif; }
-a { color: var(--e1); }
-.wrap { max-width: 1200px; margin: 0 auto; padding: 18px 16px 60px; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.6 system-ui, -apple-system, "Segoe UI", "Noto Sans TC", "Microsoft JhengHei", sans-serif; }
+a { color: var(--accent); }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 18px 16px 60px; }
 header { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; margin-bottom: 14px; }
 h1 { font-size: 24px; margin: 0; }
-h2 { font-size: 16px; margin: 0 0 2px; display: flex; align-items: center; gap: 8px; }
-h2 .n { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--ink); color: var(--bg); font-size: 12px; }
-.sub { color: var(--ink-2); font-size: 13px; margin: 0 0 10px; }
-.hdr-r { margin-left: auto; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-select, input, button { font: inherit; font-size: 14px; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; }
+nav { margin-left: auto; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; font-size: 14px; }
+select, button { font: inherit; font-size: 14px; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 5px 10px; }
 button { cursor: pointer; }
-button:hover:not(:disabled) { border-color: var(--ink-3); }
-button:disabled { opacity: .45; cursor: default; }
-button.big { font-size: 15px; font-weight: 700; padding: 8px 16px; background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.sub { color: var(--ink-2); font-size: 13px; margin: 0 0 10px; }
+.main { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+@media (max-width: 900px) { .main { grid-template-columns: 1fr; } }
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+h2 { font-size: 17px; margin: 0 0 2px; }
 
-/* 選公司 */
-.picker { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 14px; }
-.picker input { min-width: 220px; flex: 1; max-width: 340px; }
-.chip { font-size: 12.5px; padding: 4px 10px; border-radius: 99px; background: transparent; color: var(--ink-2); }
-.chip .g { margin-right: 4px; }
-.who { font-size: 20px; font-weight: 800; margin: 2px 0 12px; }
-.who small { font-size: 13px; color: var(--ink-3); font-weight: 400; margin-left: 8px; }
+/* 心智圖 */
+#map { width: 100%; height: auto; display: block; }
+#map .spoke { stroke: var(--grid); }
+#map .node { cursor: pointer; }
+#map .node circle.body { transition: transform .2s; transform-box: fill-box; transform-origin: center; }
+#map .node:hover circle.body, #map .node:focus circle.body { transform: scale(1.08); }
+#map .node:focus { outline: none; }
+#map .nm { font-weight: 800; font-size: 14px; pointer-events: none; }
+#map .meta { font-size: 10.5px; pointer-events: none; }
+#map .pulse { pointer-events: none; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; color: var(--ink-2); margin-top: 6px; }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 5px; vertical-align: -2px; }
 
-/* 步驟 */
-.steps { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
-.step { font-size: 12.5px; padding: 4px 12px; border-radius: 99px; border: 1px solid var(--line); color: var(--ink-3); transition: all .3s; }
-.step.on { color: var(--bg); background: var(--ink); border-color: var(--ink); }
-.step.done { color: var(--ink); border-color: var(--ink-3); }
+/* 每日排行 */
+.rank { display: grid; gap: 10px; }
+.item { display: grid; grid-template-columns: 46px 1fr auto; gap: 4px 12px; align-items: center; padding: 12px 14px; border: 1px solid var(--line);
+        border-radius: 12px; cursor: pointer; background: var(--panel); text-align: left; width: 100%; color: var(--ink); transition: transform .15s, border-color .15s; }
+.item:hover { transform: translateX(3px); border-color: var(--ink-3); }
+.item .no { font-size: 30px; font-weight: 900; color: var(--ink-3); grid-row: 1 / 3; text-align: center; font-variant-numeric: tabular-nums; }
+.item .t { font-size: 16px; font-weight: 800; }
+.item .sc { text-align: right; font-variant-numeric: tabular-nums; font-weight: 800; font-size: 18px; }
+.item .sc small { display: block; font-size: 11px; font-weight: 400; color: var(--ink-3); }
+.item .bar { grid-column: 2 / 4; height: 6px; background: var(--line); border-radius: 99px; overflow: hidden; }
+.item .bar i { display: block; height: 100%; background: var(--ev-2); border-radius: 99px; }
+.item .cos { grid-column: 2 / 4; font-size: 12.5px; color: var(--ink-2); }
+.up { color: var(--up); } .down { color: var(--down); }
+.method { font-size: 12.5px; color: var(--ink-2); margin-top: 12px; }
 
-.lab { display: grid; grid-template-columns: 230px minmax(0, 1fr) 300px; gap: 14px; align-items: start; }
-@media (max-width: 980px) { .lab { grid-template-columns: 1fr 1fr; } .lab > :nth-child(2) { grid-column: 1 / 3; order: 3; } }
-@media (max-width: 620px) { .lab { grid-template-columns: 1fr; } .lab > :nth-child(2) { grid-column: auto; } }
-
-/* 元素磚 */
-.shelf { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-@media (max-width: 980px) { .shelf { grid-template-columns: repeat(4, 1fr); } }
-@media (max-width: 620px) { .shelf { grid-template-columns: 1fr 1fr; } .tile { aspect-ratio: auto; min-height: 104px; } }
-@media (max-width: 980px) and (min-width: 621px) { .tile { aspect-ratio: auto; min-height: 120px; } }
-.tile { position: relative; aspect-ratio: 1 / 1.08; border-radius: 12px; border: 2px solid var(--c); background: color-mix(in srgb, var(--c) 12%, var(--panel));
-        padding: 7px 9px; cursor: grab; user-select: none; touch-action: none; transition: transform .15s, opacity .3s; display: flex; flex-direction: column; }
-.tile:hover { transform: translateY(-2px); }
-.tile .no { font-size: 11px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
-.tile .sym { font-size: 34px; font-weight: 900; line-height: 1.05; color: var(--c); margin-top: 2px; }
-.tile .nm { font-size: 12.5px; font-weight: 700; }
-.tile .val { margin-top: auto; font-size: 13px; font-variant-numeric: tabular-nums; color: var(--ink-2); }
-.tile.used { opacity: .25; cursor: default; transform: none; }
-.tile.missing { opacity: .35; cursor: not-allowed; border-style: dashed; filter: grayscale(1); }
-.tile.missing .val { color: var(--ink-3); }
-.ghost { position: fixed; z-index: 50; pointer-events: none; width: 92px; opacity: .9; transform: rotate(-6deg) scale(1.05); }
-
-/* 精煉台 */
-.refine-title { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
-.refine-title b { font-size: 18px; }
-.hist { width: 100%; height: auto; display: block; margin: 6px 0 2px; }
-.hist .lbl { fill: var(--ink-3); font-size: 11px; }
-.hist .mk { fill: var(--ink); font-size: 12px; font-weight: 700; }
-.counter { font-size: 15px; margin-top: 4px; }
-.counter b { font-size: 26px; font-variant-numeric: tabular-nums; }
-.explain { font-size: 13px; color: var(--ink-2); background: var(--bg); border-radius: 10px; padding: 8px 10px; margin-top: 8px; }
-.idle { color: var(--ink-3); text-align: center; padding: 50px 10px; }
-
-/* 鍋 */
-.potbox { position: relative; }
-#pot { width: 100%; height: auto; display: block; }
-#pot.hot { filter: drop-shadow(0 0 10px var(--glow, transparent)); }
-#pot .liquid { transition: fill .8s, transform .8s; }
-#pot .bub { animation: rise 2.4s infinite ease-in; opacity: 0; }
-@keyframes rise { 0% { transform: translateY(0); opacity: 0; } 15% { opacity: .9; } 100% { transform: translateY(-46px); opacity: 0; } }
-.orbs { position: absolute; left: 12%; right: 12%; top: 38%; display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; }
-.orb { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; text-align: center; line-height: 1.05; cursor: pointer;
-       background: radial-gradient(circle at 35% 30%, color-mix(in srgb, #fff 45%, var(--c)), var(--c) 60%); color: #fff; font-weight: 800; font-size: 15px;
-       box-shadow: 0 0 14px color-mix(in srgb, var(--c) 70%, transparent); animation: bob 2.6s ease-in-out infinite; border: 0; padding: 0; }
-.orb small { display: block; font-size: 10px; font-weight: 600; opacity: .9; }
-.orb:nth-child(2) { animation-delay: -.6s; } .orb:nth-child(3) { animation-delay: -1.2s; } .orb:nth-child(4) { animation-delay: -1.8s; }
-@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-.fly { position: fixed; z-index: 60; pointer-events: none; transition: transform .75s cubic-bezier(.5,-0.3,.3,1.2); }
-.formula { text-align: center; font-size: 14px; font-variant-numeric: tabular-nums; min-height: 44px; }
-.formula b { font-size: 20px; }
-.formula .need { color: var(--ink-3); }
-
-/* 結晶 */
-.crystal { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 18px; align-items: center; margin-top: 14px; }
-@media (max-width: 620px) { .crystal { grid-template-columns: 1fr; } }
-.gemwrap { position: relative; width: 180px; height: 180px; margin: 0 auto; }
-#gem { width: 100%; height: 100%; }
-#gem .face { transition: fill .6s; }
-#gem.pop { animation: pop .7s cubic-bezier(.3,1.6,.5,1); }
-@keyframes pop { 0% { transform: scale(.2) rotate(-20deg); opacity: 0; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
-.spark { position: absolute; left: 50%; top: 50%; width: 7px; height: 7px; border-radius: 50%; pointer-events: none; animation: burst .9s ease-out forwards; }
-@keyframes burst { from { transform: translate(-50%, -50%) rotate(var(--a)) translateX(0); opacity: 1; } to { transform: translate(-50%, -50%) rotate(var(--a)) translateX(110px); opacity: 0; } }
-.final { font-size: 15px; }
-#finalBody .hist { max-width: 640px; }
-.final .big { font-size: 40px; font-weight: 900; font-variant-numeric: tabular-nums; line-height: 1.1; }
-.note { font-size: 13px; padding: 7px 10px; border-radius: 8px; border: 1px dashed var(--ink-3); margin-top: 8px; color: var(--ink-2); }
-
-/* 圖鑑 */
-.dex { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; }
-.dex button { text-align: left; padding: 7px 9px; border-radius: 10px; }
-.dex .g { float: right; }
-.g { display: inline-block; min-width: 20px; text-align: center; border-radius: 6px; font-weight: 900; color: var(--bg); padding: 0 4px; font-size: 12px; }
-.dex small { display: block; color: var(--ink-3); font-size: 11px; }
+/* 閱讀器 */
+#reader { position: fixed; inset: 0; z-index: 20; display: none; }
+#reader.open { display: block; }
+#reader .shade { position: absolute; inset: 0; background: rgba(0,0,0,.45); }
+#reader .sheet { position: absolute; top: 0; right: 0; bottom: 0; width: min(860px, 100%); background: var(--panel); border-left: 1px solid var(--line);
+                 display: flex; flex-direction: column; animation: slide .25s ease-out; }
+@keyframes slide { from { transform: translateX(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+#reader .bar { display: flex; gap: 8px; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+#reader .bar b { font-size: 14px; color: var(--ink-2); margin-right: auto; }
+#doc { overflow: auto; padding: 8px 26px 40px; flex: 1; }
+#doc h1 { font-size: 24px; margin: 14px 0 4px; }
+#doc h2 { font-size: 19px; margin: 26px 0 8px; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
+#doc h3 { font-size: 16px; margin: 18px 0 6px; }
+#doc p, #doc li { line-height: 1.8; }
+#doc table { border-collapse: collapse; font-size: 13px; margin: 10px 0; display: block; overflow-x: auto; }
+#doc th, #doc td { border-bottom: 1px solid var(--line); padding: 6px 9px; text-align: left; white-space: nowrap; }
+#doc th { color: var(--ink-2); }
+#doc blockquote { margin: 10px 0; padding: 6px 14px; border-left: 3px solid var(--ev-2); color: var(--ink-2); background: var(--bg); border-radius: 0 8px 8px 0; }
+#doc code { font-size: 12.5px; background: var(--bg); padding: 1px 5px; border-radius: 5px; }
+@media (max-width: 640px) { #doc { padding: 6px 16px 40px; } }
 footer { color: var(--ink-3); font-size: 12px; margin-top: 22px; }
-@media (prefers-reduced-motion: reduce) { .orb, #pot .bub { animation: none; } }
+@media (prefers-reduced-motion: reduce) { #reader .sheet { animation: none; } }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <h1>⚗️ 事實分數煉金室</h1>
-    <div class="hdr-r">
+    <h1>📡 供應鏈雷達日報</h1>
+    <nav>
+      <a href="lab.html">⚗️ 煉金室</a>
       <a href="ranking.html">📊 排名總表</a>
-      <select id="day" aria-label="資料日期"></select>
+      <select id="day" aria-label="報告日期"></select>
       <button id="themeBtn" title="切換深色／淺色">◐</button>
-    </div>
+    </nav>
   </header>
 
-  <div class="picker">
-    <input id="q" list="names" placeholder="輸入代號或公司名，丟一家進實驗室" autocomplete="off">
-    <datalist id="names"></datalist>
-    <div id="quick" style="display:flex;gap:6px;flex-wrap:wrap"></div>
-    <button class="chip" id="rand">🎲 隨機抽一家</button>
-  </div>
-
-  <div class="who" id="who"></div>
-  <div class="steps">
-    <span class="step" data-s="1">① 原料：四個公開數字</span>
-    <span class="step" data-s="2">② 精煉：和全市場比，變成百分位</span>
-    <span class="step" data-s="3">③ 合成：平均</span>
-    <span class="step" data-s="4">④ 結晶：再和全市場比一次</span>
-  </div>
-
-  <div class="lab">
+  <div class="main">
     <section class="card">
-      <h2><span class="n">1</span>元素架</h2>
-      <p class="sub">把元素拖進右邊的鍋，或直接點。</p>
-      <div class="shelf" id="shelf"></div>
-      <button class="big" id="auto" style="width:100%;margin-top:12px">✨ 一鍵合成</button>
-      <button id="reset" style="width:100%;margin-top:8px">倒掉重來</button>
-    </section>
-
-    <section class="card" id="refinery">
-      <h2><span class="n">2</span>精煉台</h2>
-      <div id="refineBody"><div class="idle">丟一個元素進鍋，<br>這裡會顯示它在全部上市櫃公司裡排在哪裡</div></div>
+      <h2>元素合成</h2>
+      <p class="sub">每個圓是一種資料元素，點開是它今天的分析報告；中間是把全部元素合在一起的報告。圓越大、線越粗，合成時的權重越高；顏色是這個元素過去的回測證據有多強。</p>
+      <svg id="map" viewBox="0 0 640 600" role="img" aria-label="資料元素合成心智圖"></svg>
+      <div class="legend" id="legend"></div>
     </section>
 
     <section class="card">
-      <h2><span class="n">3</span>煉金鍋</h2>
-      <div class="potbox" id="potbox">
-        <svg id="pot" viewBox="0 0 300 250" aria-hidden="true">
-          <defs><clipPath id="potclip"><path d="M48 92 Q40 210 150 222 Q260 210 252 92 Z"/></clipPath></defs>
-          <ellipse cx="150" cy="238" rx="80" ry="8" fill="var(--line)"/>
-          <path d="M48 92 Q40 210 150 222 Q260 210 252 92 Z" fill="var(--pot)"/>
-          <g clip-path="url(#potclip)">
-            <rect class="liquid" id="liquid" x="30" y="110" width="240" height="140" fill="var(--grid)" style="transform-origin:150px 222px"/>
-            <circle class="bub" cx="110" cy="200" r="4" fill="#fff" style="animation-delay:0s"/>
-            <circle class="bub" cx="160" cy="210" r="3" fill="#fff" style="animation-delay:.8s"/>
-            <circle class="bub" cx="195" cy="195" r="5" fill="#fff" style="animation-delay:1.5s"/>
-            <circle class="bub" cx="135" cy="205" r="2.5" fill="#fff" style="animation-delay:2s"/>
-          </g>
-          <rect x="34" y="80" width="232" height="16" rx="8" fill="var(--pot-2)"/>
-          <path d="M40 88 Q14 92 22 118" stroke="var(--pot-2)" stroke-width="8" fill="none" stroke-linecap="round"/>
-          <path d="M260 88 Q286 92 278 118" stroke="var(--pot-2)" stroke-width="8" fill="none" stroke-linecap="round"/>
-        </svg>
-        <div class="orbs" id="orbs"></div>
-      </div>
-      <div class="formula" id="formula"><span class="need">鍋是空的。至少要 2 種元素才煉得出來。</span></div>
+      <h2>每日排行</h2>
+      <p class="sub" id="rankSub">今天合成分數最高的 5 個題材，每篇都會拆到題材裡的公司。</p>
+      <div class="rank" id="rank"></div>
+      <div class="method" id="method"></div>
     </section>
   </div>
 
-  <section class="card crystal" id="crystal">
-    <div class="gemwrap" id="gemwrap">
-      <svg id="gem" viewBox="0 0 200 200" aria-label="結晶等級">
-        <polygon class="face" id="gemFace" points="100,12 172,56 172,144 100,188 28,144 28,56" fill="var(--grid)" stroke="var(--line)" stroke-width="3"/>
-        <polygon points="100,12 172,56 100,78 28,56" fill="#fff" opacity=".18"/>
-        <polygon points="28,144 100,122 172,144 100,188" fill="#000" opacity=".12"/>
-        <polygon points="100,78 172,56 172,144 100,122" fill="#fff" opacity=".07"/>
-        <text id="gemTxt" x="100" y="118" text-anchor="middle" font-size="62" font-weight="900" fill="var(--bg)">?</text>
-      </svg>
-    </div>
-    <div>
-      <h2><span class="n">4</span>結晶</h2>
-      <div id="finalBody" class="final"><p class="sub">鍋裡有 2 種以上元素時，會把「平均」再和全市場每一家的平均比一次，得到最後的事實分數。</p></div>
-    </div>
-  </section>
-
-  <section class="card" style="margin-top:14px">
-    <h2>📖 圖鑑</h2>
-    <p class="sub">煉過的公司會收在這裡（只存在你這台瀏覽器）。</p>
-    <div class="dex" id="dex"></div>
-  </section>
-
-  <footer>事實分數＝四項各自在全部上市櫃普通股裡的百分位，取平均（至少 2 項），再排一次百分位。TEJ 2006～2026 回測 3 個月 IC +0.069，多空頭都有效。研究輔助，不是投資建議。</footer>
+  <footer>研究輔助，不是投資建議。報告文字由本機模型依程式算好的數字撰寫，數字經過自動核對；權重依回測證據等級設定，不是最佳化出來的。</footer>
 </div>
 
+<div id="reader" aria-hidden="true">
+  <div class="shade" data-close></div>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="readerTitle">
+    <div class="bar">
+      <b id="readerTitle"></b>
+      <button id="prev">← 上一篇</button>
+      <button id="next">下一篇 →</button>
+      <button data-close>✕ 關閉</button>
+    </div>
+    <article id="doc"></article>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
 <script>
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-const sgn = (x, d = 0, u = "") => x == null ? "—" : (x > 0 ? "+" : x < 0 ? "−" : "±") + Math.abs(x).toFixed(d) + u;
-const pct = x => x == null ? "—" : (x * 100).toFixed(x > 0.995 && x < 1 ? 1 : 0) + "%";
-const fmtN = n => n.toLocaleString("en-US");
 const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
-const sleep = ms => new Promise(r => setTimeout(r, RM ? 0 : ms));
-const GRADES = [[0.9, "S", "前 10%"], [0.75, "A", "前 25%"], [0.5, "B", "前半段"], [0.2, "C", "後半段"], [-1, "D", "後 20%，⛔ 避開"]];
-const gradeOf = f => GRADES.find(g => f >= g[0]);
-const gcol = g => `var(--g-${g.toLowerCase()})`;
+const EV = { "穩健": "var(--ev-1)", "只在多頭": "var(--ev-2)", "線索": "var(--ev-3)", "參考": "var(--ev-4)" };
+const EV_TXT = { "穩健": "多空都有效", "只在多頭": "只在多頭有效", "線索": "當線索用", "參考": "只供參考、不計分" };
+let INDEX, B, ORDER = [], openIdx = -1;
 
-const EL = [
-  { k: "rev_accel", no: 1, sym: "營", zh: "營收加速", c: "var(--e1)",
-    what: "近 3 個月營收年增率的平均，減掉再前 3 個月的平均",
-    fmt: v => sgn(v, 0, "pp"), unit: v => sgn(v, 0, "pp") },
-  { k: "rev_high12", no: 2, sym: "高", zh: "營收創新高", c: "var(--e2)", binary: true,
-    what: "最新一個月的營收，是不是過去 12 個月最高",
-    fmt: v => v ? "創新高 ✓" : "沒創新高", unit: v => v ? "創新高" : "沒創新高" },
-  { k: "gm_chg", no: 3, sym: "毛", zh: "毛利率改善", c: "var(--e3)",
-    what: "最新一季毛利率，減掉去年同一季",
-    fmt: v => sgn(v * 100, 1, "pp"), unit: v => sgn(v * 100, 1, "pp") },
-  { k: "inv_chg", no: 4, sym: "存", zh: "存貨去化", c: "var(--e4)", inverse: true,
-    what: "存貨 ÷ 年化營收，和去年同季比的變化。存貨越堆越多是壞事，所以越低分數越高",
-    fmt: v => sgn(v * 100, 1, "pp"), unit: v => sgn(v * 100, 1, "pp") },
-];
-const ELK = Object.fromEntries(EL.map(e => [e.k, e]));
-
-let INDEX, LAB, SNAP, cur = -1, inPot = [], busy = false, crystalShown = false;
-
-/* ---------- 深淺色 ---------- */
 (() => {
   let t = null; try { t = localStorage.getItem("theme"); } catch (e) {}
   if (t) document.documentElement.dataset.theme = t;
@@ -270,325 +160,119 @@ let INDEX, LAB, SNAP, cur = -1, inPot = [], busy = false, crystalShown = false;
   };
 })();
 
-/* ---------- 算法（和 radar/fact_score.py 相同） ---------- */
-// pandas rank(pct=True)：同分取平均名次
-function rankPct(arr, v) {
-  let lt = 0, eq = 0, n = 0;
-  for (const x of arr) if (x != null) { n++; if (x < v) lt++; else if (x === v) eq++; }
-  return { lt, eq, n, gt: n - lt - eq, p: (lt + (eq + 1) / 2) / n };
-}
-function avgOf(i, keys) {
-  const vals = keys.map(k => LAB.pct[k][i]).filter(v => v != null);
-  const need = Math.min(2, keys.length);
-  return vals.length >= need && vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
-}
-function synth(keys) {
-  const means = LAB.codes.map((_, i) => avgOf(i, keys));
-  const m = means[cur];
-  if (m == null) return null;
-  const r = rankPct(means, m);
-  return { mean: m, means, fact: r.p, rank: r.gt + 1, n: r.n };
-}
-const available = () => EL.filter(e => LAB.raw[e.k][cur] != null && LAB.pct[e.k][cur] != null).map(e => e.k);
-
-/* ---------- 載入 ---------- */
 async function boot() {
   INDEX = await (await fetch("data/index.json", { cache: "no-cache" })).json();
-  const days = INDEX.dates.filter(d => d.lab);
+  const days = INDEX.dates.filter(d => d.briefs);
+  if (!days.length) throw new Error("還沒有日報");
   $("#day").innerHTML = days.map(d => `<option>${d.date}</option>`).join("");
-  $("#day").onchange = () => loadDay($("#day").value);
-  await loadDay(days[0].date);
+  const want = new URLSearchParams(location.search).get("d");
+  $("#day").value = days.some(d => d.date === want) ? want : days[0].date;
+  $("#day").onchange = () => load($("#day").value);
+  await load($("#day").value);
+  const r = new URLSearchParams(location.search).get("r");
+  if (r) openReport(r);
 }
-async function loadDay(day) {
+async function load(day) {
   const d = INDEX.dates.find(x => x.date === day);
-  [LAB, SNAP] = await Promise.all([fetch(d.lab).then(r => r.json()), fetch(`data/${day}.json`).then(r => r.json()).catch(() => null)]);
-  $("#names").innerHTML = LAB.codes.map((c, i) => `<option value="${c} ${esc(LAB.names[i])}">`).join("");
-  const quick = [];
-  if (SNAP) {
-    SNAP.pool.slice(0, 3).forEach(c => quick.push(c));
-    SNAP.pool.filter(c => c.avoid).slice(0, 1).forEach(c => quick.push(c));
-    const mid = SNAP.pool.filter(c => c.fact != null && c.fact > 0.4 && c.fact < 0.65)[0]; if (mid) quick.splice(3, 0, mid);
-  }
-  $("#quick").innerHTML = quick.map(c => {
-    const g = c.fact == null ? "?" : gradeOf(c.fact)[1];
-    return `<button class="chip" data-code="${c.code}"><span class="g" style="background:${g === "?" ? "var(--grid)" : gcol(g)}">${g}</span>${esc(c.name)}</button>`;
-  }).join("");
-  $("#quick").querySelectorAll("button").forEach(b => b.onclick = () => pick(b.dataset.code));
-  const want = new URLSearchParams(location.search).get("c");
-  pick(want && LAB.codes.includes(want) ? want : (SNAP?.pool[0]?.code || LAB.codes[0]));
-  renderDex();
-}
-$("#q").addEventListener("change", () => {
-  const code = $("#q").value.trim().split(/\s+/)[0];
-  const i = LAB.codes.indexOf(code) >= 0 ? LAB.codes.indexOf(code) : LAB.names.findIndex(n => n === $("#q").value.trim());
-  if (i >= 0) { pick(LAB.codes[i]); $("#q").value = ""; }
-});
-$("#rand").onclick = () => {
-  const ok = LAB.codes.map((c, i) => i).filter(i => LAB.fact[i] != null);
-  pick(LAB.codes[ok[Math.floor(Math.random() * ok.length)]]);
-};
-
-function pick(code) {
-  if (busy) return;
-  cur = LAB.codes.indexOf(code); if (cur < 0) return;
-  history.replaceState(null, "", "?c=" + code);
-  inPot = []; crystalShown = false;
-  const q = LAB.quarter[cur];
-  $("#who").innerHTML = `${esc(code)} ${esc(LAB.names[cur])}<small>月營收到 ${LAB.rev_month || "—"}・季報 ${q || "沒有"}・資料日 ${LAB.date}</small>`;
-  renderShelf(); renderPot(); idleRefinery(); resetCrystal(); setStep(1);
+  B = await (await fetch(d.briefs, { cache: "no-cache" })).json();
+  ORDER = [B.synthesis, ...B.elements, ...B.themes];
+  renderMap(); renderRank();
+  history.replaceState(null, "", "?d=" + day);
 }
 
-/* ---------- 步驟提示 ---------- */
-function setStep(s) {
-  document.querySelectorAll(".step").forEach(el => {
-    const n = +el.dataset.s; el.classList.toggle("on", n === s); el.classList.toggle("done", n < s);
+/* ---------- 心智圖 ---------- */
+function renderMap() {
+  const svg = $("#map"), C = { x: 320, y: 300 }, R = 220;
+  const els = B.elements, n = els.length;
+  const maxW = Math.max(...els.map(e => e.weight || 0), 1);
+  const rOf = e => 26 + 18 * Math.sqrt((e.weight || 0) / maxW);
+  let spokes = "", nodes = "", pulses = "";
+  els.forEach((e, i) => {
+    const a = -Math.PI / 2 + i * 2 * Math.PI / n;
+    const x = C.x + R * Math.cos(a), y = C.y + R * Math.sin(a) * 0.95;
+    e._x = x; e._y = y;
+    const w = e.weight ? 1.5 + 5 * e.weight / maxW : 1;
+    const col = EV[e.evidence] || "var(--ev-4)";
+    spokes += `<line class="spoke" x1="${C.x}" y1="${C.y}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke-width="${w.toFixed(1)}" ${e.weight ? "" : 'stroke-dasharray="4 4"'}/>`;
+    if (e.weight && !RM) {
+      const dur = (3.2 - 1.6 * e.weight / maxW).toFixed(2);
+      pulses += `<circle class="pulse" r="${(2 + 2 * e.weight / maxW).toFixed(1)}" fill="${col}">
+        <animateMotion dur="${dur}s" repeatCount="indefinite" begin="${(i * 0.37).toFixed(2)}s" path="M${x.toFixed(1)},${y.toFixed(1)} L${C.x},${C.y}"/></circle>`;
+    }
+    const r = rOf(e), dark = e.evidence === "穩健" || e.evidence === "只在多頭";
+    nodes += `<g class="node" tabindex="0" role="button" data-id="${e.id}" aria-label="${esc(e.name)}報告">
+      <circle class="body" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}" fill="${e.weight ? col : "var(--panel)"}" stroke="${col}" stroke-width="2.5" ${e.weight ? "" : 'stroke-dasharray="5 4"'}/>
+      <text class="nm" x="${x.toFixed(1)}" y="${(y + 1).toFixed(1)}" text-anchor="middle" fill="${e.weight && dark ? "var(--hub-ink)" : "var(--ink)"}">${esc(e.short)}</text>
+      <text class="meta" x="${x.toFixed(1)}" y="${(y + 15).toFixed(1)}" text-anchor="middle" fill="${e.weight && dark ? "var(--hub-ink)" : "var(--ink-2)"}">${e.weight ? "權重 " + e.weight : "不計分"}</text>
+      <text class="meta" x="${x.toFixed(1)}" y="${(y + r + 15).toFixed(1)}" text-anchor="middle" fill="var(--ink-2)">${esc(e.metric || "")}</text>
+    </g>`;
   });
+  const s = B.synthesis;
+  svg.innerHTML = spokes + pulses + nodes + `
+    <g class="node" tabindex="0" role="button" data-id="${s.id}" aria-label="合成報告">
+      <circle class="body" cx="${C.x}" cy="${C.y}" r="62" fill="var(--hub)"/>
+      <text class="nm" x="${C.x}" y="${C.y - 4}" text-anchor="middle" fill="var(--hub-ink)" style="font-size:20px">合成報告</text>
+      <text class="meta" x="${C.x}" y="${C.y + 16}" text-anchor="middle" fill="var(--hub-ink)" style="font-size:11.5px">${esc(s.metric || "")}</text>
+    </g>`;
+  svg.querySelectorAll(".node").forEach(g => {
+    g.addEventListener("click", () => openReport(g.dataset.id));
+    g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openReport(g.dataset.id); } });
+  });
+  $("#legend").innerHTML = Object.entries(EV).map(([k, c]) =>
+    `<span><i style="background:${k === "參考" ? "transparent" : c};border:2px ${k === "參考" ? "dashed" : "solid"} ${c}"></i>${k}：${EV_TXT[k]}</span>`).join("");
 }
 
-/* ---------- 元素架 ---------- */
-function renderShelf() {
-  $("#shelf").innerHTML = EL.map(e => {
-    const v = LAB.raw[e.k][cur], miss = v == null;
-    return `<div class="tile ${miss ? "missing" : ""} ${inPot.includes(e.k) ? "used" : ""}" data-k="${e.k}" style="--c:${e.c}" title="${esc(e.what)}">
-      <span class="no">${e.no}</span><span class="sym">${e.sym}</span><span class="nm">${e.zh}</span>
-      <span class="val">${miss ? "缺資料" : e.fmt(v)}</span></div>`;
+/* ---------- 每日排行 ---------- */
+function renderRank() {
+  $("#rank").innerHTML = B.themes.map(t => {
+    const d = t.delta == null ? "" : `<span class="${t.delta >= 0 ? "up" : "down"}">${t.delta >= 0 ? "▲" : "▼"}${Math.abs(t.delta).toFixed(0)}</span>`;
+    return `<button class="item" data-id="${t.id}">
+      <span class="no">${t.rank}</span>
+      <span class="t">${esc(t.name)}</span>
+      <span class="sc">${t.score.toFixed(0)}<small>合成分數 ${d}</small></span>
+      <span class="bar"><i style="width:${Math.max(2, t.score)}%"></i></span>
+      <span class="cos">${t.companies.map(c => esc(c)).join("・")}</span>
+    </button>`;
   }).join("");
-  $("#shelf").querySelectorAll(".tile").forEach(t => t.addEventListener("pointerdown", e => dragStart(e, t)));
-}
-function dragStart(ev, tile) {
-  const k = tile.dataset.k;
-  if (busy || tile.classList.contains("missing") || inPot.includes(k)) return;
-  ev.preventDefault();
-  const x0 = ev.clientX, y0 = ev.clientY;
-  let ghost = null;
-  const move = e => {
-    if (!ghost && Math.hypot(e.clientX - x0, e.clientY - y0) > 6) {
-      ghost = tile.cloneNode(true); ghost.classList.add("ghost"); document.body.appendChild(ghost);
-    }
-    if (ghost) { ghost.style.left = e.clientX - 46 + "px"; ghost.style.top = e.clientY - 50 + "px"; }
-  };
-  const up = e => {
-    removeEventListener("pointermove", move); removeEventListener("pointerup", up);
-    if (ghost) {
-      ghost.remove();
-      const r = $("#potbox").getBoundingClientRect();
-      const over = e.clientX > r.left - 30 && e.clientX < r.right + 30 && e.clientY > r.top - 30 && e.clientY < r.bottom + 30;
-      if (!over) return;
-    }
-    addElement(k);
-  };
-  addEventListener("pointermove", move); addEventListener("pointerup", up);
+  $("#rank").querySelectorAll(".item").forEach(b => b.onclick = () => openReport(b.dataset.id));
+  $("#rankSub").textContent = `${B.date}・從 ${B.n_themes} 個題材裡挑合成分數最高的 5 個，每篇都會拆到題材裡的公司。▲▼ 是和上個月比的分數變化。`;
+  $("#method").innerHTML = B.method ? esc(B.method) : "";
 }
 
-/* ---------- 精煉台 ---------- */
-function idleRefinery() {
-  $("#refineBody").innerHTML = `<div class="idle">丟一個元素進鍋，<br>這裡會顯示它在全部上市櫃公司裡排在哪裡</div>`;
+/* ---------- 閱讀器 ---------- */
+let lastFocus = null;
+async function openReport(id) {
+  const i = ORDER.findIndex(x => x.id === id); if (i < 0) return;
+  openIdx = i; const r = ORDER[i];
+  lastFocus = document.activeElement;
+  $("#reader").classList.add("open"); $("#reader").setAttribute("aria-hidden", "false");
+  $("#readerTitle").textContent = r.name || r.title || "";
+  $("#doc").innerHTML = `<p class="sub">載入中…</p>`;
+  $("#prev").disabled = i === 0; $("#next").disabled = i === ORDER.length - 1;
+  history.replaceState(null, "", `?d=${B.date}&r=${id}`);
+  try {
+    const md = await (await fetch(r.file, { cache: "no-cache" })).text();
+    $("#doc").innerHTML = marked.parse(md);
+  } catch (e) { $("#doc").innerHTML = `<p>報告載入失敗：${esc(e.message)}</p>`; }
+  $("#doc").scrollTop = 0;
+  $("#reader [data-close]").focus({ preventScroll: true });
 }
-function quantile(sorted, q) { return sorted[Math.min(sorted.length - 1, Math.max(0, Math.floor(q * (sorted.length - 1))))]; }
+function closeReader() {
+  $("#reader").classList.remove("open"); $("#reader").setAttribute("aria-hidden", "true");
+  history.replaceState(null, "", "?d=" + B.date);
+  lastFocus?.focus?.();
+}
+document.querySelectorAll("[data-close]").forEach(el => el.onclick = closeReader);
+$("#prev").onclick = () => openIdx > 0 && openReport(ORDER[openIdx - 1].id);
+$("#next").onclick = () => openIdx < ORDER.length - 1 && openReport(ORDER[openIdx + 1].id);
+addEventListener("keydown", e => {
+  if (!$("#reader").classList.contains("open")) return;
+  if (e.key === "Escape") closeReader();
+  if (e.key === "ArrowRight") $("#next").click();
+  if (e.key === "ArrowLeft") $("#prev").click();
+});
 
-// 一張分布圖：所有公司的值 → 長條；目標公司的位置 → 標記；贏過的部分逐步上色
-function histSVG(values, v, { color, inverse = false, binary = false, fmtTick, label, range }) {
-  const W = 600, H = 150, P = 18, base = H - 26;
-  let bins, xOf, binOf, ticks;
-  if (binary) {
-    bins = [0, 0]; values.forEach(x => bins[x >= 0.5 ? 1 : 0]++);
-    const bw = (W - 2 * P) / 2;
-    xOf = val => P + bw * (val >= 0.5 ? 1.5 : 0.5);
-    binOf = i => ({ x: P + bw * i + 30, w: bw - 60, center: i });
-    ticks = [[xOf(0), "沒創新高"], [xOf(1), "創新高"]];
-  } else {
-    const s = values.slice().sort((a, b) => a - b);
-    let [lo, hi] = range || [quantile(s, 0.03), quantile(s, 0.97)];
-    if (lo === hi) { lo = s[0]; hi = s[s.length - 1] || lo + 1; }
-    const NB = 36, bw = (W - 2 * P) / NB;
-    bins = new Array(NB).fill(0);
-    const bi = x => Math.max(0, Math.min(NB - 1, Math.floor((x - lo) / (hi - lo) * NB)));
-    values.forEach(x => bins[bi(x)]++);
-    xOf = x => P + Math.max(0, Math.min(1, (x - lo) / (hi - lo))) * (W - 2 * P);
-    binOf = i => ({ x: P + bw * i + 1, w: bw - 2, center: lo + (i + 0.5) / NB * (hi - lo) });
-    ticks = range ? [[P, fmtTick(lo)], [xOf((lo + hi) / 2), fmtTick((lo + hi) / 2)], [W - P, fmtTick(hi)]]
-      : [[P, "≤" + fmtTick(lo)], [xOf(0) > P + 40 && xOf(0) < W - P - 40 ? xOf(0) : null, "0"], [W - P, "≥" + fmtTick(hi)]];
-  }
-  const mx = Math.max(...bins), hOf = n => n ? Math.max(2, (base - 22) * n / mx) : 0;
-  const beaten = b => binary ? (inverse ? b.center > (v >= 0.5 ? 1 : 0) : b.center < (v >= 0.5 ? 1 : 0)) : (inverse ? b.center > v : b.center < v);
-  let order = bins.map((_, i) => i);
-  if (inverse) order = order.reverse();
-  const rects = bins.map((n, i) => {
-    const b = binOf(i), h = hOf(n);
-    return `<rect data-o="${order.indexOf(i)}" data-win="${beaten(b) ? 1 : 0}" x="${b.x.toFixed(1)}" y="${(base - h).toFixed(1)}" width="${b.w.toFixed(1)}" height="${h.toFixed(1)}" rx="2" fill="var(--bar)"/>`;
-  }).join("");
-  const mxp = xOf(v);
-  return `<svg class="hist" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(label)}">
-    ${rects}
-    <line x1="${P}" x2="${W - P}" y1="${base + .5}" y2="${base + .5}" stroke="var(--grid)"/>
-    ${ticks.filter(t => t[0] != null).map(([x, t], j) => `<text class="lbl" x="${x}" y="${H - 8}" text-anchor="${binary || j === 1 ? "middle" : j === 0 ? "start" : "end"}">${t}</text>`).join("")}
-    <g class="marker" style="transform:translate(${mxp}px,0);transition:transform .6s"><line x1="0" x2="0" y1="10" y2="${base}" stroke="var(--ink)" stroke-width="2" stroke-dasharray="4 3"/>
-      <path d="M-7,2 L7,2 L0,11 Z" fill="var(--ink)"/>
-      <text class="mk" x="${mxp > W - 120 ? -8 : 8}" y="12" text-anchor="${mxp > W - 120 ? "end" : "start"}">這家 ${esc(label)}</text></g>
-  </svg>`;
-}
-async function animateFill(svg, color, ms) {
-  const rs = [...svg.querySelectorAll("rect[data-win='1']")].sort((a, b) => a.dataset.o - b.dataset.o);
-  const step = Math.max(1, Math.ceil(rs.length / 24));
-  for (let i = 0; i < rs.length; i += step) {
-    rs.slice(i, i + step).forEach(r => r.setAttribute("fill", color));
-    await sleep(ms / Math.ceil(rs.length / step));
-  }
-}
-async function countUp(el, to, ms, fmt) {
-  if (RM || document.hidden) { el.textContent = fmt(to); return; }
-  const t0 = performance.now();
-  let done = false;
-  // 分頁切到背景時 requestAnimationFrame 會暫停，用計時器保底，免得鍋卡住
-  await Promise.race([new Promise(res => {
-    const f = now => {
-      if (done) return;
-      const k = Math.min(1, (now - t0) / ms), e = 1 - Math.pow(1 - k, 3);
-      el.textContent = fmt(to * e);
-      k < 1 ? requestAnimationFrame(f) : res();
-    };
-    requestAnimationFrame(f);
-  }), new Promise(res => setTimeout(res, ms + 150))]);
-  done = true; el.textContent = fmt(to);
-}
-
-async function refine(k) {
-  const e = ELK[k], v = LAB.raw[k][cur], p = LAB.pct[k][cur];
-  const vals = LAB.raw[k].filter(x => x != null);
-  const r = rankPct(vals, v);
-  const won = e.inverse ? r.gt : r.lt;
-  const colour = getComputedStyle(document.documentElement).getPropertyValue(e.c.slice(4, -1)).trim();
-  let tieNote = "";
-  if (e.binary) tieNote = `<br>這一項只有「有／沒有」兩種，${v ? "創新高" : "沒創新高"}的 ${fmtN(r.eq)} 家同分，名次取平均，所以大家都拿 ${pct(p)}。`;
-  else if (r.eq > 1) tieNote = `<br>有 ${fmtN(r.eq - 1)} 家和它同分，名次取平均。`;
-  $("#refineBody").innerHTML = `
-    <div class="refine-title"><span class="g" style="background:${e.c};font-size:15px">${e.sym}</span><b>${e.zh}</b><span style="color:var(--ink-2)">原料：${e.unit(v)}</span></div>
-    <div class="sub" style="margin:2px 0 0">${esc(e.what)}</div>
-    ${histSVG(vals, v, { color: colour, inverse: e.inverse, binary: e.binary, fmtTick: e.unit, label: e.unit(v) })}
-    <div class="counter">${e.inverse ? "存貨增加得比它<b>更多</b>的" : "比它<b>差</b>的"}：<b id="cnt">0</b> 家 / ${fmtN(r.n)} 家有資料
-      <span style="margin-left:10px">→ 百分位 <b id="pc" style="color:${e.c}">0%</b></span></div>
-    <div class="explain">每一家上市櫃公司都算出同一個數字，排隊。這家${e.inverse ? "（倒過來排，越低越前面）" : ""}贏過 ${fmtN(won)} 家，換算成 0～100% 的位置 = <b>${pct(p)}</b>。${tieNote}</div>`;
-  const svg = $("#refineBody .hist");
-  await Promise.all([animateFill(svg, colour, 900), countUp($("#cnt"), won, 900, x => fmtN(Math.round(x))), countUp($("#pc"), p, 900, pct)]);
-  return svg.querySelector(".marker");
-}
-
-/* ---------- 鍋 ---------- */
-function renderPot() {
-  $("#orbs").innerHTML = inPot.map(k => {
-    const e = ELK[k];
-    return `<button class="orb" data-k="${k}" style="--c:${e.c}" title="點一下拿出來">${e.sym}<small>${pct(LAB.pct[k][cur])}</small></button>`;
-  }).join("");
-  $("#orbs").querySelectorAll(".orb").forEach(o => o.onclick = () => removeElement(o.dataset.k));
-  const ps = inPot.map(k => LAB.pct[k][cur]);
-  const lv = inPot.length / 4;
-  const liquid = $("#liquid");
-  liquid.style.transform = `scaleY(${0.35 + 0.65 * lv})`;
-  if (inPot.length) {
-    const m = ps.reduce((a, b) => a + b, 0) / ps.length;
-    liquid.setAttribute("fill", gcol(gradeOf(m)[1]));
-  } else liquid.setAttribute("fill", "var(--grid)");
-  const f = $("#formula");
-  if (!inPot.length) f.innerHTML = `<span class="need">鍋是空的。至少要 2 種元素才煉得出來。</span>`;
-  else {
-    const m = ps.reduce((a, b) => a + b, 0) / ps.length;
-    f.innerHTML = `( ${inPot.map(k => `<span style="color:${ELK[k].c};font-weight:700">${Math.round(LAB.pct[k][cur] * 100)}</span>`).join(" + ")} ) ÷ ${inPot.length} = <b>${(m * 100).toFixed(1)}</b>`
-      + (inPot.length < 2 ? `<br><span class="need">還差 ${2 - inPot.length} 種才會結晶</span>` : "");
-  }
-}
-async function flyOrb(fromEl, k) {
-  if (RM || !fromEl) return;
-  const e = ELK[k], a = fromEl.getBoundingClientRect(), b = $("#orbs").getBoundingClientRect();
-  const o = document.createElement("div");
-  o.className = "orb fly"; o.style.cssText = `--c:${e.c};left:${a.left - 26}px;top:${a.top}px;animation:none`;
-  o.innerHTML = `${e.sym}<small>${pct(LAB.pct[k][cur])}</small>`;
-  document.body.appendChild(o);
-  await sleep(30);
-  o.style.transform = `translate(${b.left + b.width / 2 - a.left}px, ${b.top + 10 - a.top}px) scale(.9)`;
-  await sleep(780);
-  o.remove();
-}
-async function addElement(k) {
-  if (busy || inPot.includes(k) || LAB.raw[k][cur] == null) return;
-  busy = true;
-  document.querySelector(`.tile[data-k="${k}"]`)?.classList.add("used");
-  setStep(2);
-  const mk = await refine(k);
-  await sleep(250);
-  await flyOrb(mk, k);
-  inPot.push(k); inPot.sort((a, b) => ELK[a].no - ELK[b].no);
-  renderPot(); setStep(3);
-  busy = false;
-  if (inPot.length >= 2) await crystallize();
-}
-function removeElement(k) {
-  if (busy) return;
-  inPot = inPot.filter(x => x !== k);
-  renderShelf(); renderPot();
-  if (inPot.length >= 2) crystallize(); else { resetCrystal(); setStep(inPot.length ? 3 : 1); }
-}
-$("#reset").onclick = () => { if (!busy) { inPot = []; renderShelf(); renderPot(); idleRefinery(); resetCrystal(); setStep(1); } };
-$("#auto").onclick = async () => {
-  if (busy) return;
-  for (const k of available()) if (!inPot.includes(k)) await addElement(k);
-};
-
-/* ---------- 結晶 ---------- */
-function resetCrystal() {
-  crystalShown = false;
-  $("#gemFace").setAttribute("fill", "var(--grid)"); $("#gemTxt").textContent = "?";
-  $("#finalBody").innerHTML = `<p class="sub">鍋裡有 2 種以上元素時，會把「平均」再和全市場每一家的平均比一次，得到最後的事實分數。</p>`
-    + (available().length < 2 ? `<div class="note">這家能用的元素不到 2 種（${available().length} 種），煉不出事實分數。新上市或財報不完整的公司常這樣。</div>` : "");
-}
-async function crystallize() {
-  busy = true; setStep(4);
-  const s = synth(inPot);
-  const all = available();
-  const g = gradeOf(s.fact);
-  const means = s.means.filter(x => x != null);
-  $("#finalBody").innerHTML = `
-    <div class="sub" style="margin:0">鍋裡的平均 ${(s.mean * 100).toFixed(1)}，放回全市場 ${fmtN(s.n)} 家的平均裡再排一次：</div>
-    ${histSVG(means, s.mean, { fmtTick: x => (x * 100).toFixed(0), label: (s.mean * 100).toFixed(1), range: [0, 1.0001] })}
-    <div style="display:flex;gap:18px;align-items:end;flex-wrap:wrap">
-      <div><div class="big" id="fpc" style="color:${gcol(g[1])}">0%</div><div class="sub" style="margin:0">事實分數</div></div>
-      <div style="padding-bottom:6px">全市場第 <b>${fmtN(s.rank)}</b> 名（共 ${fmtN(s.n)} 家）・等級 <span class="g" style="background:${gcol(g[1])}">${g[1]}</span> ${g[2]}</div>
-    </div>
-    ${inPot.length < all.length ? `<div class="note">🧪 實驗中：拿掉了 ${all.filter(k => !inPot.includes(k)).map(k => ELK[k].zh).join("、")}。正式的事實分數是能用的元素全部放進去：<b>${pct(LAB.fact[cur])}</b>。</div>` : ""}
-    ${all.length < 4 ? `<div class="note">這家缺 ${EL.filter(e => !all.includes(e.k)).map(e => e.zh).join("、")} 的資料，所以只用 ${all.length} 種元素平均。</div>` : ""}`;
-  const svg = $("#finalBody .hist");
-  const gc = getComputedStyle(document.documentElement).getPropertyValue(`--g-${g[1].toLowerCase()}`).trim();
-  await Promise.all([animateFill(svg, gc, 800), countUp($("#fpc"), s.fact, 800, pct)]);
-  const gem = $("#gem");
-  $("#gemFace").setAttribute("fill", gcol(g[1])); $("#gemTxt").textContent = g[1];
-  gem.classList.remove("pop"); void gem.getBoundingClientRect(); gem.classList.add("pop");
-  if (!RM) burst(gc);
-  if (inPot.length === all.length) saveDex(s.fact, g[1]);
-  busy = false;
-}
-function burst(color) {
-  const w = $("#gemwrap");
-  for (let i = 0; i < 14; i++) {
-    const s = document.createElement("span");
-    s.className = "spark"; s.style.background = color; s.style.setProperty("--a", (i * 360 / 14 + Math.random() * 12) + "deg");
-    w.appendChild(s); setTimeout(() => s.remove(), 950);
-  }
-}
-
-/* ---------- 圖鑑 ---------- */
-function loadDexData() { try { return JSON.parse(localStorage.getItem("dex") || "{}"); } catch (e) { return {}; } }
-function saveDex(fact, g) {
-  const d = loadDexData(); d[LAB.codes[cur]] = { n: LAB.names[cur], f: fact, g, d: LAB.date };
-  try { localStorage.setItem("dex", JSON.stringify(d)); } catch (e) {}
-  renderDex();
-}
-function renderDex() {
-  const d = loadDexData(), ks = Object.keys(d).sort((a, b) => d[b].f - d[a].f);
-  $("#dex").innerHTML = ks.length ? ks.map(c => `<button data-code="${c}"><span class="g" style="background:${gcol(d[c].g)}">${d[c].g}</span>${esc(d[c].n)}<small>${c}・${pct(d[c].f)}</small></button>`).join("")
-    : `<span class="sub">還沒煉過任何公司。</span>`;
-  $("#dex").querySelectorAll("button").forEach(b => b.onclick = () => { pick(b.dataset.code); scrollTo({ top: 0, behavior: RM ? "auto" : "smooth" }); });
-}
-
-boot().catch(e => $(".wrap").insertAdjacentHTML("afterbegin", `<div class="note">資料載入失敗：${esc(e.message)}</div>`));
+boot().catch(e => $(".wrap").insertAdjacentHTML("beforeend", `<p class="sub">資料載入失敗：${esc(e.message)}</p>`));
 </script>
 </body>
 </html>
