@@ -46,6 +46,15 @@
    "file": "briefs/2026-10-14/el-inv_chg.md"
   },
   {
+   "id": "el-academic",
+   "name": "學界估值（ML／V/P／GLS）",
+   "short": "學界估值",
+   "evidence": "穩健",
+   "weight": 1.0,
+   "metric": "中位數 51",
+   "file": "briefs/2026-10-14/el-academic.md"
+  },
+  {
    "id": "el-consensus",
    "name": "券商共識修正",
    "short": "共識修正",
@@ -123,12 +132,12 @@
    "id": "theme-memory",
    "rank": 1,
    "name": "記憶體／儲存",
-   "score": 79.6,
+   "score": 71.0,
    "delta": null,
    "companies": [
     "華邦電",
     "群聯",
-    "旺宏"
+    "力積電"
    ],
    "file": "briefs/2026-10-14/theme-memory.md"
   },
@@ -136,12 +145,12 @@
    "id": "theme-pcb_substrate",
    "rank": 2,
    "name": "PCB／載板／銅箔基板",
-   "score": 68.7,
+   "score": 63.9,
    "delta": null,
    "companies": [
     "欣興",
-    "富喬",
-    "德宏"
+    "聯茂",
+    "台光電"
    ],
    "file": "briefs/2026-10-14/theme-pcb_substrate.md"
   },
@@ -149,12 +158,12 @@
    "id": "theme-adv_packaging",
    "rank": 3,
    "name": "先進封裝",
-   "score": 64.7,
+   "score": 60.5,
    "delta": null,
    "companies": [
-    "家登",
     "萬潤",
-    "中砂"
+    "家登",
+    "台積電"
    ],
    "file": "briefs/2026-10-14/theme-adv_packaging.md"
   },
@@ -162,7 +171,7 @@
    "id": "theme-interposer",
    "rank": 4,
    "name": "矽中介層",
-   "score": 64.0,
+   "score": 59.5,
    "delta": null,
    "companies": [
     "力積電",
@@ -175,7 +184,7 @@
    "id": "theme-testing",
    "rank": 5,
    "name": "半導體測試",
-   "score": 63.4,
+   "score": 59.0,
    "delta": null,
    "companies": [
     "漢測",
@@ -189,77 +198,77 @@
   {
    "id": "memory",
    "name": "記憶體／儲存",
-   "score": 79.6,
+   "score": 71.0,
    "rank": 1,
    "fact_rank": 3
   },
   {
    "id": "pcb_substrate",
    "name": "PCB／載板／銅箔基板",
-   "score": 68.7,
+   "score": 63.9,
    "rank": 2,
    "fact_rank": 1
   },
   {
    "id": "adv_packaging",
    "name": "先進封裝",
-   "score": 64.7,
+   "score": 60.5,
    "rank": 3,
    "fact_rank": 4
   },
   {
    "id": "interposer",
    "name": "矽中介層",
-   "score": 64.0,
+   "score": 59.5,
    "rank": 4,
    "fact_rank": 2
   },
   {
    "id": "testing",
    "name": "半導體測試",
-   "score": 63.4,
+   "score": 59.0,
    "rank": 5,
    "fact_rank": 6
   },
   {
-   "id": "asic_ip",
-   "name": "ASIC／矽智財",
-   "score": 60.3,
-   "rank": 6,
-   "fact_rank": 8
-  },
-  {
    "id": "server_system",
    "name": "伺服器組裝／機櫃／機構",
-   "score": 56.6,
-   "rank": 7,
+   "score": 58.0,
+   "rank": 6,
    "fact_rank": 7
+  },
+  {
+   "id": "asic_ip",
+   "name": "ASIC／矽智財",
+   "score": 56.2,
+   "rank": 7,
+   "fact_rank": 8
   },
   {
    "id": "cooling",
    "name": "散熱／液冷",
-   "score": 53.5,
+   "score": 50.0,
    "rank": 8,
    "fact_rank": 5
   },
   {
    "id": "optical",
    "name": "光通訊／CPO",
-   "score": 51.4,
+   "score": 47.4,
    "rank": 9,
    "fact_rank": 9
   },
   {
    "id": "power",
    "name": "電源／電力",
-   "score": 43.2,
+   "score": 42.9,
    "rank": 10,
    "fact_rank": 11
   },
   {
    "id": "interconnect",
    "name": "高速傳輸／連接器",
-   "score": 35.6,
+   "score": 36.8,
    "rank": 11,
    "fact_rank": 10
   }
