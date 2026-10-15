@@ -143,6 +143,7 @@
    "name": "伺服器組裝／機櫃／機構",
    "score": 65.2,
    "delta": null,
+   "view": "偏多",
    "companies": [
     "川湖",
     "鴻海",
@@ -156,6 +157,7 @@
    "name": "PCB／載板／銅箔基板",
    "score": 58.5,
    "delta": null,
+   "view": "中性",
    "companies": [
     "聯茂",
     "台光電",
@@ -169,6 +171,7 @@
    "name": "矽中介層",
    "score": 55.2,
    "delta": null,
+   "view": "中性",
    "companies": [
     "力積電",
     "聯電",
@@ -182,6 +185,7 @@
    "name": "先進封裝",
    "score": 52.7,
    "delta": null,
+   "view": "中性",
    "companies": [
     "萬潤",
     "台積電",
@@ -195,6 +199,7 @@
    "name": "半導體測試",
    "score": 51.8,
    "delta": null,
+   "view": "中性",
    "companies": [
     "致茂",
     "矽格",
