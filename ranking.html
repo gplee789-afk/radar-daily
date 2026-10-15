@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>供應鏈雷達・算分台</title>
-<meta name="description" content="供應鏈雷達每日事實分數：營收加速、創新高、毛利率、存貨四項，和全部上市櫃公司比的百分位。">
+<title>台股分析・算分台</title>
+<meta name="description" content="台股分析每日事實分數：營收加速、創新高、毛利率、存貨四項，和全部上市櫃公司比的百分位。">
 <style>
 :root {
   color-scheme: light;
@@ -164,11 +164,12 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 24px; }
 <div class="wrap">
   <header class="top">
     <div>
-      <h1>供應鏈雷達・算分台 <small id="asof"></small></h1>
+      <h1>台股分析・算分台 <small id="asof"></small></h1>
       <p class="sub" style="margin:4px 0 0">事實分數 = 營收加速、營收創 12 月新高、毛利率年變化、存貨營收比變化（反向）四項等權，和全部上市櫃公司比的百分位。研究輔助，不是投資建議。</p>
     </div>
     <div class="controls">
-      <a href="index.html">📡 日報</a>
+      <a href="index.html">📚 報告庫</a>
+      <a href="daily.html">📡 日報</a>
       <a href="lab.html">⚗️ 煉金室</a>
       <label for="day" class="sub" style="margin:0">日期</label>
       <select id="day"></select>
@@ -237,7 +238,7 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 24px; }
     <div id="report"></div>
   </section>
 
-  <footer>資料：公開資訊觀測站月營收、TEJ／FinMind 季報、雷達新聞事件。每天約 21:30 自動更新。分數是相對排名，個別公司誤差很大。</footer>
+  <footer>資料：公開資訊觀測站月營收、TEJ／FinMind 季報、新聞事件。每天約 21:30 自動更新。分數是相對排名，個別公司誤差很大。</footer>
 </div>
 <div id="tip"></div>
 
@@ -640,7 +641,7 @@ document.querySelectorAll("[data-set]").forEach(b => b.onclick = () => {
 async function renderReport(day) {
   const d = INDEX.dates.find(x => x.date === day) || {};
   $("#links").innerHTML = [d.signals && `<a href="${d.signals}">事實分數排名（Markdown 原檔）</a>`,
-                           d.radar && `<a href="${d.radar}" target="_blank" rel="noopener">雷達新聞主題報告 ↗</a>`].filter(Boolean).join("") || "這天沒有報告檔";
+                           d.radar && `<a href="${d.radar}" target="_blank" rel="noopener">新聞主題報告 ↗</a>`].filter(Boolean).join("") || "這天沒有報告檔";
   $("#report").innerHTML = "";
   if (!d.signals || !window.marked) return;
   try {
