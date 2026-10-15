@@ -1,0 +1,289 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>台股分析 2026-10-15</title><style>
+:root { --bg:#fafaf9; --fg:#1c1917; --muted:#78716c; --card:#fff; --line:#e7e5e4; --accent:#0f766e; --up:#15803d; --down:#b91c1c; }
+@media (prefers-color-scheme: dark) {
+  :root { --bg:#1c1917; --fg:#f5f5f4; --muted:#a8a29e; --card:#292524; --line:#44403c; --accent:#5eead4; --up:#4ade80; --down:#f87171; }
+}
+* { box-sizing: border-box; }
+body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.6 system-ui, "Microsoft JhengHei", sans-serif; }
+main { max-width: 980px; margin: 0 auto; padding: 24px 16px 64px; }
+h1 { font-size: 24px; margin: 0 0 4px; }
+h2 { font-size: 19px; margin: 36px 0 12px; border-bottom: 1px solid var(--line); padding-bottom: 6px; }
+h3 { font-size: 16px; margin: 0; }
+.muted { color: var(--muted); font-size: 13px; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-weight: 600; }
+td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin: 12px 0; }
+.stage { display:inline-block; padding: 1px 8px; border-radius: 99px; border: 1px solid var(--accent); color: var(--accent); font-size: 12px; margin-left: 8px; }
+.up { color: var(--up); } .down { color: var(--down); }
+.tag { display:inline-block; font-size:12px; padding:0 6px; border-radius:4px; background:var(--line); margin-right:4px; }
+.new { background: var(--accent); color: var(--bg); }
+ul { padding-left: 20px; margin: 6px 0; }
+a { color: var(--accent); }
+.table-wrap { overflow-x: auto; }
+</style></head><body><main>
+<h1>台股分析週報</h1>
+<div class="muted">期間 2026-10-09 ～ 2026-10-15 ·
+文件：已分析 3307、待處理 0、
+過濾掉 8171、重複轉載 277、失敗 0</div>
+<p class="muted">分數＝訊號權重加總（資本支出、擴產 3；訂單、漲價缺貨 2.5；營收 1.5；技術藍圖 1）× 量級。
+動能＝本週分數 ÷ 過去幾週平均。階段是粗略的啟發式分類，只用來排序注意力，不是買賣訊號。</p>
+
+<h2>主題總覽</h2><div class="table-wrap"><table><tr><th>主題</th><th>階段</th><th class="num">分數</th><th class="num">動能</th><th class="num">事件</th><th class="num">硬訊號</th><th class="num">來源數</th></tr>
+<tr><td><a href="#t-adv_packaging">先進封裝</a></td><td title="已出現資本支出、擴產、訂單或漲價">確認</td><td class="num">62.0</td><td class="num"><span class="down">0.7×</span></td><td class="num">27</td><td class="num">17</td><td class="num">4</td></tr>
+<tr><td><a href="#t-memory">記憶體／儲存</a></td><td title="已出現資本支出、擴產、訂單或漲價">確認</td><td class="num">44.5</td><td class="num"><span class="">1.1×</span></td><td class="num">37</td><td class="num">14</td><td class="num">4</td></tr>
+<tr><td><a href="#t-testing">半導體測試</a></td><td title="已出現資本支出、擴產、訂單或漲價">確認</td><td class="num">36.0</td><td class="num"><span class="up">1.5×</span></td><td class="num">16</td><td class="num">9</td><td class="num">5</td></tr>
+<tr><td><a href="#t-power">電源／電力</a></td><td title="已出現資本支出、擴產、訂單或漲價">確認</td><td class="num">34.9</td><td class="num"><span class="up">1.3×</span></td><td class="num">20</td><td class="num">7</td><td class="num">4</td></tr>
+<tr><td><a href="#t-cooling">散熱／液冷</a></td><td title="已出現資本支出、擴產、訂單或漲價">確認</td><td class="num">32.9</td><td class="num"><span class="down">0.8×</span></td><td class="num">20</td><td class="num">7</td><td class="num">1</td></tr>
+<tr><td><a href="#t-server_system">伺服器組裝／機櫃／機構</a></td><td title="已出現資本支出、擴產、訂單或漲價">確認</td><td class="num">32.8</td><td class="num"><span class="up">2.9×</span></td><td class="num">17</td><td class="num">5</td><td class="num">4</td></tr>
+<tr><td><a href="#t-pcb_substrate">PCB／載板／銅箔基板</a></td><td title="熱度明顯低於前幾週">降溫</td><td class="num">29.1</td><td class="num"><span class="down">0.7×</span></td><td class="num">14</td><td class="num">8</td><td class="num">3</td></tr>
+<tr><td><a href="#t-optical">光通訊／CPO</a></td><td title="熱度明顯低於前幾週">降溫</td><td class="num">17.2</td><td class="num"><span class="down">0.5×</span></td><td class="num">13</td><td class="num">3</td><td class="num">2</td></tr>
+<tr><td><a href="#t-interposer">矽中介層</a></td><td title="已出現資本支出、擴產、訂單或漲價">確認</td><td class="num">15.0</td><td class="num"><span class="up">4.9×</span></td><td class="num">9</td><td class="num">5</td><td class="num">1</td></tr>
+<tr><td><a href="#t-interconnect">高速傳輸／連接器</a></td><td title="熱度明顯低於前幾週">降溫</td><td class="num">6.8</td><td class="num"><span class="down">0.7×</span></td><td class="num">4</td><td class="num">2</td><td class="num">1</td></tr>
+<tr><td><a href="#t-asic_ip">ASIC／矽智財</a></td><td title="熱度明顯低於前幾週">降溫</td><td class="num">3.5</td><td class="num"><span class="down">0.4×</span></td><td class="num">4</td><td class="num">1</td><td class="num">1</td></tr>
+<tr><td><a href="#t-new">新主題（圖譜外）</a></td><td title="已出現資本支出、擴產、訂單或漲價">確認</td><td class="num">1.0</td><td class="num"><span class="down">0.6×</span></td><td class="num">1</td><td class="num">0</td><td class="num">1</td></tr>
+</table></div>
+<h2>各主題細節</h2>
+<div class="card" id="t-adv_packaging"><h3>先進封裝<span class="stage">確認</span></h3><div class="muted">已出現資本支出、擴產、訂單或漲價</div>
+<p><b>先進封裝（泛稱）</b> <span class="muted">分數 31.2 · 16 則 · 技術藍圖、擴產、漲價缺貨、營收、訂單、資本支出</span><div class="muted">合併自：先進AI封裝元件、先進封裝、先進封裝相關供應鏈</div></p><ul>
+<li><span class="tag">資本支出</span>「與格羅方德簽20億美元協議 生產先進AI封裝元件」<div class="muted">2026-10-09 · Google新聞:矽中介層 · <a href="https://news.google.com/rss/articles/CBMiUkFVX3lxTE16U1JVVUpna0NLRU5CemZDRDJKUzdvREhXdjFnejdNdm1Qek5nTjRoLWxvLWRXU0NqWmNmMTlEYUlIOFp5N1NVZDE5ck9OM21iQVHSAVBBVV95cUxQWUk0ZDdpTldxLXF6aHJ1ekVXN1JRTFktYkhkcHRueVgzQkdOQVpfNlJjSFhQcEpVLXE1OUtxSzU5TjZCalh1ekRZUzdBaUd3eA?oc=5" target="_blank" rel="noopener">台積電釋單！與格羅方德簽20億美元協議 生產先進AI封裝元件 - ETtoday財經雲</a></div></li>
+<li><span class="tag">資本支出</span>「台積擴建先進封裝 供應鏈看好嘉科三期」<div class="muted">2026-10-10 · Google新聞:先進封裝 · <a href="https://news.google.com/rss/articles/CBMiWEFVX3lxTE5pSTNpcm94ejR4OVRlUVJ2LXJfZVZvWkJTWkt1dFRNZ3NVX21hVXdmVGc2Rmo5eUFnR0RUOVoxNjVpRWNNbWdacVlPVHMxZ2dIajlEcG5xMzg?oc=5" target="_blank" rel="noopener">台積擴建先進封裝 供應鏈看好嘉科三期 - 自由時報</a></div></li>
+<li><span class="tag">擴產</span>「台積電攜手格羅方德強化AI先進封裝關鍵產能」<div class="muted">2026-10-12 · Google新聞:先進封裝 · <a href="https://news.google.com/rss/articles/CBMi6AFBVV95cUxOaWIyNjlWMkEyZEZDLWVqcUdFaDdMYVFrNFJEeGZ2azZ3Y25qaXNhdndjODdTWm51M2hGWl9GelgyUlZ2bDFkbU9QSmN3M254aG5EVHVENEwxdGFsT0xJZFViMnM3U1FNV3J3TjlyakYyOTJzdDlXcXlKd0d0YjlLY2dDc2N5SXRsWnNyVDItdi1lbmFYSV9aNWM5dmhnanJabl9SdzlLR2hGX0hWQ1JleGFsYVBwSDh2X25DME1LOE9IWV9KTENJeHZEa3JuZ3p2RS02amhTV1pwb29yN3RKYmdtSllrZnZY?oc=5" target="_blank" rel="noopener">台積電攜手格羅方德強化AI先進封裝關鍵產能 - CTIMES</a></div></li>
+</ul>
+<p><b>CoWoS</b> <span class="muted">分數 14.0 · 5 則 · 技術藍圖、擴產、資本支出</span><div class="muted">合併自：CoWoS先進封裝、CoWoS先進封裝晶片測試業務</div></p><ul>
+<li><span class="tag">資本支出</span>「台積電20億美元長約結盟格芯！CoWoS先進封裝加速美國擴產？」<div class="muted">2026-10-09 · Google新聞:先進封裝 · <a href="https://news.google.com/rss/articles/CBMi2gRBVV95cUxPbkFXT0FwZE5LemRkeFR4RFdUMklJeDhuQkowYTRuemk2b1BfVVJqNlFyX19jNGIzanZSd0pfOU5ES2xmTTZzQnlYQ1ZTNUk2Nms1NzFiMEQ2aGpGTnlHNWlPcGdDbjctd2I1OVJzcHJzYi01TTR5MVhsaDRiWFJFXy1CS2RnYjdtM2tCY2pfV0ExTkJxRkp4YVJ6Tk5SVXFkWElvR2h1TDM0YUo1NThoVTNwQzM0OVVQQUpxV25BREdrRGR0UkFndHJhdXVhWHFNMEg2NDJsWmt0VmFkT1RZRTl3VjV5Q0JNSGRjc2NUbXBRc0lvWTRITF9wWVhETl9qd1RmZ3h3ZHZQVldkVkJPZXB3ejZhYWRzQnhWZFY3dndIUkI5TlVIaVRmaDM0anFqUWlad1VsSFBWLVpGUUVJNWNKekk3ZTN1Ukl0SVpjUTNGbXYyOVEwSllNZF93UWhfei1aTUZsVDYwUHF5djdHZlBfNDlFc3dpS3VHNDRkVy1zeFM0SnpnX0NOZHBQY0NLWmpuMUZBT1o0eEVfejhtQUFPbUR1NkRsN3NPQkYzU1hqNWlnLXB5b3NsQ2VqNGFxdGNubGczRFY2azhnQkc1ekVsZW9wLXFNRkthbVpOOEFxamJFYk12ZXlZNkYyQ3pvaDU0Y0NxM3lVb0I1YUl6NzJVUDlIaW42TEVvT1B5Y1pRSTRLUXFQUUR4R0k3SENSQTd0Wk80WDhndFBfaFp2aldWdGJNUWRvRGxwcVdrdFdlajdTZzg4MGh0LVlXdFNUanlZWTVxN1UzQQ?oc=5" target="_blank" rel="noopener">台積電20億美元長約結盟格芯！CoWoS先進封裝加速美國擴產？昔日宿敵變盟友！｜#財經新聞｜20261009(五) - </a></div></li>
+<li><span class="tag">擴產</span>「台積電砸639億擴充CoWoS產能！「美晶圓代工廠」接5年大單 2028年產量再提升」<div class="muted">2026-10-09 · Google新聞:先進封裝 · <a href="https://news.google.com/rss/articles/CBMinANBVV95cUxQdTd1MXZZNW1vVlFTN0pPTlB4Z1dRNE9TUTd4eWs4NXh5NVgwRldaTWxURmE4R083Y3p4c093WXZXWnd6YTFnZnhvcG1SMTlDMnpiVHZyQVhUVHRtOEd2VjVlUnhNOUhWazBmWFczbksyWE1Jd1dFV1ViVFhzeHU2d2xEcllsMnFNRDhoM1ZLUHdkLWk5QjNwODBTVExkZXo3M2NQT001TktHSGp6RmZPSnNHVy1Kdk5LbU9WU3Q5WG1EVk1sZWhyckpxa2tUTVhVb2hRVkZBTGFZSzI4eEQ0ZnZKbUtHcGZWc2tzcWVfaWdaZmZQUGhyX0ZxVlFGTWxxSzIyMG1XYmRIUHdVYUZuQkZZY1B2cG94WEpUbDFwZ2trZURrbDVwWFFMekdabmJCaG1KWHZyQUZaTlhWYTg2NWpveEkxY1RPWWJ2Vl9FOGFWU2tGcjl3dW1MTHdEVkdOTTU5VThRX0Vla3hVZ0R6Rks0QTZ4bzJkd1FtS3J3aGJsWUZya3E4bFRsNmdvanF0eThXYUVteFU1cGc2?oc=5" target="_blank" rel="noopener">台積電砸639億擴充CoWoS產能！「美晶圓代工廠」接5年大單 2028年產量再提升 - Yahoo股市</a></div></li>
+<li><span class="tag">擴產</span>「矽格將聚焦AI ASIC、CoWoS先進封裝晶片及矽光子高速光通訊IC測試業務」<div class="muted">2026-10-13 · 工商時報-產業 · <a href="https://www.ctee.com.tw/news/20261013701795-430502" target="_blank" rel="noopener">砸21.88億元！矽格再買竹科廠房擴產 聚焦三大方向</a></div></li>
+</ul>
+<p><b>廠務工程</b> <span class="muted">分數 9.0 · 3 則 · 資本支出</span></p><ul>
+<li><span class="tag">資本支出</span>「: 總金額：NTD 1,112,332,840」<div class="muted">2026-10-12 · 重大訊息-上市 · <a href="https://mops.twse.com.tw/" target="_blank" rel="noopener">日月光投控（3711）：代子公司矽品精密工業(股)公司公告取得廠務工程</a></div></li>
+<li><span class="tag">資本支出</span>「: 總金額：NTD 1,727,593,000」<div class="muted">2026-10-13 · 重大訊息-上市 · <a href="https://mops.twse.com.tw/" target="_blank" rel="noopener">日月光投控（3711）：代子公司矽品精密工業(股)公司公告取得廠務工程</a></div></li>
+<li><span class="tag">資本支出</span>「: 總金額：NTD 630,560,000」<div class="muted">2026-10-14 · 重大訊息-上市 · <a href="https://mops.twse.com.tw/" target="_blank" rel="noopener">日月光投控（3711）：代子公司矽品精密工業(股)公司公告取得廠務工程</a></div></li>
+</ul>
+<p><b>封裝設備</b> <span class="muted">分數 6.0 · 2 則 · 擴產、資本支出</span><div class="muted">合併自：先進封裝設備、營業用機器設備</div></p><ul>
+<li><span class="tag">資本支出</span>「交易總金額：NTD 1,246,138,775」<div class="muted">2026-10-13 · 重大訊息-上市 · <a href="https://mops.twse.com.tw/" target="_blank" rel="noopener">日月光投控（3711）：代子公司矽品精密工業(股)公司公告取得營業用機器設備達十億元</a></div></li>
+<li><span class="tag">擴產</span>「先進封裝推升設備需求！ACM Research 擴大全球布局」<div class="muted">2026-10-14 · Google新聞:先進封裝 · <a href="https://news.google.com/rss/articles/CBMifkFVX3lxTE16dkh0ZkQyX0lnRE5WUjFmcDY4T3hrRy1OUUxFbWc3RDdHZFI3a01NN29VUjU2allQV25uMW5qVGlOQ04tMy1RMzJLSTZZbTNkMnl6anN5M3VQSkZjOGpQOFR2OV82UzlQenRXNGMwZVV1SDNVSkpESmpxN3pYZw?oc=5" target="_blank" rel="noopener">先進封裝推升設備需求！ACM Research 擴大全球布局，清洗、沉積產品線持續延伸 - TechNews 科技新報</a></div></li>
+</ul>
+<p><b>供營業用之廠務工程</b> <span class="muted">分數 1.8 · 1 則 · 資本支出</span></p><ul>
+<li><span class="tag">資本支出</span>「交易總金額計：新台幣395,090仟」<div class="muted">2026-10-12 · 重大訊息-上市 · <a href="https://mops.twse.com.tw/" target="_blank" rel="noopener">日月光投控（3711）：代子公司日月光半導體製造(股)公司公告
+向九合工程股份有限公司取得供營業用之廠務工程</a></div></li>
+</ul>
+<p class="muted">被提到的公司（深色＝圖譜外的新發現）：</p><p><span class="tag">2330 台積電 ×7</span><span class="tag">3711 日月光投控 ×6</span><span class="tag">3131 弘塑 ×1</span><span class="tag new" title="不在圖譜裡：可能是新受惠者，值得研究">4556 旭然 ×1</span><span class="tag new" title="不在圖譜裡：可能是新受惠者，值得研究">5536 聖暉* ×1</span><span class="tag">6257 矽格 ×1</span><span class="tag">6613 朋億* ×1</span></p>
+</div>
+<div class="card" id="t-memory"><h3>記憶體／儲存<span class="stage">確認</span></h3><div class="muted">已出現資本支出、擴產、訂單或漲價</div>
+<p><b>DRAM（泛稱）</b> <span class="muted">分數 11.1 · 10 則 · 其他、技術藍圖、擴產、漲價缺貨</span><div class="muted">合併自：DRAM</div></p><ul>
+<li><span class="tag">漲價缺貨</span>「DRAM投片價格大漲45%！力積電9月營收年增近94%創新高」<div class="muted">2026-10-09 · Google新聞:記憶體／儲存 · <a href="https://news.google.com/rss/articles/CBMi1wNBVV95cUxNNHVSX1NVbElaenBkcUlNbkFNZ1ZmamVSeFdjbXkzcE1zMFJrOXFVMWVzNmN3Nkc4aV9ES3hGMmR6VXhBQTVZUGItMEFfRjQ1OVRSNkF5NlMySEpMNC1MXzBxVXpDOERCblVQaU55SWVPRVVhanVkM1dSYXBNdXk4aUtQYS1NUFhxNmdqR3l5TnZ2c1c5MG5YN1hHdVp6VGRsQ2ZUUFJKQzlKZWRFaVp6NkFrQ0VsdnZHZFRLZDl1eTZSeW93enFUc3FsbHM3RThCbDRRb0c0VjRtN0ltS1ROd3Rwc2lFSHdTTFNpSzdlVVluNTZWS2V3bmVuUXhtZktrWmprX0hFSmJsTmdtNF9tcXpKaVkxTWoxbTYwX2s1NjBMSEdPcVJCT1lBM3hxeTNfVW1QbTdtWVFqakVYZnpMdF8tZFRzenVCYlhkdFlJeVdCUnVrcEdOR2dTdTZySmw0N1oyanFaWFJzalJqMjltOS1hVi1jSzgyaE0xS3RWaHFISG5xUnZHaHViQTFGRW1pZ3dHWkNqNFBQTWlnWTRDWF91akpGQjhkVlE5a0lYWjdOOVZRVkZ4cXgzU2RsZmRDRGlPdWZyb3pyOE92cEo4NHVFUmJvVjQ?oc=5" target="_blank" rel="noopener">DRAM投片價格大漲45%！力積電9月營收年增近94%創新高 八大公股砸1.1億元搶進逾千張 - Yahoo股市</a></div></li>
+<li><span class="tag">擴產</span>「DRAM缺貨到明年上半年 南亞科：不排除再蓋新廠」<div class="muted">2026-10-10 · Google新聞:記憶體／儲存 · <a href="https://news.google.com/rss/articles/CBMiWEFVX3lxTE03dzUyZVlaaU42ZjEtVDFJMzVud2hHSmpneXlvbDFIeV83VVd1NTh6TjhHV3RkQUthUkM4eGdUVk1VUkRMczNLQXN2TzNheEh5ME9ncVViVTg?oc=5" target="_blank" rel="noopener">DRAM缺貨到明年上半年 南亞科：不排除再蓋新廠 - 自由時報</a></div></li>
+<li><span class="tag">漲價缺貨</span>「AI帶動DRAM需求！南亞科：供給吃緊、長約成趨勢」<div class="muted">2026-10-12 · Google新聞:記憶體／儲存 · <a href="https://news.google.com/rss/articles/CBMiX0FVX3lxTFA2VV9ENmVZeEpNVk1iVzZtd251M0dudHIxZWp0c0F2UlBJQ0h4YzBCLWxDbjUtR2xjdzNJNG9NRWxpWkFJWTlCX1Fnc1hWS3ZfWFNpOHc0RFh3QkswcnRz?oc=5" target="_blank" rel="noopener">AI帶動DRAM需求！南亞科： 供給吃緊、長約成趨勢- 產業 - 工商時報</a></div></li>
+</ul>
+<p><b>HBM</b> <span class="muted">分數 9.0 · 9 則 · 其他、技術藍圖、擴產、漲價缺貨</span><div class="muted">合併自：HBM、LPDDR5 擴展至網路、儲存及系統管理等應用、HBM、SCA 與 AI 記憶體、HBM記憶體</div></p><ul>
+<li><span class="tag">擴產</span>「美光封測二廠啟用，HBM續擴產」<div class="muted">2026-10-15 · Google新聞:記憶體／儲存 · <a href="https://news.google.com/rss/articles/CBMi5AFBVV95cUxPZ0l4cHRZUWN6dkM0eHRHSzdVVkdiSkYwZGlxNHdKNnlHbWRqZktIdHJ6OWcwVmk0bmJkc2ZzTDNVMjItb0sxOVJoOFhiOExGY3Z0QUVEX3RDZkpES1ZnNDdkODRHZEdwdmdxQXhIX003LUNxT0tjdkR1VmVqSU5vU0Q1VjJYRDNlZDhiNzgzMVk1ZnFoVHY5SFAxT3Z5VUVwN0xnZjB1TEstOEZ4S3hGYmhkeFRQcjRUTU9FRDhTcHRleGpRNDdqdnRkV0h3cXVrZlhxNE9FU0NNYUR6QXVwVzBwVWo?oc=5" target="_blank" rel="noopener">美光封測二廠啟用，HBM續擴產 - Yahoo股市</a></div></li>
+<li><span class="tag">漲價缺貨</span>「HBM、SCA 與 AI 記憶體缺貨，正在改寫記憶體景氣循環」<div class="muted">2026-10-09 · Google新聞:記憶體／儲存 · <a href="https://news.google.com/rss/articles/CBMiXEFVX3lxTFBHRlkwV2NZNUwzSl9xYVBQcWJjdHhWdGt2U3dacy05UHdpVGpDUTFHcUJ6VVdaS0NHSk9kOEtzMlFVb1hZZGtybHpqRUNhc2VNTlp0ZFFOTkJoSHpH?oc=5" target="_blank" rel="noopener">Micron 4Q26 法說會：HBM、SCA 與 AI 記憶體缺貨，正在改寫記憶體景氣循環？ - 富果直送</a></div></li>
+<li><span class="tag">漲價缺貨</span>「HBM缺貨缺到老闆親自飛首爾」<div class="muted">2026-10-13 · Google新聞:記憶體／儲存 · <a href="https://news.google.com/rss/articles/CBMif0FVX3lxTE1oOUZlV212ckVJZTR1bXgyQmdDb0c4WXZ4VFNoOGpHanJjb1A4WmJBRDlDelRKR0xQTUR5OWVtcDItbjNtQU1LMzRwVEp4ekNkZGZxQ3dVaDk2cXplc0NtdllxcGw0ZHhBOFFFVDJMXzlrcTdJU1lYOTlVZmRLTDQ?oc=5" target="_blank" rel="noopener">HBM缺貨缺到老闆親自飛首爾：蘇姿丰7個月內兩度會三星， 這次連晶圓代工都搬上桌 - T客邦</a></div></li>
+</ul>
+<p><b>DDR5／RDIMM</b> <span class="muted">分數 7.9 · 9 則 · 技術藍圖、漲價缺貨</span><div class="muted">合併自：DDR4、DDR5、DDR5、DDR5 RDIMM、DDR5記憶體</div></p><ul>
+<li><span class="tag">漲價缺貨</span>「DDR4 價格漲幅已超越新型的 DDR5，DRAM 市場甚至」<div class="muted">2026-10-13 · 科技新報 · <a href="https://finance.technews.tw/2026/10/13/the-shortage-of-memory-chips-may-continue-for-another-two-years/" target="_blank" rel="noopener">DDR4 漲幅超越 DDR5，記憶體供不應求可能繼續兩年</a></div></li>
+<li><span class="tag">技術藍圖</span>「長鑫存儲近日透露4F² DRAM架構研發取得新進展，並預告年底前推出結合4F²架構、混合鍵合等技術的新」<div class="muted">2026-10-11 · 科技新報 · <a href="https://technews.tw/2026/10/11/cxmt-dram-memory-4f%c2%b2-ddr5/" target="_blank" rel="noopener">長鑫存儲準備年底推出 4F² DDR5 RDIMM 產品，預計超前三星 2 年</a></div></li>
+<li><span class="tag">技術藍圖</span>「年底推4F²架構DDR5伺服器記憶體」<div class="muted">2026-10-12 · Google新聞:記憶體／儲存 · <a href="https://news.google.com/rss/articles/CBMiT0FVX3lxTE5oNXZmTExGbEtEbmxhZC1CNUw0c1Y0aEpRalRVUVRVQTFBSk40dDI5ZnJJWm1pM3dmVmQ4RjIwSFVuTFc0aVBHc0haUFU5N2c?oc=5" target="_blank" rel="noopener">長鑫科技新突破！年底推4F²架構DDR5伺服器記憶體 - 鉅亨網</a></div></li>
+</ul>
+<p><b>NAND／SSD</b> <span class="muted">分數 3.5 · 2 則 · 技術藍圖、訂單</span></p><ul>
+<li><span class="tag">訂單</span>「三星已與各大科技廠商簽訂五年長約，鎖定 2027 年預計記憶體總產能的近八成，全力確保人工智」<div class="muted">2026-10-13 · 科技新報 · <a href="https://finance.technews.tw/2026/10/13/samsung-plans-to-allocate-80-of-its-memory-production-capacity-to-the-ai-%e2%80%8b%e2%80%8bmarket-by-2027/" target="_blank" rel="noopener">科技大廠都簽五年長約，三星 2027 年記憶體產能八成給了 AI 市場</a></div></li>
+<li><span class="tag">技術藍圖</span>「鎧俠推出液冷企業級SSD 散熱技術從GPU延伸至儲存設備」<div class="muted">2026-10-14 · Google新聞:散熱／液冷 · <a href="https://news.google.com/rss/articles/CBMiVkFVX3lxTE9KWjdJeXRTMzl0dXRRZFlGQV9pUnNTRXpONzZGVGw4NERJemRXSk9hVS1rRjY1NFd6c0hKcjVzZk9KVHdzZk84SWVsMFczMjlkN3RhZ19B?oc=5" target="_blank" rel="noopener">鎧俠推出液冷企業級SSD 散熱技術從GPU延伸至儲存設備，瞄準AI推論需求 - 優分析UAnalyze</a></div></li>
+</ul>
+<p><b>3D 晶圓封裝與測試廠</b> <span class="muted">分數 3.0 · 1 則 · 擴產</span></p><ul>
+<li><span class="tag">擴產</span>「規劃於屏東科學園區建置3D晶圓封裝與測試廠」<div class="muted">2026-10-12 · 法說會 · <a href="https://mopsov.twse.com.tw/nas/STR/240820261012M001.pdf" target="_blank" rel="noopener">南亞科（2408）法說會簡報</a></div></li>
+</ul>
+<p><b>供營業用之機器設備</b> <span class="muted">分數 3.0 · 1 則 · 資本支出</span></p><ul>
+<li><span class="tag">資本支出</span>「交易總金額為新台幣1,670,425,206」<div class="muted">2026-10-14 · 重大訊息-上市 · <a href="https://mops.twse.com.tw/" target="_blank" rel="noopener">華邦電（2344）：本公司訂購機器設備公告。</a></div></li>
+</ul>
+<p class="muted">被提到的公司（深色＝圖譜外的新發現）：</p><p><span class="tag">2408 南亞科 ×12</span><span class="tag">2344 華邦電 ×3</span><span class="tag">2337 旺宏 ×1</span><span class="tag">6770 力積電 ×1</span></p>
+</div>
+<div class="card" id="t-testing"><h3>半導體測試<span class="stage">確認</span></h3><div class="muted">已出現資本支出、擴產、訂單或漲價</div>
+<p><b>測試產能（泛稱）</b> <span class="muted">分數 8.0 · 4 則 · 技術藍圖、擴產、資本支出</span><div class="muted">合併自：測試產能、矽光子 CPO 測試方案、矽光子高速光通訊IC測試業務、高電流液冷測試方案</div></p><ul>
+<li><span class="tag">擴產</span>「矽格將聚焦AI ASIC、CoWoS先進封裝晶片及矽光子高速光通訊IC測試業務」<div class="muted">2026-10-13 · 工商時報-產業 · <a href="https://www.ctee.com.tw/news/20261013701795-430502" target="_blank" rel="noopener">砸21.88億元！矽格再買竹科廠房擴產 聚焦三大方向</a></div></li>
+<li><span class="tag">資本支出</span>「董事會通過與輝達簽訂客戶預付款協議，支持京元電在美國建置測試產能」<div class="muted">2026-10-13 · 工商時報-產業 · <a href="https://www.ctee.com.tw/news/20261013701673-430502" target="_blank" rel="noopener">輝達預付款提前鎖定測試產能 京元電擴大美國布局</a></div></li>
+<li><span class="tag">技術藍圖</span>「全球首推半導體液冷測試方案，提升測試散熱效率」<div class="muted">2026-10-15 · 法說會 · <a href="https://mopsov.twse.com.tw/nas/STR/651520261015M001.pdf" target="_blank" rel="noopener">穎崴（6515）法說會簡報</a></div></li>
+</ul>
+<p><b>測試座／測試介面</b> <span class="muted">分數 7.5 · 4 則 · 技術藍圖、擴產、訂單</span><div class="muted">合併自：HyperSocketTM、Socket、Socket產線、測試介面</div></p><ul>
+<li><span class="tag">擴產</span>「仁武二廠動土開工 2026 年 5 月 29 日，預計投產 2027 Q2」<div class="muted">2026-10-15 · 法說會 · <a href="https://mopsov.twse.com.tw/nas/STR/651520261015M001.pdf" target="_blank" rel="noopener">穎崴（6515）法說會簡報</a></div></li>
+<li><span class="tag">訂單</span>「ASIC 訂單成明年主戰場」<div class="muted">2026-10-15 · Google新聞:半導體測試 · <a href="https://news.google.com/rss/articles/CBMinAFBVV95cUxNVjVZOHFIcXJRT2VvSkZxV2Z2bFF6WjZpRy1lQ2syaU5ELTFoa08zSEx0SjZSa2xYNEVpTFdMVWN6N3B2VC1aMlVPSjBSYUc2SGhZUUlIVWxyV1lVNXRoTWIwZE1oZkdfQW5pN3VzMURBaGhIbDBhTjVyN1c1c2VqbmZmMUlSRllEUkM0RmFnX3BmTHJHSkxEMjZMS1U?oc=5" target="_blank" rel="noopener">《DJ在線》測試介面成長無虞 ASIC訂單成明年主戰場 - 台視全球資訊網</a></div></li>
+<li><span class="tag">技術藍圖</span>「伺服器規格升級 嘉澤穩坐高階 Socket 龍頭後市可期」<div class="muted">2026-10-10 · Google新聞:半導體測試 · <a href="https://news.google.com/rss/articles/CBMiX0FVX3lxTE10WncwX2lGVm1Cb0NNbzlOUW5PVmF3T015VFJ3cExrV2U0bHNFenRraTBEaUNMRlRGM2Q3T3JwMXlQcndaYWR5YllxWWVnRTJGRW1tNDdGSzFpQWtobDcw0gFfQVVfeXFMTXRadzBfaUZWbUJvQ01vOU5Rbk9WYXdPTXlUUndwTGtXZTRsc0V6dGtpMERpQ0xGVEYzZDdPcnAxeVByd1phZHliWXFZZWdFMkZFbW00N0ZLMWlBa2hsNzA?oc=5" target="_blank" rel="noopener">伺服器規格升級 嘉澤穩坐高階 Socket 龍頭後市可期 - 經濟日報</a></div></li>
+</ul>
+<p><b>探針卡</b> <span class="muted">分數 6.8 · 2 則 · 擴產、營收</span><div class="muted">合併自：探針卡金屬件</div></p><ul>
+<li><span class="tag">擴產</span>「探針卡金屬件需求旺盛 景美拚年底產能倍增」<div class="muted">2026-10-11 · Google新聞:半導體測試 · <a href="https://news.google.com/rss/articles/CBMiZEFVX3lxTE1LSUlnSE1XS25TV3NxSE5EOXFvem5HUHZ4c1I1elc5aXoxXzZ2TWhpZkZqR3VIX0FwRG5Xd2NEbG1TR3VfVldoU1Jfal9EMi1DSlloaUFpUkRBa2YyLWZ6Yk9mSGc?oc=5" target="_blank" rel="noopener">討論牆 | 探針卡金屬件需求旺盛 景美拚年底產能倍增 - LINE TODAY</a></div></li>
+<li><span class="tag">營收</span>「薄膜式探針卡出貨升溫 漢測9月營收年增150％」<div class="muted">2026-10-09 · Google新聞:半導體測試 · <a href="https://news.google.com/rss/articles/CBMiiAFBVV95cUxPd1RZZmJkVXltX3h6UFRZdTZzREZ1NDFUNmFfaFZUTkJWWWZDZnRieTZSd0djUVBBVklUcU52emlsbFVOTHJhM0xmM21zV3V2eDF6TkZjMlFNN3pvMG5yX2FERi1oMmlydEFWWmtKMGZPb25hT2prX3YtbnR1MmdGZm9uY1N0WDZI?oc=5" target="_blank" rel="noopener">《半導體》薄膜式探針卡出貨升溫 漢測9月營收年增150％ - 富聯網</a></div></li>
+</ul>
+<p><b>創新路廠房及其附屬設備</b> <span class="muted">分數 4.5 · 1 則 · 資本支出</span></p><ul>
+<li><span class="tag">資本支出</span>「營業稅)。 總計新台幣 21.88億」<div class="muted">2026-10-13 · 重大訊息-上市 · <a href="https://mops.twse.com.tw/" target="_blank" rel="noopener">矽格（6257）：代子公司矽格聯測股份有限公司公告購置「創新路廠房與附屬設備」</a></div></li>
+</ul>
+<p><b>自製探針產能</b> <span class="muted">分數 3.0 · 1 則 · 擴產</span></p><ul>
+<li><span class="tag">擴產</span>「自製率提升，優化毛利結構，掌握關鍵製程技術」<div class="muted">2026-10-15 · 法說會 · <a href="https://mopsov.twse.com.tw/nas/STR/651520261015M001.pdf" target="_blank" rel="noopener">穎崴（6515）法說會簡報</a></div></li>
+</ul>
+<p><b>系統級測試</b> <span class="muted">分數 2.5 · 1 則 · 訂單</span><div class="muted">合併自：半導體測試（最終測試、系統級測試）</div></p><ul>
+<li><span class="tag">訂單</span>「受惠 GPU、ASIC 等高階測試強勁需求」<div class="muted">2026-10-10 · Google新聞:ASIC／矽智財 · <a href="https://news.google.com/rss/articles/CBMiWkFVX3lxTE1vRUJrc2tNRVB6TWJ3QmEyaUtfdUNUZVdGZTFhMHo5NDZkRW5fRFdIVEdfMzQ2U0R3c204d3VmYnBLbk5KZUV5MWVjZDFIRFE0Uk9nZFU1TXRud9IBX0FVX3lxTFBrUEVWSVBWWGF5Z1FyMUNiR1o0SnByTHVjcHB2cXlCbWktTWUwTVNRdEctT2pXRm9lOVkwR0dYbEctcmlvUmJBR3JlN2IyTWd4U3A3dEVTalE4X0pma0Vv?oc=5" target="_blank" rel="noopener">受惠 GPU、ASIC 等高階測試強勁需求 封測雙雄大啖 AI 成長商機 - 經濟日報</a></div></li>
+</ul>
+<p class="muted">被提到的公司（深色＝圖譜外的新發現）：</p><p><span class="tag">6515 穎崴 ×5</span><span class="tag">6257 矽格 ×3</span><span class="tag">2449 京元電子 ×1</span><span class="tag">3533 嘉澤 ×1</span><span class="tag">7856 漢測 ×1</span><span class="tag new" title="不在圖譜裡：可能是新受惠者，值得研究">7899 景美 ×1</span></p>
+</div>
+<div class="card" id="t-power"><h3>電源／電力<span class="stage">確認</span></h3><div class="muted">已出現資本支出、擴產、訂單或漲價</div>
+<p><b>BBU</b> <span class="muted">分數 14.8 · 5 則 · 技術藍圖、擴產、漲價缺貨、訂單、資本支出</span></p><ul>
+<li><span class="tag">擴產</span>「總經理劉慧啟今日宣布全面啟動彰濱二期產能直衝 7.5GWh」<div class="muted">2026-10-14 · 科技新報 · <a href="https://finance.technews.tw/2026/10/14/90v50ah/" target="_blank" rel="noopener">搶當 AIDC 電力心臟！台塑新智能啟動彰濱二期產能直衝 7.5GWh</a></div></li>
+<li><span class="tag">漲價缺貨</span>「BBU需求暴增23倍，資料中心電力管理為何變得更關鍵?」<div class="muted">2026-10-09 · Google新聞:電源／電力 · <a href="https://news.google.com/rss/articles/CBMie0FVX3lxTE9QVjM5VUxMaUNLUlFqMDNyQkQ3TlVsOTVzeDUtT3czcVdvOHBIVlEzYUhhNFh5YVNnUHlWXzJta1J0dGlTS3FnNjhvQmFFTy1sUURfbGdmVl9SMEw0NUhWRVFXNllJUnpTbFRqc2R0bExqTVJFZ1gxMFh2QQ?oc=5" target="_blank" rel="noopener">BBU需求暴增23倍，資料中心電力管理為何變得更關鍵? - CMoney</a></div></li>
+<li><span class="tag">資本支出</span>「彰濱二期規劃5GW電芯，將於12月啟動第二期擴建計畫」<div class="muted">2026-10-14 · 工商時報-產業 · <a href="https://www.ctee.com.tw/news/20261014701721-430503" target="_blank" rel="noopener">台塑新智能年底啟動電芯廠二期投資 長線投資逾400億元</a></div></li>
+</ul>
+<p><b>HVDC／800V</b> <span class="muted">分數 7.0 · 7 則 · 技術藍圖</span></p><ul>
+<li><span class="tag">技術藍圖</span>「技嘉布局新世代AI資料中心 秀800V電力、液冷機櫃方案」<div class="muted">2026-10-13 · Google新聞:散熱／液冷 · <a href="https://news.google.com/rss/articles/CBMiX0FVX3lxTE5lQllVZlRVWFM5RUY5WjBzWDhGSDJjQmJlVnZzOVpaTjd4NE1LSWFnd3JGYlk4X3F5eHhCMGlFdWt5aXpjYmhLX3NpYUhTVGdZSVdudUlhQ1d1cTV5X2pN0gFkQVVfeXFMUGZxNGl5M0xHaUZuU3haWUZNWEd5SFVaMDJqTjVGalNycGxYUDE5LXZDWV9vN3VuclJVclYtQlJTWnFwVVp4eGVfRXU0bDllcEM0N3JYb3h4TFhTRFYza21YN0NkZw?oc=5" target="_blank" rel="noopener">技嘉布局新世代AI資料中心 秀800V電力、液冷機櫃方案 - 自由財經</a></div></li>
+<li><span class="tag">技術藍圖</span>「聚焦NVIDIA 800 VDC架構、液冷散熱核心布局」<div class="muted">2026-10-14 · Google新聞:散熱／液冷 · <a href="https://news.google.com/rss/articles/CBMiT0FVX3lxTE91QV9qblJZaGhYOHVZaFpFZTRDTW0xYUw1N2JWX0pxYVRQdEs5Z1NMM0RfRmpBSUFNU2U0bzNIUk45M2lvM0c4VnVSZF94NEE?oc=5" target="_blank" rel="noopener">光寶科前進2026 OCP 聚焦NVIDIA 800 VDC架構、液冷散熱核心布局 - 鉅亨網</a></div></li>
+<li><span class="tag">技術藍圖</span>「台達電展示預製型固態變壓器（SST）直流電力解決方案，現場展出可實機運作」<div class="muted">2026-10-14 · 科技新報 · <a href="https://technews.tw/2026/10/14/delta-electronics-800-vdc-sst-debut-sofc-pilot-production-starts-year-end/" target="_blank" rel="noopener">台達電 800 VDC SST 實機首度亮相！SOFC 年底啟動試量產</a></div></li>
+</ul>
+<p><b>自地委建</b> <span class="muted">分數 4.5 · 1 則 · 資本支出</span></p><ul>
+<li><span class="tag">資本支出</span>「契約總金額不超過美金348,000,000元，約為新台幣 11,059,440,」<div class="muted">2026-10-09 · 重大訊息-上市 · <a href="https://mops.twse.com.tw/" target="_blank" rel="noopener">光寶科（2301）：代子公司LITE-ON, INC.公告以自地委建
+美國 McKinney廠簽訂新建工程統包合約</a></div></li>
+</ul>
+<p><b>供營業使用之設備</b> <span class="muted">分數 3.6 · 2 則 · 資本支出</span></p><ul>
+<li><span class="tag">資本支出</span>「，累積交易金額約人民幣98.88佰萬」<div class="muted">2026-10-12 · 重大訊息-上市 · <a href="https://mops.twse.com.tw/" target="_blank" rel="noopener">台達電（2308）：本公司代子公司台達電子(東莞)有限公司公告向關係人取得供營業使用之設備</a></div></li>
+<li><span class="tag">資本支出</span>「，累積交易金額約人民幣 72.64佰萬」<div class="muted">2026-10-13 · 重大訊息-上市 · <a href="https://mops.twse.com.tw/" target="_blank" rel="noopener">台達電（2308）：本公司代子公司華豐電子科技(蕪湖)有限公司公告向關係人取得供營
+業使用之設備</a></div></li>
+</ul>
+<p><b>電源供應器</b> <span class="muted">分數 3.0 · 3 則 · 技術藍圖</span></p><ul>
+<li><span class="tag">技術藍圖</span>「英飛凌推出 27 kW 三相電源供應器解決方案，助力下一代 AI 伺服器電源架構」<div class="muted">2026-10-13 · Google新聞:電源／電力 · <a href="https://news.google.com/rss/articles/CBMiakFVX3lxTE42TVJGWGQ3VU8tamFWR1VKSUxaVk81eHNuYjhPdmhFcmd4SnZ1eXpZZmVSMl9MSU1rREE1Q2QzVjdzTFA2elRNQjlXT0cxdjN4VE0yWnRtRzN0bmtiYnh0aUdtbXowVUNQTkE?oc=5" target="_blank" rel="noopener">英飛凌推出 27 kW 三相電源供應器解決方案，助力下一代 AI 伺服器電源架構 - COMPOTECH Asia</a></div></li>
+<li><span class="tag">技術藍圖</span>「輝達AI工廠大升級伺服器、電源、液冷再進化」<div class="muted">2026-10-12 · Google新聞:散熱／液冷 · <a href="https://news.google.com/rss/articles/CBMiX0FVX3lxTE4zSDZxdjdrdWg4SUZZZ1NFR2hZT003QWR5ejVnb0dIcmZNYmF3Qm8yOGxHTThjWkc2NkZFQ0R2Uml5Zm9LLXAxN1pTZHlVT085bml2SWdDa1g5ZjN0M1Y4?oc=5" target="_blank" rel="noopener">輝達AI工廠大升級伺服器、電源、液冷再進化鴻海等12台鏈迎商機- 日報 - 工商時報</a></div></li>
+<li><span class="tag">技術藍圖</span>「英飛凌27kW三相電源供應器解決方案 助力下一代AI伺服器電源架構」<div class="muted">2026-10-13 · Google新聞:電源／電力 · <a href="https://news.google.com/rss/articles/CBMid0FVX3lxTFAxdEhhajdHVHY4aDV6NlM5SWNUWEdvTEtoQTVCajJYd1J1VmZkU0NyQ3lzZUdHZkhVOGdyRVlEamdGZU1NWXhmcFNIN1JVdGFMaFJpQTJ3MmE5ZWJBSm5NbGE4Q3FxZERrRHdTdzVKdkZ2Z1dwWWNv?oc=5" target="_blank" rel="noopener">英飛凌27kW三相電源供應器解決方案 助力下一代AI伺服器電源架構 - CTIMES</a></div></li>
+</ul>
+<p><b>電力</b> <span class="muted">分數 1.0 · 1 則 · 技術藍圖</span></p><ul>
+<li><span class="tag">技術藍圖</span>「電力、HBM記憶體與光互連成關鍵戰場」<div class="muted">2026-10-10 · Google新聞:記憶體／儲存 · <a href="https://news.google.com/rss/articles/CBMiT0FVX3lxTFA3R1J0bDVENWJyUktsMmpfTjFfN3RsZWJ5c1dyOUFGaVJpdlROM3gyOUJpLXNTLWxvQ3Q0dkVQMmtCRFpPc05xY2ZCQkxPaTQ?oc=5" target="_blank" rel="noopener">前英特爾CEO示警AI算力瓶頸！電力、HBM記憶體與光互連成關鍵戰場 - 鉅亨網</a></div></li>
+</ul>
+<p class="muted">被提到的公司（深色＝圖譜外的新發現）：</p><p><span class="tag">2301 光寶科 ×5</span><span class="tag">2308 台達電 ×4</span><span class="tag new" title="不在圖譜裡：可能是新受惠者，值得研究">2109 華豐 ×1</span><span class="tag">2317 鴻海 ×1</span><span class="tag new" title="不在圖譜裡：可能是新受惠者，值得研究">2324 仁寶 ×1</span><span class="tag">2376 技嘉 ×1</span><span class="tag">2408 南亞科 ×1</span></p>
+</div>
+<div class="card" id="t-cooling"><h3>散熱／液冷<span class="stage">確認</span></h3><div class="muted">已出現資本支出、擴產、訂單或漲價</div>
+<p><b>液冷系統（泛稱）</b> <span class="muted">分數 26.4 · 17 則 · 技術藍圖、擴產、漲價缺貨、營收、訂單</span><div class="muted">合併自：水冷、液冷系統</div></p><ul>
+<li><span class="tag">擴產</span>「磁浮壓縮機明年再擴線」<div class="muted">2026-10-12 · Google新聞:散熱／液冷 · <a href="https://news.google.com/rss/articles/CBMikgFBVV95cUxNeFd4V2NFRTVybGkxclFoS0lFUEhNNUl3bi03YmRIckZ4MFNTbDRYN1YwYl9scmpQa05tR3VfYUZUcHRsRG9pdlBzc2o3LTBGMTJ2WVBqb1Z2S0VyMmJhZVJwT0JDSmtSTFlPQ2ZXRWloQVJrYWpLWlNUWHhzYlpXUkRwM1R6Vkp4Q0J3dDkySm5Vdw?oc=5" target="_blank" rel="noopener">時碩工業水冷續放量，磁浮壓縮機明年再擴線 - 台視全球資訊網</a></div></li>
+<li><span class="tag">擴產</span>「濱川攜雙鴻切入液冷件，Q4拚新平台量產爬坡」<div class="muted">2026-10-13 · Google新聞:散熱／液冷 · <a href="https://news.google.com/rss/articles/CBMinAFBVV95cUxNdWZMZmpnWWdZaEdkX0Z4R1p3d19rMW1TS0I3RzdUNkhMQm91NHlyNTFxQlRnbUlVN3BNSWFtLWJkUFBBZml3VXYwc1RDaW0xWWdSMDZhQ2FrRHZXWkxFT1lEcVhuWGVnOTZFems4enlHSWZCdnlZWFJjWmZpRVpXYTB6N0tHdGVXLWk1cnUwbnh2WlNXaTRMTGszODU?oc=5" target="_blank" rel="noopener">濱川攜雙鴻切入液冷件，Q4拚新平台量產爬坡 - 台視全球資訊網</a></div></li>
+<li><span class="tag">漲價缺貨</span>「先進封裝與水冷需求爆發，這 2 檔指標廠9 月營收創高」<div class="muted">2026-10-11 · Google新聞:散熱／液冷 · <a href="https://news.google.com/rss/articles/CBMiggFBVV95cUxNdEx1XzdaeUdLU0NBZUVkUG9vampvR2VjZ3ZXMy1KYTVFVjREZGxJY0FIN1FJa29QSDVNZEV1djhqdTZlYUNLQVBMYXhNRUMxejVNaXdXMW5sU2pTaUlxeUdIM1lkSUl5Mk1iNEg1b2gzT3FwcDhoWjhRNmFRdUtFMjFn?oc=5" target="_blank" rel="noopener">AI 伺服器供應鏈最新動態！先進封裝與水冷需求爆發，這 2 檔指標廠9 月營收創高-財經焦點情報站 - CMoney投資</a></div></li>
+</ul>
+<p><b>CDU</b> <span class="muted">分數 6.5 · 3 則 · 技術藍圖、漲價缺貨、資本支出</span></p><ul>
+<li><span class="tag">資本支出</span>「雙鴻推6MW CDU，擴大液冷應用」<div class="muted">2026-10-14 · Google新聞:散熱／液冷 · <a href="https://news.google.com/rss/articles/CBMiqwFBVV95cUxNenhLeEw5Z2ZVUWwzSEV1cWRoV3ZYb0FUS3VTX0d5QjFvMUQ0R0xmYV9RREZyQ2F1R25qaVNuYmRsRmplRXB5MkotMWpFdWtFbFZydUo5Y3diZG1wSkRsMkdCUFF5VFVhUmNzMXUwcS1GRklyaDBudW1HNXhOd0l0YmhjTURWUUpNdUhveEozYUhEQjl6RUE2aEdqa2R1Q1BmTElnaXF0RjB0LUE?oc=5" target="_blank" rel="noopener">雙鴻推6MW CDU，擴大液冷應用 - 台視全球資訊網</a></div></li>
+<li><span class="tag">漲價缺貨</span>「液冷CDU需求旺，Q4加單效應延續」<div class="muted">2026-10-12 · Google新聞:散熱／液冷 · <a href="https://news.google.com/rss/articles/CBMiqwFBVV95cUxNWTc1b2lGeG9WWDJBQ0h0U3J4X0ZxWUR5MlloUjZfWmhzRU4zMFBjaU1xVWRETUVCYng2T0x2aFlSNHc0V2Zsc0w1RzFrYm1UdE1lUnVEdy1LbXBqZ3JxNUxkSW5hVDRzbGx3aVVmV2s2N1FVUEJ6NjhPUjYzSVFFUmRITXJsZEFDQ0lIS2lnbVZWeDFvT3lTcHRuUkNVRG4xVGhKYjVhWmNMSDg?oc=5" target="_blank" rel="noopener">榮惠-KY液冷CDU需求旺，Q4加單效應延續 - 台視全球資訊網</a></div></li>
+<li><span class="tag">技術藍圖</span>「AI 散熱重心轉向整櫃方案」<div class="muted">2026-10-12 · Google新聞:散熱／液冷 · <a href="https://news.google.com/rss/articles/CBMie0FVX3lxTE40OVdYYUhhYVVLd3NJWEptbTVJX3I2SlpUTUo4UldJbmRZdk9RYy1YV25wRHlkY1lkVzNScjFOUXk4Ymd3Mkp1V05wcXFGNzZ0UGUzUHJpcjd4SGN0UGFwTnEtd2IybkFLcWFrSHQ0akFWRERmZUlNX2w1Zw?oc=5" target="_blank" rel="noopener">從水冷板到 CDU，AI 散熱重心轉向整櫃方案有何產業意義? - CMoney</a></div></li>
+</ul>
+<p class="muted">被提到的公司（深色＝圖譜外的新發現）：</p><p><span class="tag">2301 光寶科 ×4</span><span class="tag">3324 雙鴻 ×2</span><span class="tag new" title="不在圖譜裡：可能是新受惠者，值得研究">3380 明泰 ×2</span><span class="tag">6924 榮惠-KY創 ×2</span><span class="tag new" title="不在圖譜裡：可能是新受惠者，值得研究">1569 濱川 ×1</span><span class="tag">2317 鴻海 ×1</span><span class="tag new" title="不在圖譜裡：可能是新受惠者，值得研究">2324 仁寶 ×1</span><span class="tag new" title="不在圖譜裡：可能是新受惠者，值得研究">2352 佳世達 ×1</span><span class="tag">2376 技嘉 ×1</span><span class="tag new" title="不在圖譜裡：可能是新受惠者，值得研究">4566 時碩工業 ×1</span></p>
+</div>
+<div class="card" id="t-server_system"><h3>伺服器組裝／機櫃／機構<span class="stage">確認</span></h3><div class="muted">已出現資本支出、擴產、訂單或漲價</div>
+<p><b>伺服器機殼</b> <span class="muted">分數 15.2 · 9 則 · 技術藍圖、擴產、訂單</span><div class="muted">合併自：伺服器機殼、AI伺服器整機、伺服器機殼、機櫃、伺服器機殼、液冷系統</div></p><ul>
+<li><span class="tag">擴產</span>「全球5地擴產搶AI商機」<div class="muted">2026-10-12 · Google新聞:伺服器組裝／機櫃／機構 · <a href="https://news.google.com/rss/articles/CBMiS0FVX3lxTFBoVF90U0ZLREpWWVpWUUtYV3M3LUVJY01PelMtMnFILWpaVkpTMUo2ZlJzVnZpUTZEazgzclZXcXNSN0xiM1hrTzFnUQ?oc=5" target="_blank" rel="noopener">輝達Rubin大單來了！這「機殼大廠」前9月營收狂衝223億「提前超車去年全年」 全球5地擴產搶AI商機 - FTNN </a></div></li>
+<li><span class="tag">訂單</span>「搶攻輝達Vera Rubin新平台！「伺服器機殼大廠」前三季營收年增46%」<div class="muted">2026-10-10 · Google新聞:伺服器組裝／機櫃／機構 · <a href="https://news.google.com/rss/articles/CBMiywNBVV95cUxQUGF5eGNUd3ZFLTFid3I1QzM0dWpaV3VmakoyWjhxbVAyWHM2WXJsaUk0TWZSTVA0bnpsaDZKbUg0UGJpZE1vTXhKS0FaOVhtQ0pWMENBb1I0NEh6ZXEzQ2h0eWNIYkdCWjNxbWJmNUoya1FGTGVCNTZxVEctcXpmaHhEMWFjajhWcjNQdUxKYzZVbjJvRklHQXJaak5FVy1ESlNRWHcxUTN0Mld1WmNlU095M0o0YjBVU2VQNlF5QlQ0b20xMGU1eGlubXRRNEM5Qjk4TU5neEFYbkxBMTBvYXdoLURkR1l3cnhFYk5YZVYyM1FjRUpBYjc5aHFpVUlwWW5JWmpfTk03UndVbDZMU1FZZlNNVkVJSC1YXzNxYVk3eGN0RllRck9uNVBFYjlGUGhPbEhCbGZ2S2gzNjFxUENIWGJIT0tVcXlMS0JyWUJzQXFxOVBudFpucFBwNHZrbWtmOXQ3SHN1ZjFjSm84UnpBSGtKa2haWjFGdDZOSnJGc1ROQWdmc2xsc3d2dmEwRXA0VVpLQ3BpdnlmNkIzNzB4eDZjd1FEZ05VMkowUjNJcHdEMmlJU1M1VFlOdmVSekxhOXJ0THpQbGs?oc=5" target="_blank" rel="noopener">搶攻輝達Vera Rubin新平台！「伺服器機殼大廠」前三季營收年增46%、提前超越去年全年 - Yahoo股市</a></div></li>
+<li><span class="tag">技術藍圖</span>「Arm於2026年開放運算計畫（OCP）全球峰會公布最新測試成果」<div class="muted">2026-10-14 · 工商時報-產業 · <a href="https://www.ctee.com.tw/news/20261014701827-430502" target="_blank" rel="noopener">Arm AGI CPU效能近兩倍 AI代理掀CPU架構爭奪戰</a></div></li>
+</ul>
+<p><b>AI 伺服器整機</b> <span class="muted">分數 10.0 · 6 則 · 技術藍圖、營收、訂單</span><div class="muted">合併自：AI伺服器、AI伺服器整機、伺服器整機、液冷AI伺服器</div></p><ul>
+<li><span class="tag">訂單</span>「Vera Rubin平台明年Q1放量＋有望受惠Neocloud訂單」<div class="muted">2026-10-09 · Google新聞:伺服器組裝／機櫃／機構 · <a href="https://news.google.com/rss/articles/CBMiS0FVX3lxTE82NXlGZjVSLVRad20wUUYteENkRWlwb0VNYnYyZjF4YW9GVEVUc3Jlb3hzWi1UcG9HcWlOZUh1RmpqdFFTMDN0UkVCMA?oc=5" target="_blank" rel="noopener">目標價400元！「AI伺服器廠」EPS放眼至32元 Vera Rubin平台明年Q1放量＋有望受惠Neocloud訂單 </a></div></li>
+<li><span class="tag">營收</span>「GB200、GB300出貨啟動！「代工大廠」9月營收年增86.88%創新高 AI伺服器業務拚三位數成長」<div class="muted">2026-10-09 · Google新聞:伺服器組裝／機櫃／機構 · <a href="https://news.google.com/rss/articles/CBMikAJBVV95cUxPMTkwdjVZaEtjMy12a2pyTWNTUnFISlFLUmpWOG9jc2tlOEJiWEdIa0VFcDJPdUxKbzY1YlViRGh6Wk1QOXR5XzVPak5HVS1GYTA2ZFRKTmU3ZXdlaktFbWV6OEZWXzFyaDRFZ2lCUzJmTUwzejZkOFFBVGVpMlBJdl9adnk1N0RkajRjUGFGT3Y5QkZIYm5MZDlobzB0LTNNSERFeVo1RmlrQ1B4QmNkdWV6NDR4eTBoY0lKR2dzckw3aElBdmZPeG1BX3Z1ajdlLWRQSkQyY3FrWEZ4dlluaFlHMmlqd0lqczYtMmR0TEI3cnI4ZUI0Um5ISVlMRDBlUTIyV0czMWwzYWpoc3QzOQ?oc=5" target="_blank" rel="noopener">GB200、GB300出貨啟動！「代工大廠」9月營收年增86.88%創新高 AI伺服器業務拚三位數成長 - Yahoo股</a></div></li>
+<li><span class="tag">營收</span>「AI 伺服器量價齊揚帶動產值年增逾 90%」<div class="muted">2026-10-14 · 科技新報 · <a href="https://technews.tw/2026/10/14/csp-capital-expenditure-projected-exceed-1-5-trillion-2027-ai-server-volume-price-surge-drive-90-annual-output-value-growth/" target="_blank" rel="noopener">2027 年 CSP 資本支出總額估破 1.5 兆美元，AI 伺服器量價齊揚帶動產值年增逾 90%</a></div></li>
+</ul>
+<p><b>進行建築物改良及取得設備</b> <span class="muted">分數 4.5 · 1 則 · 資本支出</span></p><ul>
+<li><span class="tag">資本支出</span>「交易總金額: 高雄廠區擬新增新台幣6,457,598仟」<div class="muted">2026-10-12 · 重大訊息-上市 · <a href="https://mops.twse.com.tw/" target="_blank" rel="noopener">緯創（3231）：公告本公司擬進行建築物改良及取得機器設備</a></div></li>
+</ul>
+<p><b>不動產</b> <span class="muted">分數 3.0 · 1 則 · 資本支出</span></p><ul>
+<li><span class="tag">資本支出</span>「交易總金額：不超過新台幣1,000,000仟」<div class="muted">2026-10-12 · 重大訊息-上市 · <a href="https://mops.twse.com.tw/" target="_blank" rel="noopener">緯創（3231）：公告本公司擬取得位於台南市不動產</a></div></li>
+</ul>
+<p class="muted">被提到的公司（深色＝圖譜外的新發現）：</p><p><span class="tag">3231 緯創 ×2</span><span class="tag">2317 鴻海 ×1</span><span class="tag new" title="不在圖譜裡：可能是新受惠者，值得研究">2324 仁寶 ×1</span></p>
+</div>
+<div class="card" id="t-pcb_substrate"><h3>PCB／載板／銅箔基板<span class="stage">降溫</span></h3><div class="muted">熱度明顯低於前幾週</div>
+<p><b>CCL 銅箔基板</b> <span class="muted">分數 17.2 · 8 則 · 技術藍圖、擴產、漲價缺貨</span><div class="muted">合併自：銅箔基板（CCL）、高階CCL銅箔基板</div></p><ul>
+<li><span class="tag">漲價缺貨</span>「松下宣布漲價200%！CCL掀轉單潮」<div class="muted">2026-10-14 · Google新聞:PCB／載板／銅箔基板 · <a href="https://news.google.com/rss/articles/CBMi5wJBVV95cUxOTDlyS1hQWnNrNkNvMXBIckJuRG5FMVgyVDFoN0llRWxhYzhDNXdHWVhWU0wtMWpqb3QxaDg1amVaMHo3NC01ZEFybktURXhRczV2S0c2QW83ZkhReWZYVXloUkNWcTFLYWR0Vy1xS1J2VUoyMEhNM19SMGlUdGtJa1ZLOVphTjZzZFVZdGUxdllSVzlBSTdKTzZ5cWZ5NThHSTJGUTg5Qml3SWM1eDNvRDJLSTVxVjNmN3ZvNEpqNUU1bzdkcGJlQmRtV2cwR0Z1YXpEX0RaVk01Yy1sYzhyekxsWlJ0dmRBRVdidngxaXRXUkRxQW5ib3RTdXJNTkNzVWFLejJBQzk5VFp6cTNkaEt4X29IX1o3U3NEZ0dFbFFUeWstUldzRzZ6WnlPMnkxdEtXNE16VC1wWDlwWWVOaWR3YTFyZ1ZDLW1tcXpuVWJhWjhiSWVoNzQzSl9wQVJFbFByaV9wYw?oc=5" target="_blank" rel="noopener">松下宣布漲價200%！CCL掀轉單潮 法人看好「這檔」現5500元可衝7400元 - Yahoo新聞</a></div></li>
+<li><span class="tag">擴產</span>「AI高階銅箔基板誰能先放量」<div class="muted">2026-10-14 · Google新聞:PCB／載板／銅箔基板 · <a href="https://news.google.com/rss/articles/CBMiT0FVX3lxTFBNblloRUtCOWhmY0o5RDhUZHlYb3JqUEdIWFFfdEZPNHBCM21zejJsYjZsUkRsSl9fanYxR0tQZXZqc0k4bW55ZWNmMmJHNmc?oc=5" target="_blank" rel="noopener">台光電(2383)、聯茂(6213)、台燿(6274)CCL三雄擴產盤點！AI高階銅箔基板誰能先放量？ - 鉅亨網</a></div></li>
+<li><span class="tag">漲價缺貨</span>「日商松下明年起漲200％ 台鏈後市看旺」<div class="muted">2026-10-13 · Google新聞:PCB／載板／銅箔基板 · <a href="https://news.google.com/rss/articles/CBMiX0FVX3lxTE15S3NUTU45b2V6WmFGME16SEFyb0hmRDg2ekRtXzNHMVBSU05NQkxVNm5BVGFfQURseFlDYUhWNkJjRm1JaUw3SmJXMldOakNjRUtmQnF2WnRnTjFNUm5B?oc=5" target="_blank" rel="noopener">CCL大廠發話建滔今年第八度調價日商松下明年起漲200％ 台鏈後市看旺- 日報 - 工商時報</a></div></li>
+</ul>
+<p><b>自地委建</b> <span class="muted">分數 4.5 · 1 則 · 資本支出</span></p><ul>
+<li><span class="tag">資本支出</span>「契約總金額：新台幣2,085,000,000」<div class="muted">2026-10-14 · 重大訊息-上市 · <a href="https://mops.twse.com.tw/" target="_blank" rel="noopener">欣興（3037）：本公司公告以自地委建方式興建廠房相關工程</a></div></li>
+</ul>
+<p><b>機器設備</b> <span class="muted">分數 3.0 · 1 則 · 資本支出</span></p><ul>
+<li><span class="tag">資本支出</span>「交易總金額:新台幣 1,345,127,351」<div class="muted">2026-10-12 · 重大訊息-上市 · <a href="https://mops.twse.com.tw/" target="_blank" rel="noopener">臻鼎-KY（4958）：代子公司PENG SHEN TECHNOLOGY (THAILAND) CO., LTD.公告取</a></div></li>
+</ul>
+<p><b>供營業用之機器設備</b> <span class="muted">分數 3.0 · 1 則 · 資本支出</span></p><ul>
+<li><span class="tag">資本支出</span>「交易總金額：美金總額不高於1,600萬元(約新台幣5.3億」<div class="muted">2026-10-14 · 重大訊息-上市 · <a href="https://mops.twse.com.tw/" target="_blank" rel="noopener">定穎投控（3715）：代子公司 Dynamic Technology Manufacturing (Thailand) </a></div></li>
+</ul>
+<p><b>玻璃基板</b> <span class="muted">分數 1.3 · 3 則 · 其他、技術藍圖</span></p><ul>
+<li><span class="tag">技術藍圖</span>「AI掀PCB大升級電路板展聚焦先進封裝與玻璃基板」<div class="muted">2026-10-11 · Google新聞:先進封裝 · <a href="https://news.google.com/rss/articles/CBMiXkFVX3lxTE5DNXpGMllDcGFkVllMY2dGcFJuWWRaWWRVa29qa2RCcU56RkVONUE2b2VpaWFkUXBXMklYcXJ1YUdrOExrX2gyRUFSaWdfYXY1TEh1ZHBrQU93bk11T2c?oc=5" target="_blank" rel="noopener">AI掀PCB大升級電路板展聚焦先進封裝與玻璃基板| 產經 - 中央社 CNA</a></div></li>
+<li><span class="tag">技術藍圖</span>「輝達一則玻璃基板傳聞」<div class="muted">2026-10-11 · 科技新報 · <a href="https://finance.technews.tw/2026/10/11/auo-tsmc-plant-sale-38-billion-stock-16-year-high-3-keys-reality/" target="_blank" rel="noopener">友達飆 16 年新高是基本面轉強還是有夢最美？看懂面板業轉型三大關鍵</a></div></li>
+<li><span class="tag">其他</span>「京東方8.6代OLED產線遇上玻璃基板裂痕問題，至今已延續約半年仍未找到明確原因」<div class="muted">2026-10-13 · 科技新報 · <a href="https://technews.tw/2026/10/13/%e2%80%8bboe-struggles-with-glass-substrate-cracking-at-8-6-gen-oled-line/" target="_blank" rel="noopener">京東方 OLED 產線出問題持續半年，恐吃不到蘋果 iPad 訂單</a></div></li>
+</ul>
+<p class="muted">被提到的公司（深色＝圖譜外的新發現）：</p><p><span class="tag">6274 台燿 ×3</span><span class="tag">2383 台光電 ×2</span><span class="tag">6213 聯茂 ×2</span><span class="tag new" title="不在圖譜裡：可能是新受惠者，值得研究">1303 南亞 ×1</span><span class="tag">2408 南亞科 ×1</span><span class="tag new" title="不在圖譜裡：可能是新受惠者，值得研究">2409 友達 ×1</span><span class="tag">3037 欣興 ×1</span><span class="tag">3715 定穎投控 ×1</span><span class="tag new" title="不在圖譜裡：可能是新受惠者，值得研究">4722 國精化 ×1</span><span class="tag new" title="不在圖譜裡：可能是新受惠者，值得研究">4764 雙鍵 ×1</span><span class="tag new" title="不在圖譜裡：可能是新受惠者，值得研究">4766 南寶 ×1</span><span class="tag">4958 臻鼎-KY ×1</span><span class="tag">8046 南電 ×1</span></p>
+</div>
+<div class="card" id="t-optical"><h3>光通訊／CPO<span class="stage">降溫</span></h3><div class="muted">熱度明顯低於前幾週</div>
+<p><b>CPO</b> <span class="muted">分數 11.7 · 9 則 · 技術藍圖、擴產、訂單</span><div class="muted">合併自：CPO（共同封裝光學）</div></p><ul>
+<li><span class="tag">擴產</span>「CPO量產帶動FAU需求升溫」<div class="muted">2026-10-12 · Google新聞:光通訊／CPO · <a href="https://news.google.com/rss/articles/CBMiT0FVX3lxTE1Fcml1RVl2X0VNZlhmS0dzdk1OLTVSallucnRSajF5bGNtc2FFdExlREFPUGpsRUtOdHFWeUxyNjU1aWllR0hyX0J3aVktUUE?oc=5" target="_blank" rel="noopener">CPO量產帶動FAU需求升溫上詮產能效率受考驗，大摩降評示警 - 鉅亨網</a></div></li>
+<li><span class="tag">訂單</span>「鴻勁CPO設備Q4導入，2027年首季迎交機高峰」<div class="muted">2026-10-14 · Google新聞:光通訊／CPO · <a href="https://news.google.com/rss/articles/CBMiqwFBVV95cUxQS0dFMXpVMzY3ekJiaFpQSWw0QnBDcWZWV192bnpRWGtBQXJHX2Flc0gtTlEyS3ZFeTVPMGl3Q2w2WjFmNDdSNnRNMjZ3T1F2c3hUUlh4b1ZfZEM1VkFWYmstU1pxX0pFTkhjVnk3dk1KaHFTNXdmazJBdmIyN002YXFHY3NxdVdfWGpOcjdEVkJKZi0tekE3aFFxZGFwdEpycF8yOEdUcUNzOFE?oc=5" target="_blank" rel="noopener">鴻勁CPO設備Q4導入，2027年首季迎交機高峰 - 台視全球資訊網</a></div></li>
+<li><span class="tag">技術藍圖</span>「大立光法說講 CPO進度 達人：老實樹曝「面板廠轉型變數」」<div class="muted">2026-10-09 · Google新聞:光通訊／CPO · <a href="https://news.google.com/rss/articles/CBMiUkFVX3lxTE1vQzdSRWU0WjY4dk5VYUpLdlRsT2F3bURzcUNWUlJVQjM0LTkzLVI1UVJiUk80LS1ZcWJCbEVfbjZodTdHSW5WQWVzWlB0NjNzeVHSAVBBVV95cUxPM2ZMOEtnUFpxZWRtN3BFaDFOY0hoM19hNEdUNU5nWVNGb2tYXzk4SXFwc19LOXl5VXVPMjktNmZOVUZ1akEtZGo2MlZ3am5pdQ?oc=5" target="_blank" rel="noopener">大立光法說講 CPO進度 達人：老實樹曝「面板廠轉型變數」 - ETtoday財經雲</a></div></li>
+</ul>
+<p><b>矽光子（泛稱）</b> <span class="muted">分數 4.5 · 3 則 · 技術藍圖、訂單</span><div class="muted">合併自：光互連、矽光子、矽光子／光電測試</div></p><ul>
+<li><span class="tag">訂單</span>「關鍵測試供應鏈持續受惠產業趨勢」<div class="muted">2026-10-11 · Google新聞:光通訊／CPO · <a href="https://news.google.com/rss/articles/CBMiWkFVX3lxTE9UVjNtdW5Fa1ZDRHl3X0dnRlJaUnFQS3Bqb1FSR0hQQ2F2b3hQMmxSV0ZLaXVUOUtYbjZmZzhmd1VBSGNMTFp2TlRjV01jdnRLT1pXSkF2Qkk0UdIBX0FVX3lxTE9IUjlEV0VoU1BXaDhJSjJWUnYwWHQwNTR2YzNmRDUyZkJ4OG1aNXJCR0dTamFvUnZzWWZ1cXpyTDNxc3V1NUhrRWh4VnkzWVc0VU03MUZoSnZpUXBUanhF?oc=5" target="_blank" rel="noopener">全球 CPO 商機逐步升溫 關鍵測試供應鏈持續受惠產業趨勢 - 經濟日報</a></div></li>
+<li><span class="tag">技術藍圖</span>「電力、HBM記憶體與光互連成關鍵戰場」<div class="muted">2026-10-10 · Google新聞:記憶體／儲存 · <a href="https://news.google.com/rss/articles/CBMiT0FVX3lxTFA3R1J0bDVENWJyUktsMmpfTjFfN3RsZWJ5c1dyOUFGaVJpdlROM3gyOUJpLXNTLWxvQ3Q0dkVQMmtCRFpPc05xY2ZCQkxPaTQ?oc=5" target="_blank" rel="noopener">前英特爾CEO示警AI算力瓶頸！電力、HBM記憶體與光互連成關鍵戰場 - 鉅亨網</a></div></li>
+<li><span class="tag">技術藍圖</span>「Lightmatter攻矽光子日月光操刀封裝」<div class="muted">2026-10-13 · Google新聞:光通訊／CPO · <a href="https://news.google.com/rss/articles/CBMiakFVX3lxTFA0NExKZ1NZTFRFYkl1a2tHSU50UXBWRGxrMDdtVzBGOHNSQi12NDBhdW1OV0V3SjQwUW50cldScW9nZlEwdWVabWgwQ21DT0ZZWmR5UENsWWxJVjdIcVI5dWM0MlN4TUZxQUE?oc=5" target="_blank" rel="noopener">一座省16億美元Lightmatter攻矽光子日月光操刀封裝- 上市櫃 - 旺得富理財網</a></div></li>
+</ul>
+<p><b>光引擎</b> <span class="muted">分數 1.0 · 1 則 · 技術藍圖</span><div class="muted">合併自：光收發模組、光引擎</div></p><ul>
+<li><span class="tag">技術藍圖</span>「光模組規格由800G加速朝1.6T升級，後續並將進一步發展3.2T」<div class="muted">2026-10-14 · 工商時報-產業 · <a href="https://www.ctee.com.tw/news/20261014701724-430502" target="_blank" rel="noopener">華星光9月獲利年增逾倍 每股賺0.72元</a></div></li>
+</ul>
+<p class="muted">被提到的公司（深色＝圖譜外的新發現）：</p><p><span class="tag new" title="不在圖譜裡：可能是新受惠者，值得研究">3008 大立光 ×1</span><span class="tag">3443 創意 ×1</span><span class="tag">3711 日月光投控 ×1</span><span class="tag">4979 華星光 ×1</span><span class="tag">6669 緯穎 ×1</span><span class="tag">7769 鴻勁 ×1</span></p>
+</div>
+<div class="card" id="t-interposer"><h3>矽中介層<span class="stage">確認</span></h3><div class="muted">已出現資本支出、擴產、訂單或漲價</div>
+<p><b>矽中介層</b> <span class="muted">分數 15.0 · 9 則 · 技術藍圖、漲價缺貨、資本支出</span></p><ul>
+<li><span class="tag">資本支出</span>「格羅方德獲台積電20億美元大單 美國本土首建CoWoS中介層產能」<div class="muted">2026-10-10 · Google新聞:矽中介層 · <a href="https://news.google.com/rss/articles/CBMiekFVX3lxTE1OdXo0QTlFNjkwb0FoQkpuVFpVN19sdnBFbkhsUzVUMkRfR1NTTllndE1NMFNkLUZ3TTdYUGplMy1FVXlXbzFaVUMybEloT2dkMkk3TlVqdmJSX2RSTWtSQ0Y0S3ByMkJtMDJLRnM4cXdoRzlWSktXQjN3?oc=5" target="_blank" rel="noopener">格羅方德獲台積電20億美元大單 美國本土首建CoWoS中介層產能 - BigGo 財經</a></div></li>
+<li><span class="tag">資本支出</span>「台積電與GF合作擴產 建立美國本土首座矽中介層產線」<div class="muted">2026-10-13 · Google新聞:矽中介層 · <a href="https://news.google.com/rss/articles/CBMijgFBVV95cUxQb1JmekV2X1NOUDhnbS1EZTV4bmc0UF9tdmp5OThTX0dlQTZjME9HekxJR3E1cXFxdmEwS0dHcWd3al9JTzhEMmtlUVZuU2xrRWt0V0VpaEV4dWhaMHJGV01CQXdjeVB1R2o2S0J2WkU5dHJFeVdKX1l2ZjhuQW5yOXlWaUFzNWpiU3pCSTBB?oc=5" target="_blank" rel="noopener">台積電與GF合作擴產 建立美國本土首座矽中介層產線 - DIGITIMES</a></div></li>
+<li><span class="tag">資本支出</span>「格羅方德/台積電達成協議 將在美國建立矽中介層產能」<div class="muted">2026-10-12 · Google新聞:矽中介層 · <a href="https://news.google.com/rss/articles/CBMixgJBVV95cUxPWklrZW5rSTRaeTJyTjZVSDZGaTEtdGNQbGVpYnYwYzhvTXJXQ1pDSWp3TFZUZklxMy1TSDUtS015WElpWGdNRFlfSEl0UERDTTl4MlRBZkM1WUJxNEt1Ty1GMGtJQXhCZW4xWGpSQjlsX0IxcTJ3bUpFRkgzcWM0U3BISG9aa2ZFM011eUlXTEhKZWtzLXEwVmZFcEdCTWFYbUd1OEJaUWxLdlpqNURCY1Y0QVh2RGZZSVZhaERfbmFEQ2RMTjFIOGcwSG9oeFYwVlBGSlVXcXM0TmFpZGE1SmxkeHlQbTVSNkxmMEVHWElHT3Zqb2R5cnJTVmNpOEhJMU5qZV94bnhWblpOVElYdkFkWmQ2cG5SeFNoeFU1MmRBWm1MUmdqN1JqNTlIMEFGSUt5LWNXNVptZTY0b24wVjZzTjlrUQ?oc=5" target="_blank" rel="noopener">格羅方德/台積電達成協議 將在美國建立矽中介層產能 - 新電子</a></div></li>
+</ul>
+<p class="muted">被提到的公司（深色＝圖譜外的新發現）：</p><p><span class="tag">2330 台積電 ×6</span><span class="tag">2303 聯電 ×1</span><span class="tag">6770 力積電 ×1</span></p>
+</div>
+<div class="card" id="t-interconnect"><h3>高速傳輸／連接器<span class="stage">降溫</span></h3><div class="muted">熱度明顯低於前幾週</div>
+<p><b>高速連接器（泛稱）</b> <span class="muted">分數 3.3 · 2 則 · 技術藍圖、訂單</span><div class="muted">合併自：高壓連接器、高速連接器</div></p><ul>
+<li><span class="tag">訂單</span>「AI伺服器帶動連接器成隱形黑馬，佳必琪訂單能見度已到2028年」<div class="muted">2026-10-15 · Google新聞:高速傳輸／連接器 · <a href="https://news.google.com/rss/articles/CBMiWEFVX3lxTE5CWWxGay15YmpYeUc4WDVhR0NKT1paS2M5Z3RMRXhNS1M3WnZlVUtDQzlEcGw1eFJiOGVyangxek1zVzBqSTA1RjJMRHRIeE95T082YWFWNkc?oc=5" target="_blank" rel="noopener">AI伺服器帶動連接器成隱形黑馬，佳必琪訂單能見度已到2028年 - CMoney</a></div></li>
+<li><span class="tag">技術藍圖</span>「儲能系統高壓連接器市場展望2035：1500V BESS需求帶動成長」<div class="muted">2026-10-10 · Google新聞:高速傳輸／連接器 · <a href="https://news.google.com/rss/articles/CBMi0gFBVV95cUxQejJpa1pBSDBmN0NDbmx1Qy16VnlTdmN2aTl6bVpLUTJ1TnRiVVpSMER0UDk3NHloRGhRRUU5bWo1bEJlTjB4UTZ3OTNxOGJGdV9haW9NWXp6bjNDeFgxbTNEZ3dmZmIteFItZ1FwWXA1aTRhX1pXZ0RjRjh5LW9OX0JVZzh4OFdjclRxQUlkc0Rmb3lfZXEyNzFEbHUwTU9NRjBuaGIyT09SSWxqdVdZUTIybmQxa2paRGY0M2F4OTNiTmRINzdpcEM4d3VZQkszYXc?oc=5" target="_blank" rel="noopener">儲能系統高壓連接器市場展望2035：1500V BESS需求帶動成長 - 新聞與統計 - IndexBox</a></div></li>
+</ul>
+<p><b>CPU 插座</b> <span class="muted">分數 2.5 · 1 則 · 訂單</span><div class="muted">合併自：CPU插座</div></p><ul>
+<li><span class="tag">訂單</span>「Intel、AMD新平台需求點火！「連接器大廠」CPU插座需求看旺」<div class="muted">2026-10-11 · Google新聞:高速傳輸／連接器 · <a href="https://news.google.com/rss/articles/CBMiS0FVX3lxTFBqM0ZQdy0zSzN6TlU5Z1JMZkdJbzV3Z1BBdEVaMDdVemJxMDE1VEE2VWU0d1h1akJMQVVuT1ZwSWZjeGJIV1Vwb2tsRQ?oc=5" target="_blank" rel="noopener">Intel、AMD新平台需求點火！「連接器大廠」CPU插座需求看旺法人估今年EPS逾81元、目標價2,450元 - FT</a></div></li>
+</ul>
+<p><b>光纖連接</b> <span class="muted">分數 1.0 · 1 則 · 技術藍圖</span></p><ul>
+<li><span class="tag">技術藍圖</span>「BiDi技術化繁為簡有望解套」<div class="muted">2026-10-09 · Google新聞:高速傳輸／連接器 · <a href="https://news.google.com/rss/articles/CBMiX0FVX3lxTE4wd1drWThJbmN0SEFkN0t1UFl1NFA2QkRrZ0p1Q1dycVhxOUVEaC1NWWtWTmtQbFJ3alllMi1aMEJlMW5JMFJaOUxmbmxlbXROX3pwRy1MblNCOFYyeDdj?oc=5" target="_blank" rel="noopener">AI算力競賽新階段！光纖佈線成新難題 BiDi技術化繁為簡有望解套 - 科技島</a></div></li>
+</ul>
+<p class="muted">被提到的公司（深色＝圖譜外的新發現）：</p><p><span class="tag new" title="不在圖譜裡：可能是新受惠者，值得研究">6197 佳必琪 ×1</span></p>
+</div>
+<div class="card" id="t-asic_ip"><h3>ASIC／矽智財<span class="stage">降溫</span></h3><div class="muted">熱度明顯低於前幾週</div>
+<p><b>ASIC</b> <span class="muted">分數 3.5 · 4 則 · 技術藍圖、訂單</span></p><ul>
+<li><span class="tag">訂單</span>「微軟衝刺 Maia ASIC 伺服器 鴻海、緯穎代工商機升溫」<div class="muted">2026-10-13 · Google新聞:ASIC／矽智財 · <a href="https://news.google.com/rss/articles/CBMiUEFVX3lxTE02YzRBbGMzV3Y3NWc3b2c4ekROVnZzYjJ2bmZ3cU55aEN1dXZuUWJ2TGk5NGEzdmZmR1BpVUxwVlRpQjJHdGtFc2tzSWVVallF0gFWQVVfeXFMTmgyOTZJTVc0SF9SYUFoNDhyOEhBSF8yVjJ2MVkxSGNNa05GYnVRbXk4ZDRQT0NhVUYtN2NYQW9ydG1ZVkxiMFlWZmVzbUw4Q3pwb0xIQUE?oc=5" target="_blank" rel="noopener">微軟衝刺 Maia ASIC 伺服器 鴻海、緯穎代工商機升溫 - UDN</a></div></li>
+<li><span class="tag">技術藍圖</span>「新IP通過聯電14奈米製程驗證 晶粒面積縮減逾30%」<div class="muted">2026-10-14 · Google新聞:ASIC／矽智財 · <a href="https://news.google.com/rss/articles/CBMi2ANBVV95cUxQMUpTTWUzaHZNcDFJdmdZREZ1N0dSQkM2OGNnVl9TZHRoMzJzY0duQkp6T2hXTTJ4dUVFaGFCdHh3X2ZfUGtrbkw0ZFFYMktQLWt0MGlTajVaM2twSWw0VXBSZEV1NDdxNENaNnQ0ZTZZeWhGQUxVX2pnakFXRXlCNnJ3U2t6S1RUMWoyb2g0cTFmemRFTjdmTDJoTnI0WjBSMlA2ZzVFdzctV2tldmtEZDJkNTkxaWtsU0x3OFUwNkdUWnNwNXR2bVhocUlBT1RDbmVpb2ZhNUJ2S0xvRnZaMkpQaUdqdTJ1VlZvdFZaYWZ1dTdlX05rNW5KVDE0WmVUTnprMHZ0NXpsUi1nam9YR3ZwSmlOdzEwYkpTQi1LcUxOZVpaNHJJVUJJTXRtOGV2TXN1ajkxSVVCeEJ4VDJRZnEzUDVodUNaNHE2eEpXLXpjZENPbmJnSG5GelRJdkdIX0tDX2JwOVFZZzJ0b2tyTS0tbDNTMmt0MmQxWjFvcENxa2ZxLWFLQlFyUDRwTjFrOGQ4aWMtRzJYTldnVHM2SDJuSzhxNkphQWxNQXd3djlGVWdFWndLeFNjaUZxall4NC16VHA1NktYZlJEbmpic1hDWGdzVkNB?oc=5" target="_blank" rel="noopener">搶攻邊緣AI、智慧感測商機！「ASIC大廠」新IP通過聯電14奈米製程驗證 晶粒面積縮減逾30% - Yahoo股市</a></div></li>
+<li><span class="tag">技術藍圖</span>「AI加速器成長趨勢「重質不重量」 客製化ASIC不再是低價替代」<div class="muted">2026-10-13 · Google新聞:ASIC／矽智財 · <a href="https://news.google.com/rss/articles/CBMijgFBVV95cUxQbTl3U0paei1UTWs5UHRodUt4RDMwNktRd0tkdVZiR0ZyLVFSMExsdDgtSlgyRlpYa3Z1a2dIVGhCUW9kME9LRkswcEktZTRzXzdJVGFGZmVJMHpJaFJhZGZCOUdwd05yVjVmalRKQVVnVlU1RV9PMHcyYUtyRTdxRkR6RXZKR092M0FyRjBB?oc=5" target="_blank" rel="noopener">AI加速器成長趨勢「重質不重量」 客製化ASIC不再是低價替代 - DIGITIMES</a></div></li>
+</ul>
+<p class="muted">被提到的公司（深色＝圖譜外的新發現）：</p><p><span class="tag">2317 鴻海 ×1</span><span class="tag">6669 緯穎 ×1</span></p>
+</div>
+<div class="card" id="t-new"><h3>新主題（圖譜外）<span class="stage">確認</span></h3><div class="muted">已出現資本支出、擴產、訂單或漲價</div>
+<p><b>先進製程</b> <span class="muted">分數 1.0 · 1 則 · 技術藍圖</span></p><ul>
+<li><span class="tag">技術藍圖</span>「台積電將於 2030 年開始採用 High-NA EUV」<div class="muted">2026-10-15 · 科技新報 · <a href="https://finance.technews.tw/2026/10/15/tsmc-will-begin-adopting-high-na-euv-in-2030/" target="_blank" rel="noopener">台積電將於 2030 年開始採用 High-NA EUV，客戶 A14 參與度高於 N2</a></div></li>
+</ul>
+<p class="muted">被提到的公司（深色＝圖譜外的新發現）：</p><p><span class="tag">2330 台積電 ×1</span></p>
+</div>
+<h2>重大訊息：資本支出／擴產公告</h2><ul>
+<li><span class="tag">資本支出</span>「契約總金額不超過美金348,000,000元，約為新台幣 11,059,440,」<div class="muted">2026-10-09 · 重大訊息-上市 · <a href="https://mops.twse.com.tw/" target="_blank" rel="noopener">光寶科（2301）：代子公司LITE-ON, INC.公告以自地委建
+美國 McKinney廠簽訂新建工程統包合約</a></div></li>
+<li><span class="tag">資本支出</span>「: 總金額：NTD 1,112,332,840」<div class="muted">2026-10-12 · 重大訊息-上市 · <a href="https://mops.twse.com.tw/" target="_blank" rel="noopener">日月光投控（3711）：代子公司矽品精密工業(股)公司公告取得廠務工程</a></div></li>
+<li><span class="tag">資本支出</span>「交易總金額: 高雄廠區擬新增新台幣6,457,598仟」<div class="muted">2026-10-12 · 重大訊息-上市 · <a href="https://mops.twse.com.tw/" target="_blank" rel="noopener">緯創（3231）：公告本公司擬進行建築物改良及取得機器設備</a></div></li>
+<li><span class="tag">資本支出</span>「交易總金額：不超過新台幣1,000,000仟」<div class="muted">2026-10-12 · 重大訊息-上市 · <a href="https://mops.twse.com.tw/" target="_blank" rel="noopener">緯創（3231）：公告本公司擬取得位於台南市不動產</a></div></li>
+<li><span class="tag">資本支出</span>「交易總金額計：新台幣395,090仟」<div class="muted">2026-10-12 · 重大訊息-上市 · <a href="https://mops.twse.com.tw/" target="_blank" rel="noopener">日月光投控（3711）：代子公司日月光半導體製造(股)公司公告
+向九合工程股份有限公司取得供營業用之廠務工程</a></div></li>
+<li><span class="tag">資本支出</span>「代子公司矽格聯測股份有限公司公告購置不動產相關事宜」<div class="muted">2026-10-12 · 重大訊息-上市 · <a href="https://mops.twse.com.tw/" target="_blank" rel="noopener">矽格（6257）：代子公司矽格聯測股份有限公司公告購置不動產相關事宜</a></div></li>
+<li><span class="tag">資本支出</span>「交易總金額:新台幣 1,345,127,351」<div class="muted">2026-10-12 · 重大訊息-上市 · <a href="https://mops.twse.com.tw/" target="_blank" rel="noopener">臻鼎-KY（4958）：代子公司PENG SHEN TECHNOLOGY (THAILAND) CO., LTD.公告取</a></div></li>
+<li><span class="tag">資本支出</span>「，累積交易金額約人民幣98.88佰萬」<div class="muted">2026-10-12 · 重大訊息-上市 · <a href="https://mops.twse.com.tw/" target="_blank" rel="noopener">台達電（2308）：本公司代子公司台達電子(東莞)有限公司公告向關係人取得供營業使用之設備</a></div></li>
+<li><span class="tag">資本支出</span>「交易總金額：NTD 1,246,138,775」<div class="muted">2026-10-13 · 重大訊息-上市 · <a href="https://mops.twse.com.tw/" target="_blank" rel="noopener">日月光投控（3711）：代子公司矽品精密工業(股)公司公告取得營業用機器設備達十億元</a></div></li>
+<li><span class="tag">資本支出</span>「: 總金額：NTD 1,727,593,000」<div class="muted">2026-10-13 · 重大訊息-上市 · <a href="https://mops.twse.com.tw/" target="_blank" rel="noopener">日月光投控（3711）：代子公司矽品精密工業(股)公司公告取得廠務工程</a></div></li>
+<li><span class="tag">資本支出</span>「，累積交易金額約人民幣 72.64佰萬」<div class="muted">2026-10-13 · 重大訊息-上市 · <a href="https://mops.twse.com.tw/" target="_blank" rel="noopener">台達電（2308）：本公司代子公司華豐電子科技(蕪湖)有限公司公告向關係人取得供營
+業使用之設備</a></div></li>
+<li><span class="tag">資本支出</span>「營業稅)。 總計新台幣 21.88億」<div class="muted">2026-10-13 · 重大訊息-上市 · <a href="https://mops.twse.com.tw/" target="_blank" rel="noopener">矽格（6257）：代子公司矽格聯測股份有限公司公告購置「創新路廠房與附屬設備」</a></div></li>
+<li><span class="tag">資本支出</span>「交易總金額為新台幣1,670,425,206」<div class="muted">2026-10-14 · 重大訊息-上市 · <a href="https://mops.twse.com.tw/" target="_blank" rel="noopener">華邦電（2344）：本公司訂購機器設備公告。</a></div></li>
+<li><span class="tag">資本支出</span>「契約總金額：新台幣2,085,000,000」<div class="muted">2026-10-14 · 重大訊息-上市 · <a href="https://mops.twse.com.tw/" target="_blank" rel="noopener">欣興（3037）：本公司公告以自地委建方式興建廠房相關工程</a></div></li>
+<li><span class="tag">資本支出</span>「: 總金額：NTD 630,560,000」<div class="muted">2026-10-14 · 重大訊息-上市 · <a href="https://mops.twse.com.tw/" target="_blank" rel="noopener">日月光投控（3711）：代子公司矽品精密工業(股)公司公告取得廠務工程</a></div></li>
+<li><span class="tag">資本支出</span>「交易總金額：美金總額不高於1,600萬元(約新台幣5.3億」<div class="muted">2026-10-14 · 重大訊息-上市 · <a href="https://mops.twse.com.tw/" target="_blank" rel="noopener">定穎投控（3715）：代子公司 Dynamic Technology Manufacturing (Thailand) </a></div></li>
+</ul>
+<h2>本週新出現的技術名詞</h2><p class="muted">第一次被抽取到、且不在圖譜關鍵字裡的名詞。反覆出現的值得加進 supply_chain.yaml。</p><p>
+<span class="tag">4F² DDR5 RDIMM ×2</span><span class="tag">1D/1E/EUV ×2</span><span class="tag">1C客戶驗證 ×2</span><span class="tag">1.6T水冷交換機 ×2</span><span class="tag">SOFC ×2</span><span class="tag">Vera Rubin機櫃 ×2</span><span class="tag">InP代工 ×2</span><span class="tag">4F² DRAM ×2</span><span class="tag">探針卡金屬件 ×1</span><span class="tag">4F² DRAM 架構 ×1</span><span class="tag">4F²垂直電晶體 ×1</span><span class="tag">HBM記憶體 ×1</span><span class="tag">英特爾先進封裝 ×1</span><span class="tag">SCA ×1</span><span class="tag">DRAM投片價格 ×1</span><span class="tag">AI硬體 ×1</span><span class="tag">Neocloud ×1</span><span class="tag">Vera Rubin平台 ×1</span><span class="tag">BiDi技術 ×1</span><span class="tag">AI紅利 ×1</span><span class="tag">3D晶圓封裝與測試廠 ×1</span><span class="tag">測試廠 ×1</span><span class="tag">3D晶圓封裝 ×1</span><span class="tag">ASIC 專案 ×1</span><span class="tag">CyberFlow 系列 ×1</span><span class="tag">高階樹脂 ×1</span><span class="tag">4F²架構 ×1</span><span class="tag">DDR5伺服器記憶體 ×1</span>
+</p>
+</main></body></html>

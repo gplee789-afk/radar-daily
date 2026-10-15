@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FVG 每日標的</title>
+<meta name="description" content="大型股多方 FVG 回踩：每天收盤後列出明天可以掛的限價單與停損，只做多、上方沒有空方 OB。">
+<style>
+:root {
+  color-scheme: light;
+  --bg: #f4f5f2; --panel: #ffffff; --line: #dfe2dc;
+  --ink: #12170f; --ink-2: #4c5549; --ink-3: #80887d;
+  --up: #0f5c3c; --up-bg: #e3f1e9; --warn: #8a5a00; --warn-bg: #f6efe0; --down: #b42318;
+  --accent: #2a78d6;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0c0f0b; --panel: #141913; --line: #232b21;
+    --ink: #eaf1e6; --ink-2: #a7b3a2; --ink-3: #6f7b6b;
+    --up: #9af5c8; --up-bg: #17291f; --warn: #e8c37a; --warn-bg: #2b2617; --down: #ff8a80;
+    --accent: #3987e5;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0c0f0b; --panel: #141913; --line: #232b21;
+  --ink: #eaf1e6; --ink-2: #a7b3a2; --ink-3: #6f7b6b;
+  --up: #9af5c8; --up-bg: #17291f; --warn: #e8c37a; --warn-bg: #2b2617; --down: #ff8a80;
+  --accent: #3987e5;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.6 system-ui, -apple-system, "Segoe UI", "Noto Sans TC", "Microsoft JhengHei", sans-serif; }
+a { color: var(--accent); }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 18px 16px 60px; }
+header { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; margin-bottom: 6px; }
+h1 { font-size: 24px; margin: 0; }
+nav { margin-left: auto; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; font-size: 14px; }
+select, button { font: inherit; font-size: 14px; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; }
+button { cursor: pointer; }
+.sub { color: var(--ink-2); font-size: 13.5px; margin: 0 0 14px; }
+h2 { font-size: 17px; margin: 24px 0 4px; }
+h2 .n { font-size: 13px; color: var(--ink-3); font-weight: 400; margin-left: 6px; }
+.hint { color: var(--ink-3); font-size: 12.5px; margin: 0 0 8px; }
+
+.stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; margin: 14px 0 4px; }
+.stat { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px 14px; }
+.stat .k { font-size: 12px; color: var(--ink-3); }
+.stat .v { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.stat .v.up { color: var(--up); } .stat .v.dn { color: var(--down); }
+.stat .s { font-size: 12px; color: var(--ink-2); }
+
+.tbl { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+th, td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+th { color: var(--ink-2); font-weight: 600; font-size: 12.5px; background: var(--bg); }
+tr:last-child td { border-bottom: 0; }
+th:nth-child(-n+2), td:nth-child(-n+2) { text-align: left; }
+td.px { font-weight: 700; }
+td.stop { color: var(--down); }
+.code { all: unset; cursor: pointer; font-weight: 700; color: var(--accent); }
+.code:focus-visible { outline: 2px solid var(--accent); border-radius: 4px; }
+.ind { color: var(--ink-3); font-size: 12px; }
+.chip { display: inline-block; font-size: 11.5px; padding: 0 7px; border-radius: 99px; margin-left: 4px; }
+.chip.ok { background: var(--up-bg); color: var(--up); }
+.chip.warn { background: var(--warn-bg); color: var(--warn); }
+.chip.bad { background: var(--warn-bg); color: var(--down); }
+tr.dim td { opacity: .55; }
+.empty { padding: 16px; color: var(--ink-3); font-size: 13.5px; }
+details { margin-top: 26px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px 16px; }
+details summary { cursor: pointer; font-weight: 700; }
+details li { font-size: 13.5px; color: var(--ink-2); line-height: 1.8; }
+#toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 6px 14px; border-radius: 99px; font-size: 13px; opacity: 0; transition: opacity .2s; pointer-events: none; }
+#toast.on { opacity: 1; }
+footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🎯 FVG 每日標的</h1>
+    <nav>
+      <a href="index.html">📚 報告庫</a>
+      <a href="daily.html">📡 日報</a>
+      <a href="ranking.html">📊 排名總表</a>
+      <select id="day" aria-label="日期"></select>
+      <button id="themeBtn" title="切換深色／淺色" aria-label="切換深色／淺色">◐</button>
+    </nav>
+  </header>
+  <p class="sub">每天收盤後，從成交值前 150 名的大型股裡找剛成立的多方 FVG（缺口 ≥ 1 ATR、上方沒有空方 OB），列出明天在上緣掛限價買的單。只做多。點代號會複製成 TradingView 的格式（例如 <code>TWSE:2330</code>），點名稱打開 Yahoo 股市。</p>
+
+  <div class="stats" id="stats"></div>
+
+  <h2>明天可以掛的單<span class="n" id="nPend"></span></h2>
+  <p class="hint">在「掛單價」掛限價買，開盤就在停損以下就不買。剩幾天 = 這張單還能掛幾個交易日（含明天）。</p>
+  <div class="tbl" id="pend"></div>
+
+  <h2>今天已經成交<span class="n" id="nFill"></span></h2>
+  <p class="hint">今天盤中碰到上緣、照規則已經成交的單：明天起照停損與移動停利管理。</p>
+  <div class="tbl" id="fill"></div>
+
+  <details>
+    <summary>規則與回測</summary>
+    <ul>
+      <li><b>股票池</b>：前 60 個交易日平均成交值前 150 名。</li>
+      <li><b>訊號</b>：多方 FVG（中間那根是位移 K），缺口 ≥ 1 倍 ATR(14)；上緣以上沒有還活著的空方 OB（LuxAlgo 取法，Internal 5）。</li>
+      <li><b>進場</b>：FVG 成立後 3 個交易日內，在上緣掛限價買；開盤就跳到上緣以下用開盤價成交，開盤在停損以下就撤單。</li>
+      <li><b>停損</b>：下緣 − 0.1 ATR。<b>出場</b>：收盤跌破前 10 天最低，隔天開盤賣；最多抱 120 天。</li>
+      <li><b>部位</b>：回測用每筆風險 1%（進場價 − 停損）、單檔上限 10%、最多 10 檔。</li>
+      <li><b>回測</b>（日 K，含下市股票，扣台股成本）：2005–2015 挑參數、2016–2026 驗證，驗證期年化 +10.8%、最大回撤 −34%；同規則隨機進場 +1.7%。訊號比隨機好，但<b>同期 0050 含息年化 +24%</b>，這個策略贏不了買進持有，2011、2012、2014、2016、2018、2021 都是虧的。</li>
+      <li><b>創高中</b>：收盤在 60 日高點 3% 以內的，表格裡淡化顯示，不是追高的目標。</li>
+      <li>資料：Yahoo 日 K（還原股利），每個交易日 21:30 更新。研究輔助，不是投資建議。</li>
+    </ul>
+  </details>
+
+  <footer>研究輔助，不是投資建議。回測結果不代表未來；限價單實際可能排不到。</footer>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const fmt = (x, d = 2) => x == null ? "–" : Number(x).toLocaleString("zh-TW", { minimumFractionDigits: d, maximumFractionDigits: d });
+const pct = (x, sign = true) => x == null ? "–" : (sign && x > 0 ? "+" : "") + Number(x).toFixed(1) + "%";
+
+(function theme() {
+  let t = null;
+  try { t = localStorage.getItem("theme"); } catch (e) {}
+  if (t) document.documentElement.dataset.theme = t;
+  $("#themeBtn").onclick = () => {
+    const dark = document.documentElement.dataset.theme
+      ? document.documentElement.dataset.theme === "dark"
+      : matchMedia("(prefers-color-scheme: dark)").matches;
+    const n = dark ? "light" : "dark";
+    document.documentElement.dataset.theme = n;
+    try { localStorage.setItem("theme", n); } catch (e) {}
+  };
+})();
+
+function toast(msg) {
+  const t = $("#toast");
+  t.textContent = msg; t.classList.add("on");
+  clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove("on"), 1400);
+}
+
+function notes(r) {
+  let s = "";
+  if (r.near_high) s += '<span class="chip warn">創高中</span>';
+  if (r.with_ob) s += '<span class="chip ok">與多方 OB 重疊</span>';
+  if (r.bfv) s += `<span class="chip warn">上方空方 FVG ${r.bfv}</span>`;
+  if (r.stopped_today) s += '<span class="chip bad">今天收在停損下</span>';
+  return s;
+}
+
+function table(rows, pending) {
+  if (!rows.length) return `<div class="empty">${pending ? "今天沒有符合條件的新單。這個設定挑得很嚴，沒有單是常態。" : "今天沒有成交的單。"}</div>`;
+  const head = `<tr><th>代號</th><th>名稱</th><th>收盤</th><th>${pending ? "掛單價" : "成交價"}</th><th>停損</th><th>停損距離</th>`
+    + (pending ? "<th>離掛單</th><th>剩幾天</th>" : "")
+    + "<th>FVG 區間</th><th>缺口</th><th>離 60 日高</th><th>成交值排名</th><th>FVG 成立</th><th></th></tr>";
+  const body = rows.map(r => {
+    const sym = `${r.market}:${r.code}`;
+    const yh = `https://tw.stock.yahoo.com/quote/${r.code}.${r.market === "TPEX" ? "TWO" : "TW"}`;
+    return `<tr class="${r.near_high ? "dim" : ""}">
+      <td><button class="code" data-sym="${esc(sym)}" title="複製 ${esc(sym)}">${esc(r.code)}</button></td>
+      <td><a href="${yh}" target="_blank" rel="noopener">${esc(r.name)}</a> <span class="ind">${esc(r.industry)}</span></td>
+      <td>${fmt(r.close)}</td>
+      <td class="px">${fmt(r.entry)}</td>
+      <td class="stop">${fmt(r.stop)}</td>
+      <td>${pct(-r.stop_pct)}</td>
+      ${pending ? `<td>${pct(r.to_entry_pct)}</td><td>${r.days_left}</td>` : ""}
+      <td>${fmt(r.btm)}–${fmt(r.top)}</td>
+      <td>${fmt(r.gap_atr, 1)} ATR</td>
+      <td>${pct(-r.below_high_pct)}</td>
+      <td>${r.rank}</td>
+      <td>${esc(r.born.slice(5))}</td>
+      <td style="text-align:left">${notes(r)}</td>
+    </tr>`;
+  }).join("");
+  return `<table><thead>${head}</thead><tbody>${body}</tbody></table>`;
+}
+
+function render(d) {
+  const P = d.picks.filter(r => r.status === "pending"), F = d.picks.filter(r => r.status === "filled");
+  const m = d.market;
+  $("#stats").innerHTML = `
+    <div class="stat"><div class="k">資料日期</div><div class="v">${esc(d.date)}</div><div class="s">產生於 ${esc(d.generated)}</div></div>
+    <div class="stat"><div class="k">股票池</div><div class="v">${d.universe} 檔</div><div class="s">成交值前 ${d.rule.top_n} 名</div></div>
+    ${m ? `<div class="stat"><div class="k">加權指數 vs 200 日線</div><div class="v ${m.above ? "up" : "dn"}">${m.above ? "在線上" : "在線下"}</div>
+      <div class="s">${fmt(m.close)}（200 日線 ${fmt(m.ma200)}）</div></div>` : ""}
+    <div class="stat"><div class="k">明天可掛 / 今天成交</div><div class="v">${P.length} / ${F.length}</div><div class="s">創高中的淡化顯示</div></div>`;
+  $("#nPend").textContent = `${P.length} 筆`;
+  $("#nFill").textContent = `${F.length} 筆`;
+  $("#pend").innerHTML = table(P, true);
+  $("#fill").innerHTML = table(F, false);
+}
+
+document.addEventListener("click", e => {
+  const b = e.target.closest(".code");
+  if (!b) return;
+  const s = b.dataset.sym;
+  (navigator.clipboard ? navigator.clipboard.writeText(s) : Promise.reject()).then(
+    () => toast(`已複製 ${s}`), () => toast(s));
+});
+
+async function load(day) {
+  const r = await fetch(`data/fvg/fvg-${day}.json`, { cache: "no-cache" });
+  render(await r.json());
+  try { history.replaceState(null, "", `#${day}`); } catch (e) {}
+}
+
+(async () => {
+  try {
+    const idx = await (await fetch("data/fvg/index.json", { cache: "no-cache" })).json();
+    const sel = $("#day");
+    sel.innerHTML = idx.dates.map(d => `<option>${esc(d)}</option>`).join("");
+    const want = location.hash.slice(1);
+    sel.value = idx.dates.includes(want) ? want : idx.latest;
+    sel.onchange = () => load(sel.value);
+    await load(sel.value);
+  } catch (e) {
+    $("#pend").innerHTML = '<div class="empty">還沒有資料。</div>';
+  }
+})();
+</script>
+</body>
+</html>

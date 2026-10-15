@@ -1,0 +1,70 @@
+{
+ "date": "2026-10-15",
+ "generated": "2026-10-15 20:15",
+ "universe": 150,
+ "market": {
+  "close": 46969.87,
+  "ma200": 39865.05,
+  "above": true,
+  "date": "2026-10-15"
+ },
+ "rule": {
+  "top_n": 150,
+  "wait_days": 3,
+  "min_gap_atr": 1.0,
+  "high_lookback": 60,
+  "near_high_pct": 3.0
+ },
+ "picks": [
+  {
+   "code": "2603",
+   "name": "長榮",
+   "market": "TWSE",
+   "industry": "航運業",
+   "status": "pending",
+   "born": "2026-10-13",
+   "days_left": 1,
+   "close": 257.0,
+   "top": 248.0,
+   "btm": 236.0,
+   "entry": 248.0,
+   "stop": 235.0,
+   "gap_atr": 1.56,
+   "h_pct": 4.84,
+   "stop_pct": 5.15,
+   "to_entry_pct": -3.5,
+   "below_high_pct": 3.93,
+   "near_high": false,
+   "bfv": 0,
+   "with_ob": true,
+   "rank": 78,
+   "turnover_e8": 30.2,
+   "stopped_today": false
+  },
+  {
+   "code": "6505",
+   "name": "台塑化",
+   "market": "TWSE",
+   "industry": "油電燃氣業",
+   "status": "filled",
+   "born": "2026-10-14",
+   "days_left": 0,
+   "close": 111.5,
+   "top": 117.0,
+   "btm": 110.0,
+   "entry": 117.0,
+   "stop": 109.0,
+   "gap_atr": 1.1,
+   "h_pct": 5.98,
+   "stop_pct": 6.53,
+   "to_entry_pct": 4.93,
+   "below_high_pct": 13.57,
+   "near_high": false,
+   "bfv": 0,
+   "with_ob": false,
+   "rank": 77,
+   "turnover_e8": 30.5,
+   "stopped_today": false
+  }
+ ]
+}
