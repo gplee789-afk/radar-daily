@@ -249,7 +249,7 @@ async function openDoc(path) {
     const hs = [...doc.querySelectorAll("h2, h3")];
     hs.forEach((h, i) => h.id = "s" + i);
     const hit = sec && hs.find(h => h.textContent.trim().startsWith(sec));
-    if (hit) requestAnimationFrame(() => hit.scrollIntoView({ block: "start" }));
+    if (hit) doc.scrollTop = hit.getBoundingClientRect().top - doc.getBoundingClientRect().top - 8;
   }
   $("#reader [data-close]").focus({ preventScroll: true });
 }

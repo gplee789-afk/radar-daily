@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>4F² 題材鏈圖</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&family=Noto+Serif:ital@0;1&family=Noto+Sans+TC:wght@400;500;600&family=Noto+Serif+TC:wght@400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* 配色：diagram-design 設定檔 taiwan-analysis（取自網站 radar/site_library.html） */
+    :root {
+      --paper: #f4f5f2; --node: #ffffff; --ink: #12170f; --muted: #4c5549; --soft: #5f685c;
+      --rule: rgba(18,23,15,0.12); --accent: #0f5c3c; --accent-tint: rgba(15,92,60,0.08);
+      --font-sans: 'Geist', 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', system-ui, sans-serif;
+      --font-serif: 'Instrument Serif', 'Noto Serif', 'Noto Serif TC', serif;
+      --font-mono: 'Geist Mono', ui-monospace, monospace;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --paper: #0c0f0b; --node: #141913; --ink: #eaf1e6; --muted: #a7b3a2; --soft: #8a9686;
+        --rule: rgba(234,241,230,0.12); --accent: #5cc999; --accent-tint: rgba(92,201,153,0.10);
+      }
+    }
+    body { font-family: var(--font-sans); background: var(--paper); color: var(--ink); padding: 20px 16px 24px; }
+    .frame { max-width: 1000px; margin: 0 auto; }
+    .diagram-container { width: 100%; overflow-x: auto; }
+    .eyebrow { font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 4px; }
+    h1 { font-family: var(--font-serif); font-size: clamp(1.4rem, 2.2vw + 0.7rem, 1.9rem); font-weight: 400; line-height: 1.2; margin-bottom: 14px; }
+    svg { width: 100%; min-width: 960px; display: block; }
+    .note { font-size: 13px; line-height: 1.75; color: var(--muted); margin-top: 12px; max-width: 900px; }
+    .note b { color: var(--ink); font-weight: 600; }
+
+    svg .bg { fill: var(--paper); }
+    svg .wire { fill: none; stroke: var(--muted); stroke-width: 1; }
+    svg .box { fill: var(--node); stroke: var(--ink); stroke-width: 1; }
+    svg .box.focal { fill: var(--accent-tint); stroke: var(--accent); stroke-width: 1.2; }
+    svg .tag { fill: none; stroke: var(--soft); stroke-width: 0.8; }
+    svg .tag.focal { stroke: var(--accent); }
+    svg .t-tag { fill: var(--ink); font: 500 12px var(--font-sans); }
+    svg .t-tag.focal { fill: var(--accent); }
+    svg .t-name { fill: var(--ink); font: 600 13px var(--font-sans); }
+    svg .t-root { fill: var(--ink); font: 600 16px var(--font-sans); }
+    svg .t-sub { fill: var(--muted); font: 400 12px var(--font-sans); }
+    svg .t-co { fill: var(--ink); font: 600 12px var(--font-sans); }
+    svg .t-col { fill: var(--muted); font: 500 12px var(--font-sans); }
+    svg .sep { stroke: var(--rule); stroke-width: 0.8; }
+    svg a.node { cursor: pointer; }
+    svg a.node:hover .box, svg a.node:focus-visible .box { stroke-width: 2; }
+    svg a.node:focus-visible { outline: none; }
+    svg .t-go { fill: var(--muted); font: 400 12px var(--font-sans); }
+    svg a.node:hover .t-go { fill: var(--ink); }
+    svg .co a tspan { fill: var(--link); text-decoration: underline; text-decoration-color: rgba(31,99,184,0.35); }
+    svg .co a:hover tspan { text-decoration-color: currentColor; }
+    @media (prefers-color-scheme: dark) { svg .co a tspan { text-decoration-color: rgba(106,166,238,0.4); } }
+    :root { --link: #1f63b8; }
+    @media (prefers-color-scheme: dark) { :root { --link: #6aa6ee; } }
+    @media print { .diagram-container { overflow-x: visible; } svg { min-width: 0; } }
+    /* 題材鏈圖加的：欄位標題連結、資料不足的虛線框 */
+    svg a.hd { cursor: pointer; }
+    svg a.hd:hover .t-col, svg a.hd:focus-visible .t-col { fill: var(--ink); }
+    svg a.hd:focus-visible { outline: none; }
+    svg .box.dashed { stroke: var(--soft); stroke-dasharray: 4 3; }
+    svg .wire.dashed { stroke-dasharray: 4 3; }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">題材鏈分析・2026-10-15</p>
+    <h1>4F²：誰在買、誰在賣、緊不緊</h1>
+
+    <div class="diagram-container">
+      <svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="tc-6618c778-2026-10-15-title tc-6618c778-2026-10-15-desc">
+        <title id="tc-6618c778-2026-10-15-title">4F² 題材鏈圖</title>
+        <desc id="tc-6618c778-2026-10-15-desc">4F² 的供需鏈：左邊供給端 19 家台股公司，中間題材，右邊需求端 4 家；程式規則判斷供需平衡。</desc>
+
+        <rect class="bg" width="100%" height="100%"/>
+
+        <!-- 欄位標題 -->
+        <a class="hd" href="../../?r=library/themechain/2026-10-15-4F².md#sec=3.%20供給端" target="_top" aria-label="看報告的「3. 供給端」">
+          <text class="t-col" x="40" y="56">供給端（誰在賣）</text>
+          <text class="t-go" x="152" y="56">看報告 ›</text>
+        </a>
+        <text class="t-col" x="360" y="56">題材</text>
+        <a class="hd" href="../../?r=library/themechain/2026-10-15-4F².md#sec=2.%20需求端" target="_top" aria-label="看報告的「2. 需求端」">
+          <text class="t-col" x="680" y="56">需求端（誰在買）</text>
+          <text class="t-go" x="792" y="56">看報告 ›</text>
+        </a>
+
+        <!-- 連線：先畫線再畫框 -->
+        <path class="wire" d="M 280 132 H 312 Q 320 132 320 140 V 292 Q 320 300 328 300 H 360"/>
+        <path class="wire" d="M 280 244 H 312 Q 320 244 320 252 V 292 Q 320 300 328 300 H 360"/>
+        <path class="wire" d="M 280 356 H 312 Q 320 356 320 348 V 308 Q 320 300 328 300 H 360"/>
+        <path class="wire" d="M 280 468 H 312 Q 320 468 320 460 V 308 Q 320 300 328 300 H 360"/>
+        <path class="wire" d="M 600 300 H 632 Q 640 300 640 292 V 140 Q 640 132 648 132 H 680"/>
+        <path class="wire" d="M 600 300 H 632 Q 640 300 640 292 V 252 Q 640 244 648 244 H 680"/>
+        <path class="wire" d="M 600 300 H 632 Q 640 300 640 308 V 348 Q 640 356 648 356 H 680"/>
+        <path class="wire" d="M 600 300 H 632 Q 640 300 640 308 V 460 Q 640 468 648 468 H 680"/>
+
+        <!-- 題材 -->
+        <a class="node" href="../../?r=library/themechain/2026-10-15-4F².md#sec=6.%20供需判斷" target="_top" aria-label="看報告的「6. 供需判斷」">
+          <rect class="bg" x="360" y="240" width="240" height="120" rx="6"/>
+          <rect class="box focal" x="360" y="240" width="240" height="120" rx="6"/>
+          <rect class="tag focal" x="372" y="252" width="40" height="18" rx="2"/>
+          <text class="t-tag focal" x="392" y="265" text-anchor="middle">題材</text>
+          <text class="t-root" x="372" y="296">4F²</text>
+          <text class="t-sub" x="372" y="320">供需：平衡</text>
+          <text class="t-sub" x="372" y="340">供給 19 家・需求 4 家</text>
+        </a>
+
+        <!-- 公司 -->
+        <a class="node" href="https://tw.stock.yahoo.com/quote/6139" target="_blank" rel="noopener" aria-label="開 6139 亞翔 的 Yahoo 股市報價">
+          <rect class="bg" x="40" y="96" width="240" height="72" rx="6"/>
+          <rect class="box" x="40" y="96" width="240" height="72" rx="6"/>
+          <text class="t-name" x="52" y="124">6139 亞翔</text>
+          <text class="t-sub" x="52" y="148">賣設備給 1 家</text>
+        </a>
+        <a class="node" href="https://tw.stock.yahoo.com/quote/3402" target="_blank" rel="noopener" aria-label="開 3402 漢科 的 Yahoo 股市報價">
+          <rect class="bg" x="40" y="208" width="240" height="72" rx="6"/>
+          <rect class="box" x="40" y="208" width="240" height="72" rx="6"/>
+          <text class="t-name" x="52" y="236">3402 漢科</text>
+          <text class="t-sub" x="52" y="260">賣設備給 1 家・上游供應商・深挖已列</text>
+        </a>
+        <a class="node" href="https://tw.stock.yahoo.com/quote/2464" target="_blank" rel="noopener" aria-label="開 2464 盟立 的 Yahoo 股市報價">
+          <rect class="bg" x="40" y="320" width="240" height="72" rx="6"/>
+          <rect class="box" x="40" y="320" width="240" height="72" rx="6"/>
+          <text class="t-name" x="52" y="348">2464 盟立</text>
+          <text class="t-sub" x="52" y="372">賣設備給 1 家</text>
+        </a>
+        <a class="node" href="https://tw.stock.yahoo.com/quote/2480" target="_blank" rel="noopener" aria-label="開 2480 敦陽科 的 Yahoo 股市報價">
+          <rect class="bg" x="40" y="432" width="240" height="72" rx="6"/>
+          <rect class="box" x="40" y="432" width="240" height="72" rx="6"/>
+          <text class="t-name" x="52" y="460">2480 敦陽科</text>
+          <text class="t-sub" x="52" y="484">賣設備給 1 家</text>
+        </a>
+        <a class="node" href="https://tw.stock.yahoo.com/quote/2408" target="_blank" rel="noopener" aria-label="開 2408 南亞科 的 Yahoo 股市報價">
+          <rect class="bg" x="680" y="96" width="240" height="72" rx="6"/>
+          <rect class="box" x="680" y="96" width="240" height="72" rx="6"/>
+          <text class="t-name" x="692" y="124">2408 南亞科</text>
+          <text class="t-sub" x="692" y="148">資本支出公告 51 筆</text>
+        </a>
+        <a class="node" href="https://tw.stock.yahoo.com/quote/2344" target="_blank" rel="noopener" aria-label="開 2344 華邦電 的 Yahoo 股市報價">
+          <rect class="bg" x="680" y="208" width="240" height="72" rx="6"/>
+          <rect class="box" x="680" y="208" width="240" height="72" rx="6"/>
+          <text class="t-name" x="692" y="236">2344 華邦電</text>
+          <text class="t-sub" x="692" y="260">資本支出公告 15 筆</text>
+        </a>
+        <a class="node" href="https://tw.stock.yahoo.com/quote/3702" target="_blank" rel="noopener" aria-label="開 3702 大聯大 的 Yahoo 股市報價">
+          <rect class="bg" x="680" y="320" width="240" height="72" rx="6"/>
+          <rect class="box" x="680" y="320" width="240" height="72" rx="6"/>
+          <text class="t-name" x="692" y="348">3702 大聯大</text>
+          <text class="t-sub" x="692" y="372">下游客戶</text>
+        </a>
+        <a class="node" href="https://tw.stock.yahoo.com/quote/8059" target="_blank" rel="noopener" aria-label="開 8059 凱碩 的 Yahoo 股市報價">
+          <rect class="bg" x="680" y="432" width="240" height="72" rx="6"/>
+          <rect class="box" x="680" y="432" width="240" height="72" rx="6"/>
+          <text class="t-name" x="692" y="460">8059 凱碩</text>
+          <text class="t-sub" x="692" y="484">下游客戶</text>
+        </a>
+
+        <!-- 圖例 -->
+        <line class="sep" x1="40" y1="548" x2="920" y2="548"/>
+        <rect class="box focal" x="40" y="562" width="20" height="14" rx="3"/>
+        <text class="t-sub" x="68" y="574">題材（點了看供需判斷）</text>
+        <rect class="box" x="296" y="562" width="20" height="14" rx="3"/>
+        <text class="t-sub" x="324" y="574">台股公司（各欄最多 4 家，依證據則數）</text>
+        <rect class="box dashed" x="652" y="562" width="20" height="14" rx="3"/>
+        <text class="t-sub" x="680" y="574">這一端資料不足</text>
+      </svg>
+    </div>
+
+    <p class="note">點框跳到報告段落，點公司開 Yahoo 股市報價。供需端由程式規則分類，細節與判斷規則見報告；研究輔助，不是投資建議。</p>
+  </div>
+</body>
+</html>
