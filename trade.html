@@ -72,15 +72,17 @@ details.box li { font-size: 13.5px; color: var(--ink-2); line-height: 1.8; }
 .card .row span:first-child { color: var(--ink-3); }
 .card p { font-size: 12.5px; color: var(--ink-2); margin: 8px 0 0; }
 .strats { display: grid; gap: 10px; }
-details.strat { margin: 0; }
-details.strat > summary { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
-details.strat > summary .hl { font-weight: 400; font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
-details.strat .body { border-top: 1px solid var(--line); padding: 10px 16px 14px; display: grid; grid-template-columns: minmax(260px, 1fr) minmax(300px, 2fr); gap: 14px 22px; }
-@media (max-width: 760px) { details.strat .body { grid-template-columns: 1fr; } }
-details.strat .rows .row { display: flex; justify-content: space-between; gap: 10px; font-size: 13.5px; padding: 3px 0; border-top: 1px solid var(--line); font-variant-numeric: tabular-nums; }
-details.strat .rows .row:first-child { border-top: 0; }
-details.strat .rows .row span:first-child { color: var(--ink-3); }
-details.strat .rows p { font-size: 12.5px; color: var(--ink-2); margin: 8px 0 0; }
+.strat { margin: 0; padding: 0 0 4px; }
+.strat > .head { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; font-weight: 700; padding: 10px 16px 4px; }
+.strat > .head .hl { font-weight: 400; font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.strat .charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 4px 22px; padding: 4px 16px 0; }
+.strat details.more { border-top: 1px solid var(--line); margin: 4px 0 0; }
+.strat details.more > summary { cursor: pointer; font-size: 13.5px; color: var(--ink-2); padding: 8px 16px; }
+.strat .rows { padding: 0 16px 10px; max-width: 560px; }
+.strat .rows .row { display: flex; justify-content: space-between; gap: 10px; font-size: 13.5px; padding: 3px 0; border-top: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+.strat .rows .row:first-child { border-top: 0; }
+.strat .rows .row span:first-child { color: var(--ink-3); }
+.strat .rows p { font-size: 12.5px; color: var(--ink-2); margin: 8px 0 0; }
 .chart { margin-bottom: 12px; min-width: 0; }
 .chart h4 { margin: 0 0 2px; font-size: 13.5px; }
 .chart .legend { display: flex; flex-wrap: wrap; gap: 2px 14px; font-size: 12px; color: var(--ink-2); margin: 2px 0 4px; }
@@ -298,7 +300,7 @@ function watch(day, PB, F) {
     + (ex.length ? `<ul class="excl">${ex.map(([c, why]) => `<li><b>${esc(c)}</b>：${esc(why)}</li>`).join("")}</ul>` : "") + "</details>";
 }
 
-// ---------- ④ 策略成績：兩個策略各一個折疊區塊，點開才畫損益折線圖 ----------
+// ---------- ④ 策略成績：損益折線圖直接顯示，詳細數值收在「詳細數值」折疊區塊 ----------
 let CURVES = null;
 const cssv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 
@@ -373,7 +375,7 @@ function lineChart(el, { series, log = false, split = null, title = "", cap = ""
 
 function drawCharts(which) {
   const box = document.getElementById("strat-" + which);
-  if (!box || !box.open) return;
+  if (!box) return;
   const ink3 = cssv("--ink-3"), ink2 = cssv("--ink-2");
   const pick = (c, k) => (c.series.find(s => s.key === k) || { pts: [] }).pts;
   if (which === "pb") {
@@ -411,8 +413,9 @@ function cards() {
   const row = (k, v, c = "") => `<div class="row"><span>${k}</span><span class="${c}">${v}</span></div>`;
   const hlPb = (a ? `上線 <span class="${cls(a.pnl)}">${pct(a.pnl, 2)}</span>（0050 ${pct(a.bench, 2)}）・` : "") + "回測年化 +0.4%／+122%";
   $("#cards").innerHTML = `
-    <details class="box strat" id="strat-pb"><summary>${S.pb} 回檔到支撐 <span class="hl">${hlPb}</span></summary>
-      <div class="body"><div class="rows">
+    <div class="box strat" id="strat-pb"><div class="head">${S.pb} 回檔到支撐 <span class="hl">${hlPb}</span></div>
+      <div class="charts"><div class="c-live"></div><div class="c-bt"></div></div>
+      <details class="more"><summary>詳細數值</summary><div class="rows">
       ${a ? row("上線紀錄（2026-10-15 起）", `買進 ${a.in} 筆・持有 ${a.open}・停損 ${a.stop}`)
         + row("帳戶損益（每筆 1/15 資金）", pct(a.pnl, 2), cls(a.pnl))
         + row("平均每筆（扣成本）", `${pct(a.avg, 2)}・勝率 ${a.win == null ? "–" : a.win.toFixed(0) + "%"}`, cls(a.avg))
@@ -422,19 +425,18 @@ function cards() {
       ${row("回測 2025-04～2026-09 年化", "+122%（回撤 −26%）")}
       ${row("同規則隨機選股（中位數）", "−5.4%／+42.2%")}
       ${row("同期 0050", "+26.2%／+89.9%")}
-      <p>回測兩段都贏同規則隨機選股；前段輸 0050、後段贏。上線紀錄筆數還太少，先別下結論。</p></div>
-      <div style="min-width:0"><div class="c-live"></div><div class="c-bt"></div></div></div></details>
-    <details class="box strat" id="strat-fvg"><summary>${S.fvg} FVG 每日標的 <span class="hl">回測驗證期年化 +15.5%（0050 +24%）・上線紀錄還沒有</span></summary>
-      <div class="body"><div class="rows">
+      <p>回測兩段都贏同規則隨機選股；前段輸 0050、後段贏。上線紀錄筆數還太少，先別下結論。</p></div></details></div>
+    <div class="box strat" id="strat-fvg"><div class="head">${S.fvg} FVG 每日標的 <span class="hl">回測驗證期年化 +15.5%（0050 +24%）・上線紀錄還沒有</span></div>
+      <div class="charts"><div class="c-bt"></div></div>
+      <details class="more"><summary>詳細數值</summary><div class="rows">
       ${row("上線紀錄", "還沒有（目前只列當天的單）")}
       ${row("回測驗證期 2016–2026 年化", "+15.5%", "up")}
       ${row("最大回撤", "−39%", "dn")}
       ${row("同規則、前 5 名隨機挑（中位數）", "+13.5%（+8.3%～+20.2%）")}
       ${row("舊規則（前 150 名、掛 3 天、每張都掛）", "+10.8%")}
       ${row("同期 0050 含息年化", "+24%", "up")}
-      <p>依缺口大小挑前 5 只比隨機挑多一點，還在隨機的範圍內；<b>仍然贏不了買進 0050</b>。2016–2026 裡 2016、2018、2022、2024 都虧。</p></div>
-      <div style="min-width:0"><div class="c-bt"></div></div></div></details>`;
-  for (const k of ["pb", "fvg"]) document.getElementById("strat-" + k).addEventListener("toggle", () => drawCharts(k));
+      <p>依缺口大小挑前 5 只比隨機挑多一點，還在隨機的範圍內；<b>仍然贏不了買進 0050</b>。2016–2026 裡 2016、2018、2022、2024 都虧。</p></div></details></div>`;
+  drawCharts("pb"); drawCharts("fvg");
 }
 let rsz;
 addEventListener("resize", () => { clearTimeout(rsz); rsz = setTimeout(() => { drawCharts("pb"); drawCharts("fvg"); }, 200); });
