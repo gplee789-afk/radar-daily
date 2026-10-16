@@ -9,11 +9,11 @@
 <style>
 :root {
   color-scheme: dark;
-  --bg: #0e0c0a; --panel: #191512; --line: #2d2620; --grid: #3a3129; --ink: #f2ebe3; --ink-2: #c2b3a3; --ink-3: #8c7d6e; --ev-1: #ffcf8a; --ev-2: #f0a050; --ev-3: #c97a3a; --ev-4: #5b4b3d; --accent: #f5b461; --tag-auto: #2e2116; --tag-ask: #33201c; --tag-in: #2b2617;
+  --bg: #0e0c0a; --panel: #191512; --line: #2d2620; --grid: #3a3129; --ink: #f2ebe3; --ink-2: #c2b3a3; --ink-3: #8c7d6e; --ev-1: #ffcf8a; --ev-2: #f0a050; --ev-3: #c97a3a; --ev-4: #5b4b3d; --accent: #f5b461; --tag-auto: #2e2116; --tag-ask: #33201c; --tag-in: #2b2617; --up: #ff7a5c; --down: #8fb4cc;
 }
 :root[data-theme="light"] {
   color-scheme: light;
-  --bg: #f7f1e8; --panel: #fffaf3; --line: #e6dccd; --grid: #d8ccb9; --ink: #1f1812; --ink-2: #5c4f43; --ink-3: #8a7b6c; --ev-1: #a8521b; --ev-2: #c9702e; --ev-3: #dc9a5c; --ev-4: #c4b5a3; --accent: #b5541c; --tag-auto: #f6e6d3; --tag-ask: #f7e0da; --tag-in: #f6efe0;
+  --bg: #f7f1e8; --panel: #fffaf3; --line: #e6dccd; --grid: #d8ccb9; --ink: #1f1812; --ink-2: #5c4f43; --ink-3: #8a7b6c; --ev-1: #a8521b; --ev-2: #c9702e; --ev-3: #dc9a5c; --ev-4: #c4b5a3; --accent: #b5541c; --tag-auto: #f6e6d3; --tag-ask: #f7e0da; --tag-in: #f6efe0; --up: #c8432a; --down: #3f6f8f;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
@@ -28,6 +28,33 @@ input, button { font: inherit; font-size: 14px; color: var(--ink); background: v
 button { cursor: pointer; }
 .sub { color: var(--ink-3); font-size: 13px; margin: 8px 0 0; }
 .hide { display: none !important; }
+
+/* 今日大盤（最新盤前預估） */
+.hero { margin-top: 18px; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 18px 22px; }
+.hero .hhd { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; margin-bottom: 14px; }
+.hero .hhd h2 { font-size: 20px; }
+.hero .hhd .when { color: var(--ink-3); font-size: 13px; }
+.hero .hhd a { margin-left: auto; font-size: 14px; font-weight: 600; text-decoration: none; }
+.hero .hbody { display: grid; grid-template-columns: 200px 1fr 300px; gap: 18px 32px; align-items: start; }
+@media (max-width: 900px) { .hero .hbody { grid-template-columns: 1fr 1fr; } .hero .track { grid-column: 1 / -1; } }
+@media (max-width: 560px) { .hero .hbody { grid-template-columns: 1fr; } .hero { padding: 16px; } }
+.hero .lbl { color: var(--ink-3); font-size: 12.5px; }
+.hero .pct { font-size: 56px; font-weight: 800; line-height: 1.05; font-variant-numeric: tabular-nums; letter-spacing: -1px; }
+.hero .verdict { font-size: 15px; font-weight: 700; margin-top: 2px; }
+.up { color: var(--up); } .down { color: var(--down); } .flat { color: var(--ink); }
+.hero .kv { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; font-size: 14px; margin: 2px 0 14px; }
+.hero .kv span:nth-child(odd) { color: var(--ink-3); font-size: 12.5px; padding-top: 1px; }
+.hero .kv b { font-variant-numeric: tabular-nums; }
+.scen { display: flex; height: 26px; border-radius: 6px; overflow: hidden; font-size: 11.5px; font-weight: 600; }
+.scen div { display: flex; align-items: center; justify-content: center; min-width: 0; white-space: nowrap; overflow: hidden; color: #1a1410; }
+.scen-lg { color: var(--ink-3); font-size: 11.5px; margin-top: 4px; }
+.track h3 { font-size: 13px; color: var(--ink-2); margin: 0 0 4px; font-weight: 600; }
+.track .tr { all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: 44px 1fr 1fr 20px; gap: 8px; width: 100%;
+             padding: 5px 0; border-bottom: 1px dashed var(--line); font-size: 13px; font-variant-numeric: tabular-nums; }
+.track .tr:hover { color: var(--accent); }
+.track .tr .d { color: var(--ink-3); }
+.track .ok { color: var(--accent); } .track .ng { color: var(--ink-3); }
+.track .acc { color: var(--ink-3); font-size: 12px; margin-top: 8px; }
 
 /* 搜尋＋區塊捷徑：捲動時固定在上方 */
 .toolbar { position: sticky; top: 0; z-index: 5; background: var(--bg); display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px;
@@ -124,13 +151,15 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
   </header>
   <p class="sub" id="intro">專案產出的每一種報告。<span class="tag auto">每天自動</span> 是每晚排程產生，<span class="tag ask">不定期更新</span> 是有新題材或新研究時才寫。</p>
 
+  <section class="hero hide" id="hero" aria-labelledby="heroTitle"></section>
+
   <div class="toolbar">
     <input id="q" type="search" placeholder="搜尋報告標題，例如：記憶體、玻璃基板、估值" aria-label="搜尋報告">
     <nav class="gnav" id="gnav" aria-label="報告區塊"></nav>
   </div>
 
   <section id="latestSec">
-    <div class="sec-hd"><h2>最近更新</h2><span class="note">每一類最新的一篇</span></div>
+    <div class="sec-hd"><h2>最近更新</h2><span class="note">每一類最新的一篇（盤前預估在上面）</span></div>
     <div class="latest" id="latest"></div>
   </section>
 
@@ -157,7 +186,7 @@ const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const TAG = { "每天自動": "auto", "每月自動": "auto", "每週更新": "auto", "不定期更新": "ask", "每天自動＋深挖": "ask" };
 const SHOW = 4;
-let CATS = [], ALL = [], GROUPS = [];
+let CATS = [], ALL = [], GROUPS = [], HERO = null;
 
 (function theme() {
   let t = null;
@@ -183,9 +212,41 @@ function row(r, withCat, cat) {
   return `<button class="row" data-path="${esc(r.path)}" title="${esc(r.title)}"><span class="dt">${esc(day(r.date))}</span>${ct}${tt}</button>`;
 }
 
+const WD = "日一二三四五六";
+const sgn = (x, d = 2) => (x > 0 ? "+" : x < 0 ? "−" : "") + Math.abs(x).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
+const tone = p => p >= 60 ? "up" : p <= 40 ? "down" : "flat";
+function hero(h) {
+  if (!h) return;
+  const today = new Date(Date.now() + 8 * 3600e3).toISOString().slice(0, 10);
+  const when = `${h.date.slice(5).replace("-", "/")}（${WD[new Date(h.date + "T12:00:00Z").getUTCDay()]}）盤前預估` +
+               (h.date === today ? "・今天 08:40 前發布" : "・最近一個交易日，下一份在下個交易日 08:40 前發布");
+  const verdict = { up: "偏多：收紅機率較高", down: "偏空：收黑機率較高", flat: "方向不明：紅黑機率接近" }[tone(h.p_up)];
+  const SC = { 大跌: "var(--down)", 小跌: "color-mix(in srgb, var(--down) 55%, var(--panel))", 小漲: "color-mix(in srgb, var(--up) 55%, var(--panel))", 大漲: "var(--up)" };
+  const scen = (h.scen || []).length ? `<div class="lbl" style="margin-bottom:4px">四種情境的機率</div>
+    <div class="scen" role="img" aria-label="${h.scen.map(([k, v]) => k + " " + v + "%").join("，")}">${h.scen.map(([k, v]) =>
+      `<div style="flex:${Math.max(v, 0.5)};background:${SC[k]}" title="${k} ${v}%">${v >= 18 ? k + " " + v + "%" : v >= 8 ? v + "%" : ""}</div>`).join("")}</div>
+    <div class="scen-lg">大跌 &lt;−1%、小跌 −1%～0、小漲 0～+1%、大漲 &gt;+1%</div>` : "";
+  const kv = [h.exp != null && ["預期漲跌", `<b class="${h.exp > 0 ? "up" : h.exp < 0 ? "down" : ""}">${sgn(h.exp)}%</b>（約 ${sgn(h.pts, 0)} 點，昨收 ${h.prev.toLocaleString()}）`],
+              h.lo != null && ["可能區間", `<b>${h.lo_pt.toLocaleString()} ～ ${h.hi_pt.toLocaleString()}</b>（${sgn(h.lo)}% ～ ${sgn(h.hi)}%，8 成機率落在這裡）`]]
+             .filter(Boolean).map(([a, b]) => `<span>${a}</span><span>${b}</span>`).join("");
+  const track = (h.track || []).map(t => `<button class="tr" data-path="${esc(t.path)}"><span class="d">${esc(t.date.slice(5))}</span>
+      <span${t.redo != null ? ` title="當天正式發布 ${t.p_up}%；報告事後依修正算法重算為 ${t.redo}%"` : ""}>收紅 ${t.p_up}%${t.redo != null ? "*" : ""}</span><span class="${t.act == null ? "" : t.act > 0 ? "up" : "down"}">${t.act == null ? "等收盤" : "實際 " + sgn(t.act) + "%"}</span>
+      <span class="${t.hit ? "ok" : "ng"}" title="${t.hit == null ? "" : t.hit ? "猜對方向" : "猜錯方向"}">${t.hit == null ? "" : t.hit ? "✓" : "✗"}</span></button>`).join("");
+  $("#hero").innerHTML = `<div class="hhd"><h2 id="heroTitle">今日大盤</h2><span class="when">${esc(when)}</span>
+      <a href="#" data-path="${esc(h.path)}">看完整預估與依據 →</a></div>
+    <div class="hbody">
+      <div><div class="lbl">加權指數收紅機率</div><div class="pct ${tone(h.p_up)}">${h.p_up}%</div><div class="verdict ${tone(h.p_up)}">${verdict}</div></div>
+      <div><div class="kv">${kv}</div>${scen}</div>
+      <div class="track"><h3>最近幾天：預估 vs. 實際收盤</h3>${track}
+        ${(h.track || []).some(t => t.redo != null) ? `<div class="acc">* 對答案用當天正式發布的數字；報告頁面上是事後修正算法重算的版本。</div>` : ""}
+        ${h.acc ? `<div class="acc">過去 8 年回測猜對方向 ${h.acc}%（每天都猜收紅只有 ${h.base}%）。只是機率，突發消息不在模型裡。</div>` : ""}</div>
+    </div>`;
+  $("#hero").classList.remove("hide");
+}
+
 function render() {
   YEAR = ALL.map(r => r.date || "").sort().pop().slice(0, 4);
-  const newest = CATS.filter(c => c.items.length).map(c => ({ ...c.items[0], cat: c.name }));
+  const newest = CATS.filter(c => c.items.length && c.key !== "premarket").map(c => ({ ...c.items[0], cat: c.name }));
   $("#latest").innerHTML = newest.sort((a, b) => (b.date || "").localeCompare(a.date || "")).slice(0, 10).map(r => row(r, true)).join("");
   const card = c => {
     const n = c.items.length;
@@ -215,12 +276,13 @@ document.addEventListener("click", e => {
     return;
   }
   const b = e.target.closest("[data-path]");
-  if (b) openDoc(b.dataset.path);
+  if (b) { e.preventDefault(); openDoc(b.dataset.path); }
 });
 
 $("#q").addEventListener("input", () => {
   const q = $("#q").value.trim().toLowerCase();
   $("#latestSec").classList.toggle("hide", !!q);
+  $("#hero").classList.toggle("hide", !!q || !HERO);
   document.querySelectorAll(".cat").forEach(c => {
     let hit = 0;
     c.querySelectorAll("li").forEach(x => {
@@ -274,7 +336,8 @@ addEventListener("keydown", e => { if (e.key === "Escape" && $("#reader").classL
   CATS = L.categories;
   GROUPS = L.groups || [{ key: "all", name: "報告類別", desc: "", cats: CATS }];
   ALL = CATS.flatMap(c => c.items.map(r => ({ ...r, cat: c.name })));
-  render();
+  HERO = L.hero || null;
+  render(); hero(HERO);
   const want = new URLSearchParams(location.search).get("r");
   if (want) openDoc(want);
 })().catch(e => $(".wrap").insertAdjacentHTML("beforeend", `<p class="sub">資料載入失敗：${esc(e.message)}</p>`));
