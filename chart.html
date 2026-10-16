@@ -60,7 +60,7 @@ main { flex: 1; position: relative; min-height: 0; }
 </head>
 <body>
 <header>
-  <a class="back" id="back" href="trade.html">← 今日交易</a>
+  <a class="back" id="back" href="trade.html">← FVG 實驗室</a>
   <div class="sep"></div>
   <select id="sym" aria-label="切換股票"></select>
   <div class="nav"><button id="prev" title="上一檔（←）" aria-label="上一檔">‹</button><button id="next" title="下一檔（→）" aria-label="下一檔">›</button></div>
@@ -93,7 +93,7 @@ const css = k => getComputedStyle(document.documentElement).getPropertyValue(k).
 const P = new URLSearchParams(location.search);
 const DAY = P.get("d") || "";
 const STRAT = P.get("s") === "fvg" ? "fvg" : "pullback";          // 哪個策略的名單：回檔到支撐（預設）或 FVG 每日標的
-const FROM = "trade";                                              // ← 返回今日交易（舊的 fvg.html、pullback.html 已併進去）
+const FROM = "trade";                                              // ← 返回FVG 實驗室（舊的 fvg.html、pullback.html 已併進去）
 const state = { tf: "60", fvg: "live", ob: "live" };
 let chart, candle, volS, stopLine, entryLine, raw = null, cur = null, picks = [], hover = null, dirty = true, lastKey = "", C = {};
 
