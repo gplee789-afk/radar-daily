@@ -74,6 +74,11 @@ details.box li { font-size: 13.5px; color: var(--ink-2); line-height: 1.8; }
 .strats { display: grid; gap: 10px; }
 .strat { margin: 0; padding: 0 0 4px; }
 .strat > .head { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; font-weight: 700; padding: 10px 16px 4px; }
+details.strat > summary.head { cursor: pointer; list-style: none; }
+details.strat > summary.head::-webkit-details-marker { display: none; }
+details.strat > summary.head::before { content: "▸"; color: var(--ink-3); font-weight: 400; }
+details.strat[open] > summary.head::before { content: "▾"; }
+details.strat:not([open]) { padding-bottom: 6px; }
 .strat > .head .hl { font-weight: 400; font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
 .strat .charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 4px 22px; padding: 4px 16px 0; }
 .strat details.more { border-top: 1px solid var(--line); margin: 4px 0 0; }
@@ -411,7 +416,7 @@ function cards() {
       ${row("同規則隨機選股（中位數）", "−5.4%／+42.2%")}
       ${row("同期 0050", "+26.2%／+89.9%")}
       <p>回測兩段都贏同規則隨機選股；前段輸 0050、後段贏。2026-10-17 起不再產生新名單（20 年日 K 回測比 FVG 差，見規則與限制），上線紀錄只剩停用前買進的部位。</p></div></details></div>
-    <div class="box strat" id="strat-fvg"><div class="head">${S.fvg} FVG 每日標的 <span class="hl">回測驗證期年化 +11.8%（0050 +24%）・上線紀錄還沒有</span></div>
+    <details class="box strat" id="strat-fvg"><summary class="head">${S.fvg} FVG 每日標的 <span class="hl">回測驗證期年化 +11.8%（0050 +24%）・上線紀錄還沒有</span></summary>
       <div class="charts"><div class="c-bt"></div></div>
       <details class="more"><summary>詳細數值</summary><div class="rows">
       ${row("上線紀錄", "還沒有（目前只列當天的單）")}
@@ -421,8 +426,9 @@ function cards() {
       ${row("同規則、名單裡隨機挑（中位數）", "+10.7%")}
       ${row("不限掛單距離（名單隔天只有 13% 成交）", "+15.5%")}
       ${row("同期 0050 含息年化", "+24%", "up")}
-      <p>只列隔天高機率買得到的單，回測報酬比不限距離低；依缺口排序只比隨機好一點。<b>贏不了買進 0050</b>，2016–2026 裡 2016、2017、2018、2021、2022 都虧。</p></div></details></div>`;
+      <p>只列隔天高機率買得到的單，回測報酬比不限距離低；依缺口排序只比隨機好一點。<b>贏不了買進 0050</b>，2016–2026 裡 2016、2017、2018、2021、2022 都虧。</p></div></details></details>`;
   drawCharts("pb"); drawCharts("fvg");
+  $("#strat-fvg").addEventListener("toggle", () => drawCharts("fvg"));   // 收起來時寬度是 0，打開再畫一次
 }
 let rsz;
 addEventListener("resize", () => { clearTimeout(rsz); rsz = setTimeout(() => { drawCharts("pb"); drawCharts("fvg"); }, 200); });
