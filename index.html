@@ -70,14 +70,17 @@ h2 { font-size: 15px; margin: 0; }
 .sec-hd .note { color: var(--ink-3); font-size: 12.5px; }
 
 /* 最近更新：每類只列最新一篇 */
-.latest { display: grid; grid-template-columns: 1fr 1fr; column-gap: 32px; border-top: 1px solid var(--line); }
-@media (max-width: 760px) { .latest { grid-template-columns: 1fr; } }
+.latest { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; border-top: 1px solid var(--line); }
+@media (max-width: 760px) { .latest { grid-template-columns: minmax(0, 1fr); } }
 .row { all: unset; box-sizing: border-box; display: flex; align-items: baseline; gap: 12px; width: 100%; padding: 8px 2px; border-bottom: 1px solid var(--line);
        cursor: pointer; font-size: 14px; min-width: 0; }
 .row .dt { flex: none; width: 52px; white-space: nowrap; color: var(--ink-3); font-size: 12.5px; font-variant-numeric: tabular-nums; }
 .row .ct { flex: none; width: 92px; color: var(--ink-3); font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.row .tt { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.row .tt.dim { color: var(--ink-2); }
+.row .tx { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.row .tt { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.row .sm { color: var(--ink-3); font-size: 12.5px; line-height: 1.55; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row .sm.lead { color: var(--ink-2); white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.row.lead .tt { font-weight: 700; white-space: normal; }
 .row:hover .tt, .row:focus-visible .tt { color: var(--accent); }
 .row:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; border-radius: 4px; }
 
@@ -88,16 +91,16 @@ h2 { font-size: 15px; margin: 0; }
 .group > .ghd p { color: var(--ink-3); font-size: 13px; margin: 0; }
 .group.method > .ghd h2 { border-left-color: var(--ev-4); font-size: 17px; }
 .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 0 20px; }
-.cat { display: grid; grid-template-columns: 260px 1fr; gap: 6px 28px; padding: 16px 0; }
+.cat { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 6px 28px; padding: 16px 0; }
 .cat + .cat { border-top: 1px solid var(--line); }
-@media (max-width: 760px) { .cat { grid-template-columns: 1fr; } .panel { padding: 0 14px; } }
+@media (max-width: 760px) { .cat { grid-template-columns: minmax(0, 1fr); } .panel { padding: 0 14px; } }
 .cat h3 { font-size: 16px; margin: 0; }
 .cat .how { font-size: 12px; color: var(--ink-3); margin-top: 3px; }
 .tag { font-size: 11.5px; padding: 1px 8px; border-radius: 99px; color: var(--ink-2); }
 .tag.auto { background: var(--tag-auto); } .tag.ask { background: var(--tag-ask); } .tag.in { background: var(--tag-in); }
-.cat .desc { font-size: 12.5px; color: var(--ink-3); margin: 6px 0 0; line-height: 1.6; }
+.cat .desc { font-size: 12.5px; color: var(--ink-3); margin: 6px 0 0; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .cat ul { list-style: none; margin: 0; padding: 0; }
-.cat li .row { padding: 6px 2px; border-bottom: 1px dashed var(--line); }
+.cat li .row { padding: 7px 2px; border-bottom: 1px dashed var(--line); }
 .cat li:last-child .row { border-bottom: 0; }
 .cat .more { all: unset; cursor: pointer; margin-top: 6px; font-size: 13px; color: var(--accent); }
 .cat .more:hover { text-decoration: underline; }
@@ -159,7 +162,7 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
   </div>
 
   <section id="latestSec">
-    <div class="sec-hd"><h2>最近更新</h2><span class="note">每一類最新的一篇（盤前預估在上面）</span></div>
+    <div class="sec-hd"><h2>最近更新</h2><span class="note">每一類最新的一篇</span></div>
     <div class="latest" id="latest"></div>
   </section>
 
@@ -204,12 +207,18 @@ let CATS = [], ALL = [], GROUPS = [], HERO = null;
 const short = t => t.replace(/[（(]\s*\d{4}-\d{2}(?:-\d{2})?\s*[）)]/g, "").replace(/\s+\d{4}-\d{2}-\d{2}\s*$/, "").replace(/^\d{4}-\d{2}-\d{2}\s+/, "").trim() || t;
 let YEAR = "";
 const day = d => !d ? "—" : d.length === 10 && d.startsWith(YEAR) ? d.slice(5) : d;   // 今年的日期只寫月-日
-function row(r, withCat, cat) {
+// 標題都一樣（盤前預估、外資動向…）的類別，主文字改用報告裡抽出的一句話
+function label(r, cat, dup) {
   let t = short(r.title);
   if (cat && t.startsWith(cat + "：")) t = t.slice(cat.length + 1);   // 類別裡不用再寫「題材鏈分析：」
+  const generic = t === cat || (dup && dup[t] > 1);
+  return { t, generic, main: generic && r.sum ? r.sum : t, sub: generic ? "" : r.sum || "" };
+}
+function row(r, withCat, cat, dup, lead) {
+  const L = label(r, withCat ? r.cat : cat, dup);
   const ct = withCat ? `<span class="ct">${esc(r.cat)}</span>` : "";
-  const tt = withCat && t === r.cat ? `<span class="tt dim">最新一期</span>` : `<span class="tt">${esc(t)}</span>`;
-  return `<button class="row" data-path="${esc(r.path)}" title="${esc(r.title)}"><span class="dt">${esc(day(r.date))}</span>${ct}${tt}</button>`;
+  const sub = !withCat && L.sub ? `<span class="sm${lead ? " lead" : ""}">${esc(L.sub)}</span>` : "";
+  return `<button class="row${lead ? " lead" : ""}" data-path="${esc(r.path)}" title="${esc(r.title)}"><span class="dt">${esc(day(r.date))}</span>${ct}<span class="tx"><span class="tt">${esc(L.main)}</span>${sub}</span></button>`;
 }
 
 const WD = "日一二三四五六";
@@ -250,7 +259,9 @@ function render() {
   $("#latest").innerHTML = newest.sort((a, b) => (b.date || "").localeCompare(a.date || "")).slice(0, 10).map(r => row(r, true)).join("");
   const card = c => {
     const n = c.items.length;
-    const body = n ? `<ul>${c.items.map((r, i) => `<li data-t="${esc(r.title.toLowerCase())}"${i >= SHOW ? ' data-x="1" class="hide"' : ""}>${row(r, false, c.name)}</li>`).join("")}</ul>
+    const dup = {};
+    c.items.forEach(r => { const t = label(r, c.name).t; dup[t] = (dup[t] || 0) + 1; });
+    const body = n ? `<ul>${c.items.map((r, i) => `<li data-t="${esc((r.title + " " + (r.sum || "")).toLowerCase())}"${i >= SHOW ? ' data-x="1" class="hide"' : ""}>${row(r, false, c.name, dup, i === 0)}</li>`).join("")}</ul>
              ${n > SHOW ? `<button class="more">全部 ${n} 篇</button>` : ""}`
           : `<div class="empty">還沒有這類報告。</div>`;
     return `<section class="cat" data-key="${c.key}">
