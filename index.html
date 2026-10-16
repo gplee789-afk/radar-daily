@@ -103,7 +103,7 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
       <button id="themeBtn" title="切換深色／淺色" aria-label="切換深色／淺色">◐</button>
     </nav>
   </header>
-  <p class="sub" id="intro">這裡收著專案產出的每一種報告。標籤說明報告怎麼來的：<span class="tag auto">每天自動</span> 每晚的排程產生，<span class="tag ask">請 Claude 寫</span> 在對話裡請 Claude 研究後寫成。</p>
+  <p class="sub" id="intro">這裡收著專案產出的每一種報告。標籤說明報告怎麼來的：<span class="tag auto">每天自動</span> 每晚的排程產生，<span class="tag ask">不定期更新</span> 有新題材或新研究時才寫。</p>
   <input id="q" type="search" placeholder="搜尋報告標題，例如：記憶體、玻璃基板、估值" aria-label="搜尋報告">
   <nav class="gnav" id="gnav" aria-label="報告區塊"></nav>
 
@@ -133,7 +133,7 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
 <script>
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-const TAG = { "每天自動": "auto", "每月自動": "auto", "每週更新": "auto", "請 Claude 寫": "ask", "每天自動＋深挖": "ask" };
+const TAG = { "每天自動": "auto", "每月自動": "auto", "每週更新": "auto", "不定期更新": "ask", "每天自動＋深挖": "ask" };
 const SHOW = 5;
 let CATS = [], ALL = [], GROUPS = [];
 

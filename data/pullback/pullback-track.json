@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-16 21:06",
+ "generated": "2026-10-16 22:51",
  "asof": "2026-10-16",
  "rule": {
   "hold": 20,
@@ -7,18 +7,25 @@
   "bench": "0050",
   "start": "2026-10-15",
   "per_day": 3,
-  "max_pos": 15
+  "max_pos": 15,
+  "bear_p_up": 15.0
  },
  "days": [
   {
    "date": "2026-10-16",
    "tv": true,
-   "n": 28
+   "n": 28,
+   "entry_day": null,
+   "pm_p_up": null,
+   "decision": "等下一個交易日 08:10 的盤前預估"
   },
   {
    "date": "2026-10-15",
    "tv": false,
-   "n": 48
+   "n": 48,
+   "entry_day": "2026-10-16",
+   "pm_p_up": 30.2,
+   "decision": "照常買"
   }
  ],
  "trades": [
