@@ -71,6 +71,29 @@ details.box li { font-size: 13.5px; color: var(--ink-2); line-height: 1.8; }
 .card .row:first-of-type { border-top: 0; }
 .card .row span:first-child { color: var(--ink-3); }
 .card p { font-size: 12.5px; color: var(--ink-2); margin: 8px 0 0; }
+.strats { display: grid; gap: 10px; }
+details.strat { margin: 0; }
+details.strat > summary { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
+details.strat > summary .hl { font-weight: 400; font-size: 13px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+details.strat .body { border-top: 1px solid var(--line); padding: 10px 16px 14px; display: grid; grid-template-columns: minmax(260px, 1fr) minmax(300px, 2fr); gap: 14px 22px; }
+@media (max-width: 760px) { details.strat .body { grid-template-columns: 1fr; } }
+details.strat .rows .row { display: flex; justify-content: space-between; gap: 10px; font-size: 13.5px; padding: 3px 0; border-top: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+details.strat .rows .row:first-child { border-top: 0; }
+details.strat .rows .row span:first-child { color: var(--ink-3); }
+details.strat .rows p { font-size: 12.5px; color: var(--ink-2); margin: 8px 0 0; }
+.chart { margin-bottom: 12px; min-width: 0; }
+.chart h4 { margin: 0 0 2px; font-size: 13.5px; }
+.chart .legend { display: flex; flex-wrap: wrap; gap: 2px 14px; font-size: 12px; color: var(--ink-2); margin: 2px 0 4px; }
+.chart .legend i { display: inline-block; width: 16px; height: 0; border-top: 2px solid; vertical-align: middle; margin-right: 5px; }
+.chart .legend i.dash { border-top-style: dashed; }
+.chart .plot { position: relative; }
+.chart svg { display: block; max-width: 100%; height: auto; overflow: visible; touch-action: pan-y; }
+.chart svg text { font-size: 11px; fill: var(--ink-3); font-variant-numeric: tabular-nums; }
+.chart .tip { position: absolute; pointer-events: none; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 6px 9px; font-size: 12px; color: var(--ink); white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,.25); display: none; z-index: 2; }
+.chart .tip b { font-weight: 600; }
+.chart .tip .r { display: flex; justify-content: space-between; gap: 12px; }
+.chart .tip i { display: inline-block; width: 10px; height: 0; border-top: 2px solid; vertical-align: middle; margin-right: 5px; }
+.chart .cap { font-size: 12px; color: var(--ink-3); margin: 2px 0 0; }
 .excl { font-size: 13px; color: var(--ink-2); margin: 0; padding: 8px 16px 12px 34px; border-top: 1px solid var(--line); }
 #toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 6px 14px; border-radius: 99px; font-size: 13px; opacity: 0; transition: opacity .2s; pointer-events: none; }
 #toast.on { opacity: 1; }
@@ -101,22 +124,22 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
   <div class="tbl" id="todo"></div>
 
   <h2>② 目前持有<span class="n" id="holdN"></span></h2>
-  <p class="hint">回檔紀錄裡還沒出場的部位（收盤跌破停損就出場、最多 20 個交易日），加上 FVG 今天已經成交的單（FVG 目前還沒有持倉追蹤）。</p>
+  <p class="hint">回檔紀錄裡還沒出場的部位（收盤跌破停損就出場、最多 20 個交易日），加上 FVG 今天成交、算買進的單（FVG 目前還沒有持倉追蹤）。</p>
   <div class="tbl" id="hold"></div>
 
   <h2>③ 觀察名單</h2>
-  <p class="hint">回檔名單裡這天沒輪到買的股票（每天最多買 3 筆）。不用動作，預設收起來。</p>
+  <p class="hint">FVG 沒進前 5 名的單、成交了但沒算買進的單，和回檔名單裡這天沒輪到買的股票（兩邊都是每天最多買 3 筆）。不用動作，預設收起來。</p>
   <div id="watch"></div>
 
   <h2>④ 策略成績</h2>
   <p class="hint">兩個都要拿來跟買 0050 比：贏不了 0050 的選股就沒有意義。</p>
-  <div class="cards" id="cards"></div>
+  <div class="strats" id="cards"></div>
   <div id="logDetail"></div>
 
   <details class="box">
     <summary>規則與限制</summary>
     <ul>
-      <li><span class="chip fvg">FVG</span> <b>股票池</b>成交值前 150 名。<b>訊號</b>：日 K 多方 FVG，缺口 ≥ 1 ATR，上緣以上沒有還活著的空方 OB。<b>進場</b>：成立後 3 個交易日內在上緣掛限價買，開盤在停損以下就撤單。<b>停損</b>：下緣 − 0.1 ATR；收盤跌破前 10 天最低隔天開盤賣，最多 120 天。收盤在 60 日高 3% 以內的淡化顯示（創高中，不追）。</li>
+      <li><span class="chip fvg">FVG</span> <b>股票池</b>成交值前 300 名。<b>訊號</b>：日 K 多方 FVG，缺口 ≥ 1 ATR，上緣以上沒有還活著的空方 OB。<b>觀察名單</b>：還能掛的單依缺口大小（ATR 倍）排序，只掛前 5 名。<b>進場</b>：成立後 10 個交易日內在上緣掛限價買，開盤在停損以下就撤單；同一天成交超過 3 檔只算名次前 3 的，沒成交就不買（2026-10-17 起；之前是前 150 名、掛 3 天、每張都掛）。<b>停損</b>：下緣 − 0.1 ATR；收盤跌破前 10 天最低隔天開盤賣，最多 120 天。收盤在 60 日高 3% 以內的淡化顯示（創高中，不追）。</li>
       <li><span class="chip pb">回檔</span> <b>股票池</b>成交值前 300 名。<b>條件</b>（60 分 K）：離 60 日高 ≥ 8%，價格在多方 FVG 或 OB 裡或上緣上方 3% 內，上方空方 OB／FVG 都在 3% 外。<b>分級</b>：上方空間 ≥ 5% 為 A、3–5% 為 B，A 裡法人當天買超、5 日買超 ≥ 5,000 張為優先。<b>進場</b>：隔天開盤買，每天最多 3 筆、同時最多 15 筆；進場日 08:10 盤前預估 P(收紅) &lt; 15% 整天不買。<b>停損</b>：收盤跌破支撐下緣再往下 0.5 個日 ATR（FVG 下緣為主，只有 OB 才用 OB 下緣），最多 20 個交易日。<b>回測</b>（2024-01～2026-09）：停損放寬 0.5 ATR 比停在下緣剛好兩段期間都好，2024-01～2025-03 年化 +0.4%（0050 +26.2%）、2025-04～2026-09 +122%（0050 +89.9%），兩段都贏同規則隨機選股的中位數。</li>
       <li>FVG 用 Yahoo 日 K、每個交易日 21:30 更新；回檔名單 07:30 產生、08:50 依盤前預估決定買不買（09:00 開盤前更新），14:45 收盤後更新持有部位。兩邊同一檔股票的停損可能不同，各照各的規則。</li>
       <li>研究輔助，不是投資建議。紀錄是照規則模擬的，不是實際成交。</li>
@@ -182,11 +205,12 @@ let FVG_IDX = { dates: [] }, PB_IDX = { dates: [] }, LOG = null;
 function todo(day, F, PB) {
   const dec = LOG && LOG.days.find(x => x.date === day);
   const rows = [];
-  if (F) for (const r of F.picks.filter(r => r.status === "pending")) rows.push({
+  if (F) for (const r of fvgWatch(F)) rows.push({
     s: "fvg", r, day, ind: r.industry, dim: r.near_high,
     act: `限價買 ${px(r.entry)}`, ref: r.entry, stop: r.stop,
     zone: `FVG ${px(r.btm)}–${px(r.top)}`,
-    note: [r.near_high ? '<span class="chip warn">創高中</span>' : "", r.with_ob ? '<span class="chip ok">與多方 OB 重疊</span>' : "",
+    note: [r.watch ? `<span class="chip ok">第 ${r.watch} 名</span>` : "", `<span class="chip mute">缺口 ${r.gap_atr} ATR</span>`,
+      r.near_high ? '<span class="chip warn">創高中</span>' : "", r.with_ob ? '<span class="chip ok">與多方 OB 重疊</span>' : "",
       r.bfv ? `<span class="chip warn">上方空方 FVG ${r.bfv}</span>` : "", `<span class="chip mute">還能掛 ${r.days_left} 天</span>`].join(" "),
     dd60: -r.below_high_pct, rank: r.rank,
   });
@@ -208,7 +232,7 @@ function todo(day, F, PB) {
   $("#todoN").textContent = `${rows.length} 筆（FVG ${fN}・回檔 ${pbN}）`;
   const decTxt = !dec ? "" : dec.decision === "照常買" ? `回檔：進場日 ${esc((dec.entry_day || "").slice(5))} 盤前 P(收紅) ${dec.pm_p_up?.toFixed(0)}%，照常買。`
     : dec.decision.endsWith("不買") ? `回檔：進場日盤前判斷「${esc(dec.decision)}」，這天的單都不買。` : `回檔：${esc(dec.decision)}（P(收紅) < 15% 就整天不買）。`;
-  $("#todoHint").innerHTML = `${esc(day)} 收盤後產生、下一個交易日執行。FVG 在掛單價掛限價買，開盤就在停損以下撤單；回檔開盤買，開盤在停損以下跳過。${decTxt}`;
+  $("#todoHint").innerHTML = `${esc(day)} 收盤後產生、下一個交易日執行。FVG 只掛缺口最大的前 5 檔，在掛單價掛限價買，開盤就在停損以下撤單；同一天成交超過 3 檔只算名次前 3 的，沒成交就不買；回檔開盤買，開盤在停損以下跳過。${decTxt}`;
   if (!rows.length) { $("#todo").innerHTML = '<div class="empty">這天兩個策略都沒有要下的單。沒有單是常態，不用勉強找。</div>'; return; }
   $("#todo").innerHTML = `<table><thead><tr><th class="l">策略</th><th class="l">代號</th><th class="l">名稱</th><th class="l">動作</th><th>停損</th><th>停損距離</th>
     <th class="l">支撐／訊號區</th><th>離 60 日高</th><th>成交值排名</th><th class="l">備註</th></tr></thead><tbody>`
@@ -224,9 +248,10 @@ function hold(day, F) {
   const rows = [];
   for (const t of (LOG ? LOG.trades.filter(t => t.status === "持有中") : [])) rows.push({ s: "pullback", r: t, day: t.date,
     entry_date: t.entry_date, entry: t.entry, stop: t.stop, last: t.exit, ret: t.ret, days: t.days, bench: t.bench, tag: gchip(t.grade) });
-  if (F) for (const r of F.picks.filter(r => r.status === "filled")) rows.push({ s: "fvg", r, day: F.date, ind: r.industry,
+  if (F) for (const r of F.picks.filter(r => r.status === "filled" && r.buy !== false)) rows.push({ s: "fvg", r, day: F.date, ind: r.industry,
     entry_date: F.date, entry: r.entry, stop: r.stop, last: r.close, ret: (r.close / r.entry - 1) * 100, days: 0, bench: null,
-    tag: r.stopped_today ? '<span class="chip bad">今天收在停損下</span>' : '<span class="chip mute">今天成交</span>' });
+    tag: (r.stopped_today ? '<span class="chip bad">今天收在停損下</span>' : '<span class="chip mute">今天成交</span>')
+      + (r.prev_watch ? ` <span class="chip ok">前一天第 ${r.prev_watch} 名</span>` : "") });
   rows.sort((a, b) => (b.entry_date || "").localeCompare(a.entry_date || ""));
   $("#holdN").textContent = `${rows.length} 筆` + (LOG ? `・價格更新到 ${LOG.asof}` : "");
   if (!rows.length) { $("#hold").innerHTML = '<div class="empty">目前沒有持有。</div>'; return; }
@@ -239,13 +264,30 @@ function hold(day, F) {
 }
 
 // ---------- ③ 觀察名單 ----------
-function watch(day, PB) {
-  if (!PB) { $("#watch").innerHTML = `<div class="tbl"><div class="empty">回檔：${esc(day)} 沒有名單。</div></div>`; return; }
+// FVG：檔案有 watch 欄位（2026-10-17 起）就只掛前 5 名；更早的檔案每張都掛
+const fvgWatch = F => { const p = F.picks.filter(r => r.status === "pending"); return p.some(r => "watch" in r) ? p.filter(r => r.watch) : p; };
+
+function fvgRest(day, F) {
+  if (!F) return "";
+  const shown = new Set(fvgWatch(F));
+  const rest = F.picks.filter(r => r.status === "pending" && !shown.has(r)), nb = F.picks.filter(r => r.status === "filled" && r.buy === false);
+  if (!rest.length && !nb.length) return "";
+  return `<details class="box"><summary>FVG 沒進前 5 的單 ${esc(day)}<span class="n">還能掛 ${rest.length} 張・今天成交沒算買進 ${nb.length} 張</span></summary>
+    <div class="tbl"><table><thead><tr><th class="l">代號</th><th class="l">名稱</th><th>收盤</th><th>掛單／成交價</th><th>停損</th><th>缺口 ATR</th>
+    <th>離 60 日高</th><th>成交值排名</th><th class="l">狀態</th></tr></thead><tbody>`
+    + [...rest, ...nb].map(r => `<tr class="${r.near_high ? "dim" : ""}"><td class="l">${codeCell(r)}</td><td class="l">${nameCell(r, "fvg", day, r.industry)}</td>
+      <td class="px">${px(r.close)}</td><td>${px(r.entry)}</td><td class="stop">${px(r.stop)}</td><td>${r.gap_atr}</td><td>${pct(-r.below_high_pct)}</td><td>${r.rank}</td>
+      <td class="l">${r.status === "pending" ? `<span class="chip mute">還能掛 ${r.days_left} 天</span>` : `<span class="chip bad">不買：${esc(r.why || "")}</span>`}</td></tr>`).join("")
+    + "</tbody></table></div></details>";
+}
+
+function watch(day, PB, F) {
+  if (!PB) { $("#watch").innerHTML = fvgRest(day, F) + `<div class="tbl"><div class="empty">回檔：${esc(day)} 沒有名單。</div></div>`; return; }
   const tm = Object.fromEntries((LOG ? LOG.trades : []).filter(t => t.date === day).map(t => [t.code, t]));
   const rest = PB.picks.filter(p => { const t = tm[p.code]; return !(t && (t.status === "待進場（預定買）" || t.entry != null)); });
   const n = g => rest.filter(p => p.grade === g).length;
   const ex = Object.entries(PB.excluded || {});
-  $("#watch").innerHTML = `<details class="box"><summary>回檔名單 ${esc(day)}<span class="n">${rest.length} 檔・優先 ${n("優先")}・A ${n("A")}・B ${n("B")}${PB.tv ? "・TV 確認" : "・自動分級"}${ex.length ? `・剔除 ${ex.length}` : ""}</span></summary>
+  $("#watch").innerHTML = fvgRest(day, F) + `<details class="box"><summary>回檔名單 ${esc(day)}<span class="n">${rest.length} 檔・優先 ${n("優先")}・A ${n("A")}・B ${n("B")}${PB.tv ? "・TV 確認" : "・自動分級"}${ex.length ? `・剔除 ${ex.length}` : ""}</span></summary>
     <div class="tbl"><table><thead><tr><th class="l">級別</th><th class="l">代號</th><th class="l">名稱</th><th>收盤</th><th class="l">支撐區</th><th>停損</th><th>停損距離</th>
     <th>上方空間</th><th>離 60 日高</th><th>近 5 日</th><th>法人 5 日</th><th>成交值排名</th><th class="l">紀錄</th></tr></thead><tbody>`
     + rest.map(r => { const t = tm[r.code]; return `<tr><td class="l">${gchip(r.grade)}</td><td class="l">${codeCell(r)}</td><td class="l">${nameCell(r, "pullback", day)}</td>
@@ -256,12 +298,121 @@ function watch(day, PB) {
     + (ex.length ? `<ul class="excl">${ex.map(([c, why]) => `<li><b>${esc(c)}</b>：${esc(why)}</li>`).join("")}</ul>` : "") + "</details>";
 }
 
-// ---------- ④ 策略成績 ----------
+// ---------- ④ 策略成績：兩個策略各一個折疊區塊，點開才畫損益折線圖 ----------
+let CURVES = null;
+const cssv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+// 折線圖：series [{name, color, dash, pts:[[日期, 累積報酬%]]}]；log = 對數刻度（長期）；split = 挑參數／驗證的分界
+function lineChart(el, { series, log = false, split = null, title = "", cap = "" }) {
+  if (!el) return;
+  const w0 = el.getBoundingClientRect().width;
+  if (w0 < 50) { requestAnimationFrame(() => lineChart(el, { series, log, split, title, cap })); return; }   // 還沒排版好
+  const W = Math.round(w0), H = 210, L = 46, R = 58, T = 8, B = 22;
+  const all = series.flatMap(s => s.pts);
+  if (!all.length) { el.innerHTML = `<div class="chart"><h4>${esc(title)}</h4><div class="empty">還沒有資料。</div></div>`; return; }
+  const tx = d => new Date(d + "T00:00:00").getTime();
+  const x0 = Math.min(...all.map(p => tx(p[0]))), x1 = Math.max(...all.map(p => tx(p[0])));
+  const f = v => log ? Math.log(1 + v / 100) : v;
+  let y0 = Math.min(0, ...all.map(p => f(p[1]))), y1 = Math.max(0, ...all.map(p => f(p[1])));
+  const pad = (y1 - y0) * 0.06 || 1; y0 -= pad; y1 += pad;
+  const X = t => L + (x1 > x0 ? (t - x0) / (x1 - x0) : 0.5) * (W - L - R);
+  const Y = v => T + (1 - (f(v) - y0) / (y1 - y0)) * (H - T - B);
+  const ticks = [];
+  if (log) { for (const m of [0.5, 1, 2, 3, 5, 10, 20, 50, 100]) { const v = (m - 1) * 100; if (f(v) >= y0 && f(v) <= y1) ticks.push(v); } }
+  else {
+    const raw = (y1 - y0) / 4, mag = 10 ** Math.floor(Math.log10(raw)), st = [1, 2, 5, 10].map(k => k * mag).find(k => k >= raw);
+    for (let v = Math.ceil(y0 / st) * st; v <= y1; v += st) ticks.push(Math.round(v * 1e6) / 1e6);
+  }
+  const sp = v => (v > 0 ? "+" : "") + (Math.abs(v) >= 100 ? v.toFixed(0) : v.toFixed(Math.abs(v) < 10 ? 2 : 1)) + "%";
+  const yrs = (x1 - x0) / 3.15e10, xt = [], d0 = new Date(x0), d1 = new Date(x1);
+  if (yrs > 1.5) { const step = yrs > 8 ? 2 : 1; for (let y = d0.getFullYear() + 1; y <= d1.getFullYear(); y += step) xt.push([new Date(y, 0, 1).getTime(), String(y)]); }
+  else if (yrs > 0.15) { for (let d = new Date(d0.getFullYear(), d0.getMonth() + 1, 1); d <= d1; d.setMonth(d.getMonth() + (yrs > 0.6 ? 3 : 1))) xt.push([d.getTime(), `${d.getFullYear() % 100}/${d.getMonth() + 1}`]); }
+  else for (const p of series[0].pts) xt.push([tx(p[0]), p[0].slice(5)]);
+  let g = ticks.map(v => `<line x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}" stroke="${cssv(v === 0 ? "--ink-3" : "--line")}" ${v === 0 ? "" : 'stroke-dasharray="2 3"'}/>`
+    + `<text x="${L - 6}" y="${Y(v) + 4}" text-anchor="end">${sp(v)}</text>`).join("");
+  g += xt.map(([t, lab]) => `<text x="${X(t)}" y="${H - 5}" text-anchor="middle">${lab}</text>`).join("");
+  if (split) {
+    const sx = X(tx(split.date));
+    if (sx > L && sx < W - R) g += `<line x1="${sx}" x2="${sx}" y1="${T}" y2="${H - B}" stroke="${cssv("--ink-3")}" stroke-dasharray="4 3"/>`
+      + `<text x="${sx - 4}" y="${T + 10}" text-anchor="end">${esc(split.left)}</text><text x="${sx + 4}" y="${T + 10}">${esc(split.right)}</text>`;
+  }
+  const ends = [];
+  for (const s of series) {
+    if (!s.pts.length) continue;
+    const d = s.pts.map((p, k) => `${k ? "L" : "M"}${X(tx(p[0])).toFixed(1)},${Y(p[1]).toFixed(1)}`).join("");
+    g += `<path d="${d}" fill="none" stroke="${s.color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" ${s.dash ? 'stroke-dasharray="5 4"' : ""}/>`;
+    if (s.pts.length === 1) { const p = s.pts[0]; g += `<circle cx="${X(tx(p[0]))}" cy="${Y(p[1])}" r="4" fill="${s.color}" stroke="${cssv("--panel")}" stroke-width="2"/>`; }
+    const lp = s.pts[s.pts.length - 1]; ends.push({ y: Y(lp[1]), v: lp[1], c: s.color });
+  }
+  ends.sort((a, b) => a.y - b.y);
+  for (let k = 1; k < ends.length; k++) if (ends[k].y - ends[k - 1].y < 13) ends[k].y = ends[k - 1].y + 13;
+  g += ends.map(e => `<rect x="${W - R + 6}" y="${e.y - 1}" width="8" height="2" fill="${e.c}"/><text x="${W - R + 17}" y="${e.y + 4}" style="fill:${cssv("--ink-2")}">${sp(e.v)}</text>`).join("");
+  g += `<line class="cross" x1="0" x2="0" y1="${T}" y2="${H - B}" stroke="${cssv("--ink-2")}" visibility="hidden"/>`;
+  const legend = series.map(s => `<span><i class="${s.dash ? "dash" : ""}" style="border-color:${s.color}"></i>${esc(s.name)}</span>`).join("");
+  el.innerHTML = `<div class="chart"><h4>${esc(title)}</h4><div class="legend">${legend}</div>
+    <div class="plot"><svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${esc(title)}">${g}</svg><div class="tip"></div></div>
+    ${cap ? `<p class="cap">${cap}</p>` : ""}</div>`;
+  const svg = el.querySelector("svg"), tip = el.querySelector(".tip"), cross = el.querySelector(".cross");
+  const near = (pts, t) => { let b = null, bd = Infinity; for (const p of pts) { const dd = Math.abs(tx(p[0]) - t); if (dd < bd) { bd = dd; b = p; } } return b; };
+  const hide = () => { tip.style.display = "none"; cross.setAttribute("visibility", "hidden"); };
+  const move = ev => {
+    const r = svg.getBoundingClientRect(), mx = (ev.clientX - r.left) * W / r.width;
+    if (mx < L - 4 || mx > W - R + 4) return hide();
+    const t = x0 + Math.min(1, Math.max(0, (mx - L) / (W - L - R))) * (x1 - x0), p0 = near(series[0].pts, t), cx = X(tx(p0[0]));
+    cross.setAttribute("x1", cx); cross.setAttribute("x2", cx); cross.setAttribute("visibility", "visible");
+    tip.innerHTML = `<b>${esc(p0[0])}</b>` + series.filter(s => s.pts.length).map(s => {
+      const p = near(s.pts, tx(p0[0]));
+      return `<div class="r"><span><i style="border-color:${s.color}"></i>${esc(s.name)}</span><span>${sp(p[1])}</span></div>`;
+    }).join("");
+    tip.style.display = "block";
+    const left = cx / W * r.width;
+    tip.style.left = Math.max(0, Math.min(left + 12, r.width - tip.offsetWidth - 4)) + "px"; tip.style.top = "6px";
+  };
+  svg.addEventListener("pointermove", move); svg.addEventListener("pointerdown", move); svg.addEventListener("pointerleave", hide);
+}
+
+function drawCharts(which) {
+  const box = document.getElementById("strat-" + which);
+  if (!box || !box.open) return;
+  const ink3 = cssv("--ink-3"), ink2 = cssv("--ink-2");
+  const pick = (c, k) => (c.series.find(s => s.key === k) || { pts: [] }).pts;
+  if (which === "pb") {
+    const eq = LOG && LOG.equity ? LOG.equity : [];
+    lineChart(box.querySelector(".c-live"), {
+      title: "上線紀錄：帳戶損益（每筆 1/15 資金、扣成本）",
+      series: [{ name: "回檔到支撐", color: cssv("--pb"), pts: eq.map(e => [e.date, e.pnl]) },
+               { name: "同期 0050", color: ink3, pts: eq.map(e => [e.date, e.bench]) }],
+      cap: eq.length < 5 ? "2026-10-15 才開始記錄，資料點還很少，累積幾週再看走勢。" : "",
+    });
+    const c = CURVES && CURVES.pullback;
+    if (c) lineChart(box.querySelector(".c-bt"), {
+      title: "回測：累積報酬（2024-01～2026-09，週資料）",
+      split: { date: c.split, left: "挑參數", right: "驗證" },
+      series: [{ name: "回檔到支撐", color: cssv("--pb"), pts: pick(c, "strat") },
+               { name: "同規則隨機選股（中位數）", color: ink2, dash: true, pts: pick(c, "rand") },
+               { name: "0050", color: ink3, pts: pick(c, "bench") }],
+      cap: "回測用成交值排名代替法人排序（法人資料只有最近一年）；每筆 1/15 資金、扣成本 0.4%。",
+    });
+  } else {
+    const c = CURVES && CURVES.fvg;
+    if (c) lineChart(box.querySelector(".c-bt"), {
+      title: "回測：累積報酬（2014～2026，對數刻度，週資料）", log: true,
+      split: { date: c.split, left: "挑參數", right: "驗證" },
+      series: [{ name: "FVG 每日標的", color: cssv("--fvg"), pts: pick(c, "strat") },
+               ...(pick(c, "rand").length ? [{ name: "前 5 名隨機挑（中位數）", color: ink2, dash: true, pts: pick(c, "rand") }] : []),
+               { name: "0050（含息）", color: ink3, pts: pick(c, "bench") }],
+      cap: "回測從 2005 年起，但 Yahoo 的 0050 在 2014 年以前資料有誤，所以從 2014 年起畫。對數刻度：一樣的斜率就是一樣的年化報酬。",
+    });
+  }
+}
+
 function cards() {
   const a = LOG ? agg(LOG.trades) : null;
   const row = (k, v, c = "") => `<div class="row"><span>${k}</span><span class="${c}">${v}</span></div>`;
+  const hlPb = (a ? `上線 <span class="${cls(a.pnl)}">${pct(a.pnl, 2)}</span>（0050 ${pct(a.bench, 2)}）・` : "") + "回測年化 +0.4%／+122%";
   $("#cards").innerHTML = `
-    <div class="card"><h3>${S.pb} 回檔到支撐</h3>
+    <details class="box strat" id="strat-pb"><summary>${S.pb} 回檔到支撐 <span class="hl">${hlPb}</span></summary>
+      <div class="body"><div class="rows">
       ${a ? row("上線紀錄（2026-10-15 起）", `買進 ${a.in} 筆・持有 ${a.open}・停損 ${a.stop}`)
         + row("帳戶損益（每筆 1/15 資金）", pct(a.pnl, 2), cls(a.pnl))
         + row("平均每筆（扣成本）", `${pct(a.avg, 2)}・勝率 ${a.win == null ? "–" : a.win.toFixed(0) + "%"}`, cls(a.avg))
@@ -272,14 +423,21 @@ function cards() {
       ${row("同規則隨機選股（中位數）", "−5.4%／+42.2%")}
       ${row("同期 0050", "+26.2%／+89.9%")}
       <p>回測兩段都贏同規則隨機選股；前段輸 0050、後段贏。上線紀錄筆數還太少，先別下結論。</p></div>
-    <div class="card"><h3>${S.fvg} FVG 每日標的</h3>
+      <div style="min-width:0"><div class="c-live"></div><div class="c-bt"></div></div></div></details>
+    <details class="box strat" id="strat-fvg"><summary>${S.fvg} FVG 每日標的 <span class="hl">回測驗證期年化 +15.5%（0050 +24%）・上線紀錄還沒有</span></summary>
+      <div class="body"><div class="rows">
       ${row("上線紀錄", "還沒有（目前只列當天的單）")}
-      ${row("回測驗證期 2016–2026 年化", "+10.8%", "up")}
-      ${row("最大回撤", "−34%", "dn")}
-      ${row("同規則隨機進場", "+1.7%")}
+      ${row("回測驗證期 2016–2026 年化", "+15.5%", "up")}
+      ${row("最大回撤", "−39%", "dn")}
+      ${row("同規則、前 5 名隨機挑（中位數）", "+13.5%（+8.3%～+20.2%）")}
+      ${row("舊規則（前 150 名、掛 3 天、每張都掛）", "+10.8%")}
       ${row("同期 0050 含息年化", "+24%", "up")}
-      <p>訊號比隨機好，但<b>贏不了買進 0050</b>；2011、2012、2014、2016、2018、2021 都虧。</p></div>`;
+      <p>依缺口大小挑前 5 只比隨機挑多一點，還在隨機的範圍內；<b>仍然贏不了買進 0050</b>。2016–2026 裡 2016、2018、2022、2024 都虧。</p></div>
+      <div style="min-width:0"><div class="c-bt"></div></div></div></details>`;
+  for (const k of ["pb", "fvg"]) document.getElementById("strat-" + k).addEventListener("toggle", () => drawCharts(k));
 }
+let rsz;
+addEventListener("resize", () => { clearTimeout(rsz); rsz = setTimeout(() => { drawCharts("pb"); drawCharts("fvg"); }, 200); });
 
 // 回檔紀錄明細：原本 pullback.html 的「依級別」「依名單日期」，只列真的有買或預定買的
 function logDetail() {
@@ -326,7 +484,7 @@ async function load(day) {
     FVG_IDX.dates.includes(day) ? getJSON(`data/fvg/fvg-${day}.json`).catch(() => null) : null,
     PB_IDX.dates.includes(day) ? getJSON(`data/pullback/pullback-${day}.json`).catch(() => null) : null,
   ]);
-  strip(day, F, PB); todo(day, F, PB); hold(day, F); watch(day, PB);
+  strip(day, F, PB); todo(day, F, PB); hold(day, F); watch(day, PB, F);
   try { history.replaceState(null, "", `#${day}`); } catch (e) {}
 }
 
@@ -336,6 +494,7 @@ async function load(day) {
     getJSON("data/pullback/index.json").catch(() => ({ dates: [] })),
     getJSON("data/pullback/pullback-track.json").catch(() => null),
   ]);
+  getJSON("data/pullback/strategy-curves.json").then(c => { CURVES = c; drawCharts("pb"); drawCharts("fvg"); }).catch(() => {});
   const days = [...new Set([...FVG_IDX.dates, ...PB_IDX.dates])].sort().reverse();
   cards(); logDetail();
   if (!days.length) { $("#todo").innerHTML = '<div class="empty">還沒有資料。</div>'; return; }
