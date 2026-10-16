@@ -152,7 +152,6 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
       <button id="themeBtn" title="切換深色／淺色" aria-label="切換深色／淺色">◐</button>
     </nav>
   </header>
-  <p class="sub" id="intro">專案產出的每一種報告。<span class="tag auto">每天自動</span> 是每晚排程產生，<span class="tag ask">不定期更新</span> 是有新題材或新研究時才寫。</p>
 
   <section class="hero hide" id="hero" aria-labelledby="heroTitle"></section>
 
@@ -162,13 +161,13 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
   </div>
 
   <section id="latestSec">
-    <div class="sec-hd"><h2>最近更新</h2><span class="note">每一類最新的一篇</span></div>
+    <div class="sec-hd"><h2>最近更新</h2></div>
     <div class="latest" id="latest"></div>
   </section>
 
   <div id="groups"></div>
 
-  <footer>研究輔助，不是投資建議。分數與模型都是啟發式的，用來決定先研究什麼；新聞只當線索，數字以公開資訊觀測站、證交所與公司財報為準。</footer>
+  <footer>研究輔助，不是投資建議。</footer>
 </div>
 
 <div id="reader" aria-hidden="true">
@@ -218,7 +217,7 @@ function row(r, withCat, cat, dup, lead) {
   const L = label(r, withCat ? r.cat : cat, dup);
   const ct = withCat ? `<span class="ct">${esc(r.cat)}</span>` : "";
   const sub = !withCat && L.sub ? `<span class="sm${lead ? " lead" : ""}">${esc(L.sub)}</span>` : "";
-  return `<button class="row${lead ? " lead" : ""}" data-path="${esc(r.path)}" title="${esc(r.title)}"><span class="dt">${esc(day(r.date))}</span>${ct}<span class="tx"><span class="tt">${esc(L.main)}</span>${sub}</span></button>`;
+  return `<button class="row${lead ? " lead" : ""}" data-path="${esc(r.path)}" title="${esc(r.full || r.title)}"><span class="dt">${esc(day(r.date))}</span>${ct}<span class="tx"><span class="tt">${esc(L.main)}</span>${sub}</span></button>`;
 }
 
 const WD = "日一二三四五六";
@@ -239,7 +238,7 @@ function hero(h) {
               h.lo != null && ["可能區間", `<b>${h.lo_pt.toLocaleString()} ～ ${h.hi_pt.toLocaleString()}</b>（${sgn(h.lo)}% ～ ${sgn(h.hi)}%，8 成機率落在這裡）`]]
              .filter(Boolean).map(([a, b]) => `<span>${a}</span><span>${b}</span>`).join("");
   const track = (h.track || []).map(t => `<button class="tr" data-path="${esc(t.path)}"><span class="d">${esc(t.date.slice(5))}</span>
-      <span${t.redo != null ? ` title="當天正式發布 ${t.p_up}%；報告事後依修正算法重算為 ${t.redo}%"` : ""}>收紅 ${t.p_up}%${t.redo != null ? "*" : ""}</span><span class="${t.act == null ? "" : t.act > 0 ? "up" : "down"}">${t.act == null ? "等收盤" : "實際 " + sgn(t.act) + "%"}</span>
+      <span>收紅 ${t.p_up}%</span><span class="${t.act == null ? "" : t.act > 0 ? "up" : "down"}">${t.act == null ? "等收盤" : "實際 " + sgn(t.act) + "%"}</span>
       <span class="${t.hit ? "ok" : "ng"}" title="${t.hit == null ? "" : t.hit ? "猜對方向" : "猜錯方向"}">${t.hit == null ? "" : t.hit ? "✓" : "✗"}</span></button>`).join("");
   $("#hero").innerHTML = `<div class="hhd"><h2 id="heroTitle">今日大盤</h2><span class="when">${esc(when)}</span>
       <a href="#" data-path="${esc(h.path)}">看完整預估與依據 →</a></div>
@@ -247,8 +246,7 @@ function hero(h) {
       <div><div class="lbl">加權指數收紅機率</div><div class="pct ${tone(h.p_up)}">${h.p_up}%</div><div class="verdict ${tone(h.p_up)}">${verdict}</div></div>
       <div><div class="kv">${kv}</div>${scen}</div>
       <div class="track"><h3>最近幾天：預估 vs. 實際收盤</h3>${track}
-        ${(h.track || []).some(t => t.redo != null) ? `<div class="acc">* 對答案用當天正式發布的數字；報告頁面上是事後修正算法重算的版本。</div>` : ""}
-        ${h.acc ? `<div class="acc">過去 8 年回測猜對方向 ${h.acc}%（每天都猜收紅只有 ${h.base}%）。只是機率，突發消息不在模型裡。</div>` : ""}</div>
+        ${h.acc ? `<div class="acc">過去 8 年回測準確率 ${h.acc}%</div>` : ""}</div>
     </div>`;
   $("#hero").classList.remove("hide");
 }
@@ -261,7 +259,7 @@ function render() {
     const n = c.items.length;
     const dup = {};
     c.items.forEach(r => { const t = label(r, c.name).t; dup[t] = (dup[t] || 0) + 1; });
-    const body = n ? `<ul>${c.items.map((r, i) => `<li data-t="${esc((r.title + " " + (r.sum || "")).toLowerCase())}"${i >= SHOW ? ' data-x="1" class="hide"' : ""}>${row(r, false, c.name, dup, i === 0)}</li>`).join("")}</ul>
+    const body = n ? `<ul>${c.items.map((r, i) => `<li data-t="${esc((r.title + " " + (r.full || "") + " " + (r.sum || "")).toLowerCase())}"${i >= SHOW ? ' data-x="1" class="hide"' : ""}>${row(r, false, c.name, dup, i === 0)}</li>`).join("")}</ul>
              ${n > SHOW ? `<button class="more">全部 ${n} 篇</button>` : ""}`
           : `<div class="empty">還沒有這類報告。</div>`;
     return `<section class="cat" data-key="${c.key}">
