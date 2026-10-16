@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>美光隔夜漲跌 × 股價位階</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&family=Noto+Serif:ital@0;1&family=Noto+Sans+TC:wght@400;500;600&family=Noto+Serif+TC:wght@400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* 配色：diagram-design 設定檔 taiwan-analysis（取自網站 radar/site_library.html） */
+    :root {
+      --paper: #f4f5f2; --node: #ffffff; --ink: #12170f; --muted: #4c5549; --soft: #5f685c;
+      --rule: rgba(18,23,15,0.12); --accent: #0f5c3c; --accent-tint: rgba(15,92,60,0.08);
+      --font-sans: 'Geist', 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', system-ui, sans-serif;
+      --font-serif: 'Instrument Serif', 'Noto Serif', 'Noto Serif TC', serif;
+      --font-mono: 'Geist Mono', ui-monospace, monospace;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --paper: #0c0f0b; --node: #141913; --ink: #eaf1e6; --muted: #a7b3a2; --soft: #8a9686;
+        --rule: rgba(234,241,230,0.12); --accent: #5cc999; --accent-tint: rgba(92,201,153,0.10);
+      }
+    }
+    body { font-family: var(--font-sans); background: var(--paper); color: var(--ink); padding: 20px 16px 24px; }
+    .frame { max-width: 1000px; margin: 0 auto; }
+    .diagram-container { width: 100%; overflow-x: auto; }
+    .eyebrow { font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 4px; }
+    h1 { font-family: var(--font-serif); font-size: clamp(1.4rem, 2.2vw + 0.7rem, 1.9rem); font-weight: 400; line-height: 1.2; margin-bottom: 14px; }
+    svg { width: 100%; min-width: 960px; display: block; }
+    .note { font-size: 13px; line-height: 1.75; color: var(--muted); margin-top: 12px; max-width: 900px; }
+    .note b { color: var(--ink); font-weight: 600; }
+
+    svg .bg { fill: var(--paper); }
+    svg .wire { fill: none; stroke: var(--muted); stroke-width: 1; }
+    svg .box { fill: var(--node); stroke: var(--ink); stroke-width: 1; }
+    svg .box.focal { fill: var(--accent-tint); stroke: var(--accent); stroke-width: 1.2; }
+    svg .tag { fill: none; stroke: var(--soft); stroke-width: 0.8; }
+    svg .tag.focal { stroke: var(--accent); }
+    svg .t-tag { fill: var(--ink); font: 500 12px var(--font-sans); }
+    svg .t-tag.focal { fill: var(--accent); }
+    svg .t-name { fill: var(--ink); font: 600 13px var(--font-sans); }
+    svg .t-root { fill: var(--ink); font: 600 16px var(--font-sans); }
+    svg .t-sub { fill: var(--muted); font: 400 12px var(--font-sans); }
+    svg .t-co { fill: var(--ink); font: 600 12px var(--font-sans); }
+    svg .t-col { fill: var(--muted); font: 500 12px var(--font-sans); }
+    svg .sep { stroke: var(--rule); stroke-width: 0.8; }
+    svg a.node { cursor: pointer; }
+    svg a.node:hover .box, svg a.node:focus-visible .box { stroke-width: 2; }
+    svg a.node:focus-visible { outline: none; }
+    svg .t-go { fill: var(--muted); font: 400 12px var(--font-sans); }
+    svg a.node:hover .t-go { fill: var(--ink); }
+    svg .co a tspan { fill: var(--link); text-decoration: underline; text-decoration-color: rgba(31,99,184,0.35); }
+    svg .co a:hover tspan { text-decoration-color: currentColor; }
+    @media (prefers-color-scheme: dark) { svg .co a tspan { text-decoration-color: rgba(106,166,238,0.4); } }
+    :root { --link: #1f63b8; }
+    @media (prefers-color-scheme: dark) { :root { --link: #6aa6ee; } }
+    @media print { .diagram-container { overflow-x: visible; } svg { min-width: 0; } }
+  
+    /* 熱圖 */
+    svg { min-width: 800px; }
+    svg .cell-v { fill: var(--ink); font: 600 14px var(--font-sans); }
+    svg .cell-s { fill: var(--ink); font: 400 12px var(--font-sans); }
+    svg .cell-v.on, svg .cell-s.on { fill: var(--paper); }
+    svg .colname { fill: var(--ink); font: 600 13px var(--font-sans); }
+    svg .colsub { fill: var(--muted); font: 400 12px var(--font-sans); }
+    svg .rowname { fill: var(--ink); font: 600 13px var(--font-sans); }
+    svg .rowsub { fill: var(--muted); font: 400 12px var(--font-sans); }
+    svg .axis-title { fill: var(--muted); font: 500 12px var(--font-sans); }
+    svg .key { fill: var(--ink); font: 400 12px var(--font-sans); }
+    svg .focal-ring { fill: none; stroke: var(--accent); stroke-width: 1.4; }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">同業連動 × 股價位階・2026-10-16</p>
+    <h1>美光大漲、股價在高位階：跳空更大，但開盤後回吐</h1>
+
+    <div class="diagram-container">
+      <svg viewBox="0 0 1000 498" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="peerpos-title peerpos-desc">
+        <title id="peerpos-title">美光大漲、股價在高位階：跳空更大，但開盤後回吐</title>
+        <desc id="peerpos-desc">記憶體四檔（南亞科、華邦電、群聯、威剛）依美光隔夜漲跌五檔與自己的 52 週位階三分位分格，每格平均開盤到收盤報酬與開盤跳空。美光漲 3% 以上且高位階：開盤後 -0.64%、跳空 +2.51%。</desc>
+        <rect class="bg" width="100%" height="100%"/>
+        <text class="colname" x="306" y="52" text-anchor="middle">低位階</text>
+        <text class="colsub" x="306" y="68" text-anchor="middle">pos52 < 1/3</text>
+        <text class="colname" x="544" y="52" text-anchor="middle">中位階</text>
+        <text class="colsub" x="544" y="68" text-anchor="middle">1/3 ～ 2/3</text>
+        <text class="colname" x="782" y="52" text-anchor="middle">高位階</text>
+        <text class="colsub" x="782" y="68" text-anchor="middle">pos52 ≥ 2/3</text>
+        <text class="axis-title" x="172" y="52" text-anchor="end">美光隔夜漲跌</text>
+        <text class="axis-title" x="172" y="68" text-anchor="end">↓ ／ 股價位階 →</text>
+        <text class="rowname" x="172" y="122" text-anchor="end">≥ +3%</text>
+        <text class="rowsub" x="172" y="140" text-anchor="end">平均 +5.3%・n 1416</text>
+        <rect x="190" y="94" width="232" height="66" fill="var(--paper)"/>
+        <rect data-row="≥ +3%" data-col="低位階" data-value="0.106" data-mean="-0.106" x="190" y="94" width="232" height="66" rx="4" fill="var(--ink)" fill-opacity="0.18"/>
+        <text class="cell-v" x="306" y="122" text-anchor="middle">開盤後 −0.11%</text>
+        <text class="cell-s" x="306" y="144" text-anchor="middle">跳空 +1.36%・n 444</text>
+        <rect x="428" y="94" width="232" height="66" fill="var(--paper)"/>
+        <rect data-row="≥ +3%" data-col="中位階" data-value="0.236" data-mean="-0.236" x="428" y="94" width="232" height="66" rx="4" fill="var(--ink)" fill-opacity="0.41"/>
+        <text class="cell-v on" x="544" y="122" text-anchor="middle">開盤後 −0.24%</text>
+        <text class="cell-s on" x="544" y="144" text-anchor="middle">跳空 +1.39%・n 378</text>
+        <rect x="666" y="94" width="232" height="66" fill="var(--paper)"/>
+        <rect data-row="≥ +3%" data-col="高位階" data-value="0.640" data-mean="-0.640" data-focal="true" x="666" y="94" width="232" height="66" rx="4" fill="var(--accent)" fill-opacity="0.85"/>
+        <rect class="focal-ring" x="666" y="94" width="232" height="66" rx="4"/>
+        <text class="cell-v on" x="782" y="122" text-anchor="middle">開盤後 −0.64%</text>
+        <text class="cell-s on" x="782" y="144" text-anchor="middle">跳空 +2.51%・n 594</text>
+        <text class="rowname" x="172" y="194" text-anchor="end">+1% ～ +3%</text>
+        <text class="rowsub" x="172" y="212" text-anchor="end">平均 +1.9%・n 1676</text>
+        <rect x="190" y="166" width="232" height="66" fill="var(--paper)"/>
+        <rect data-row="+1% ～ +3%" data-col="低位階" data-value="0.202" data-mean="-0.202" x="190" y="166" width="232" height="66" rx="4" fill="var(--ink)" fill-opacity="0.35"/>
+        <text class="cell-v" x="306" y="194" text-anchor="middle">開盤後 −0.20%</text>
+        <text class="cell-s" x="306" y="216" text-anchor="middle">跳空 +0.66%・n 494</text>
+        <rect x="428" y="166" width="232" height="66" fill="var(--paper)"/>
+        <rect data-row="+1% ～ +3%" data-col="中位階" data-value="0.148" data-mean="-0.148" x="428" y="166" width="232" height="66" rx="4" fill="var(--ink)" fill-opacity="0.26"/>
+        <text class="cell-v" x="544" y="194" text-anchor="middle">開盤後 −0.15%</text>
+        <text class="cell-s" x="544" y="216" text-anchor="middle">跳空 +0.75%・n 492</text>
+        <rect x="666" y="166" width="232" height="66" fill="var(--paper)"/>
+        <rect data-row="+1% ～ +3%" data-col="高位階" data-value="0.375" data-mean="-0.375" x="666" y="166" width="232" height="66" rx="4" fill="var(--ink)" fill-opacity="0.65"/>
+        <text class="cell-v on" x="782" y="194" text-anchor="middle">開盤後 −0.37%</text>
+        <text class="cell-s on" x="782" y="216" text-anchor="middle">跳空 +0.91%・n 690</text>
+        <text class="rowname" x="172" y="266" text-anchor="end">−1% ～ +1%</text>
+        <text class="rowsub" x="172" y="284" text-anchor="end">平均 +0.0%・n 2632</text>
+        <rect x="190" y="238" width="232" height="66" fill="var(--paper)"/>
+        <rect data-row="−1% ～ +1%" data-col="低位階" data-value="0.067" data-mean="-0.067" x="190" y="238" width="232" height="66" rx="4" fill="var(--ink)" fill-opacity="0.12"/>
+        <text class="cell-v" x="306" y="266" text-anchor="middle">開盤後 −0.07%</text>
+        <text class="cell-s" x="306" y="288" text-anchor="middle">跳空 +0.26%・n 791</text>
+        <rect x="428" y="238" width="232" height="66" fill="var(--paper)"/>
+        <rect data-row="−1% ～ +1%" data-col="中位階" data-value="0.154" data-mean="-0.154" x="428" y="238" width="232" height="66" rx="4" fill="var(--ink)" fill-opacity="0.27"/>
+        <text class="cell-v" x="544" y="266" text-anchor="middle">開盤後 −0.15%</text>
+        <text class="cell-s" x="544" y="288" text-anchor="middle">跳空 +0.37%・n 805</text>
+        <rect x="666" y="238" width="232" height="66" fill="var(--paper)"/>
+        <rect data-row="−1% ～ +1%" data-col="高位階" data-value="0.299" data-mean="-0.299" x="666" y="238" width="232" height="66" rx="4" fill="var(--ink)" fill-opacity="0.52"/>
+        <text class="cell-v on" x="782" y="266" text-anchor="middle">開盤後 −0.30%</text>
+        <text class="cell-s on" x="782" y="288" text-anchor="middle">跳空 +0.51%・n 1036</text>
+        <text class="rowname" x="172" y="338" text-anchor="end">−3% ～ −1%</text>
+        <text class="rowsub" x="172" y="356" text-anchor="end">平均 -1.9%・n 1672</text>
+        <rect x="190" y="310" width="232" height="66" fill="var(--paper)"/>
+        <rect data-row="−3% ～ −1%" data-col="低位階" data-value="0.188" data-mean="-0.188" x="190" y="310" width="232" height="66" rx="4" fill="var(--ink)" fill-opacity="0.33"/>
+        <text class="cell-v" x="306" y="338" text-anchor="middle">開盤後 −0.19%</text>
+        <text class="cell-s" x="306" y="360" text-anchor="middle">跳空 −0.39%・n 544</text>
+        <rect x="428" y="310" width="232" height="66" fill="var(--paper)"/>
+        <rect data-row="−3% ～ −1%" data-col="中位階" data-value="0.315" data-mean="-0.315" x="428" y="310" width="232" height="66" rx="4" fill="var(--ink)" fill-opacity="0.55"/>
+        <text class="cell-v on" x="544" y="338" text-anchor="middle">開盤後 −0.31%</text>
+        <text class="cell-s on" x="544" y="360" text-anchor="middle">跳空 +0.03%・n 494</text>
+        <rect x="666" y="310" width="232" height="66" fill="var(--paper)"/>
+        <rect data-row="−3% ～ −1%" data-col="高位階" data-value="0.372" data-mean="-0.372" x="666" y="310" width="232" height="66" rx="4" fill="var(--ink)" fill-opacity="0.64"/>
+        <text class="cell-v on" x="782" y="338" text-anchor="middle">開盤後 −0.37%</text>
+        <text class="cell-s on" x="782" y="360" text-anchor="middle">跳空 −0.01%・n 634</text>
+        <text class="rowname" x="172" y="410" text-anchor="end">≤ −3%</text>
+        <text class="rowsub" x="172" y="428" text-anchor="end">平均 -5.0%・n 1096</text>
+        <rect x="190" y="382" width="232" height="66" fill="var(--paper)"/>
+        <rect data-row="≤ −3%" data-col="低位階" data-value="0.020" data-mean="0.020" x="190" y="382" width="232" height="66" rx="4" fill="var(--accent)" fill-opacity="0.07"/>
+        <text class="cell-v" x="306" y="410" text-anchor="middle">開盤後 +0.02%</text>
+        <text class="cell-s" x="306" y="432" text-anchor="middle">跳空 −1.24%・n 386</text>
+        <rect x="428" y="382" width="232" height="66" fill="var(--paper)"/>
+        <rect data-row="≤ −3%" data-col="中位階" data-value="0.343" data-mean="-0.343" x="428" y="382" width="232" height="66" rx="4" fill="var(--ink)" fill-opacity="0.59"/>
+        <text class="cell-v on" x="544" y="410" text-anchor="middle">開盤後 −0.34%</text>
+        <text class="cell-s on" x="544" y="432" text-anchor="middle">跳空 −1.16%・n 300</text>
+        <rect x="666" y="382" width="232" height="66" fill="var(--paper)"/>
+        <rect data-row="≤ −3%" data-col="高位階" data-value="0.048" data-mean="0.048" x="666" y="382" width="232" height="66" rx="4" fill="var(--accent)" fill-opacity="0.08"/>
+        <text class="cell-v" x="782" y="410" text-anchor="middle">開盤後 +0.05%</text>
+        <text class="cell-s" x="782" y="432" text-anchor="middle">跳空 −1.80%・n 410</text>
+        <text class="key" x="190" y="476">色階：深墨色 = 開盤到收盤平均下跌越多；白 = 0；淺綠 = 為正。焦點格（綠框）不進色階。</text>
+      </svg>
+    </div>
+    <p class="note"><b>怎麼讀</b>：高位階與 +3% 以上那格，開盤跳空 +2.51%（低位階 +1.36%），開盤到收盤 -0.64%（t = -3.0，以交易日群聚）。焦點格 -0.64% 不進色階，其餘格的 |值| 最大 0.37%。四檔合併，同一天不同個股不獨立；2019～2026-10-15 全期樣本、不是樣本外。排除：無（五列 × 三欄全部畫出）。來源：<code>radar/peerpos.py</code>。</p>
+  </div>
+</body>
+</html>
