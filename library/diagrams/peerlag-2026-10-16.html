@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>美股同業連動回測</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&family=Noto+Serif:ital@0;1&family=Noto+Sans+TC:wght@400;500;600&family=Noto+Serif+TC:wght@400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* 配色：diagram-design 設定檔 taiwan-analysis（取自網站 radar/site_library.html） */
+    :root {
+      --paper: #f4f5f2; --node: #ffffff; --ink: #12170f; --muted: #4c5549; --soft: #5f685c;
+      --rule: rgba(18,23,15,0.12); --accent: #0f5c3c; --accent-tint: rgba(15,92,60,0.08);
+      --font-sans: 'Geist', 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', system-ui, sans-serif;
+      --font-serif: 'Instrument Serif', 'Noto Serif', 'Noto Serif TC', serif;
+      --font-mono: 'Geist Mono', ui-monospace, monospace;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --paper: #0c0f0b; --node: #141913; --ink: #eaf1e6; --muted: #a7b3a2; --soft: #8a9686;
+        --rule: rgba(234,241,230,0.12); --accent: #5cc999; --accent-tint: rgba(92,201,153,0.10);
+      }
+    }
+    body { font-family: var(--font-sans); background: var(--paper); color: var(--ink); padding: 20px 16px 24px; }
+    .frame { max-width: 1000px; margin: 0 auto; }
+    .diagram-container { width: 100%; overflow-x: auto; }
+    .eyebrow { font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 4px; }
+    h1 { font-family: var(--font-serif); font-size: clamp(1.4rem, 2.2vw + 0.7rem, 1.9rem); font-weight: 400; line-height: 1.2; margin-bottom: 14px; }
+    svg { width: 100%; min-width: 960px; display: block; }
+    .note { font-size: 13px; line-height: 1.75; color: var(--muted); margin-top: 12px; max-width: 900px; }
+    .note b { color: var(--ink); font-weight: 600; }
+
+    svg .bg { fill: var(--paper); }
+    svg .wire { fill: none; stroke: var(--muted); stroke-width: 1; }
+    svg .box { fill: var(--node); stroke: var(--ink); stroke-width: 1; }
+    svg .box.focal { fill: var(--accent-tint); stroke: var(--accent); stroke-width: 1.2; }
+    svg .tag { fill: none; stroke: var(--soft); stroke-width: 0.8; }
+    svg .tag.focal { stroke: var(--accent); }
+    svg .t-tag { fill: var(--ink); font: 500 12px var(--font-sans); }
+    svg .t-tag.focal { fill: var(--accent); }
+    svg .t-name { fill: var(--ink); font: 600 13px var(--font-sans); }
+    svg .t-root { fill: var(--ink); font: 600 16px var(--font-sans); }
+    svg .t-sub { fill: var(--muted); font: 400 12px var(--font-sans); }
+    svg .t-co { fill: var(--ink); font: 600 12px var(--font-sans); }
+    svg .t-col { fill: var(--muted); font: 500 12px var(--font-sans); }
+    svg .sep { stroke: var(--rule); stroke-width: 0.8; }
+    svg a.node { cursor: pointer; }
+    svg a.node:hover .box, svg a.node:focus-visible .box { stroke-width: 2; }
+    svg a.node:focus-visible { outline: none; }
+    svg .t-go { fill: var(--muted); font: 400 12px var(--font-sans); }
+    svg a.node:hover .t-go { fill: var(--ink); }
+    svg .co a tspan { fill: var(--link); text-decoration: underline; text-decoration-color: rgba(31,99,184,0.35); }
+    svg .co a:hover tspan { text-decoration-color: currentColor; }
+    @media (prefers-color-scheme: dark) { svg .co a tspan { text-decoration-color: rgba(106,166,238,0.4); } }
+    :root { --link: #1f63b8; }
+    @media (prefers-color-scheme: dark) { :root { --link: #6aa6ee; } }
+    @media print { .diagram-container { overflow-x: visible; } svg { min-width: 0; } }
+  
+    /* 啞鈴圖 */
+    :root { --axis: rgba(18,23,15,0.25); --conn: rgba(18,23,15,0.55); --grid: rgba(18,23,15,0.08); }
+    @media (prefers-color-scheme: dark) { :root { --axis: rgba(234,241,230,0.20); --conn: rgba(234,241,230,0.40); --grid: rgba(234,241,230,0.08); } }
+    svg { min-width: 800px; }
+    svg .grid { stroke: var(--grid); stroke-width: 0.8; }
+    svg .axis { stroke: var(--axis); stroke-width: 1; }
+    svg .conn { stroke: var(--conn); stroke-width: 1; }
+    svg .ref { fill: var(--paper); stroke: var(--muted); stroke-width: 1.5; }
+    svg .focal { fill: var(--accent); stroke: var(--ink); stroke-width: 1; }
+    svg .rowname { fill: var(--ink); font: 600 13px var(--font-sans); }
+    svg a.lk .rowname { fill: var(--link); text-decoration: underline; text-decoration-color: rgba(31,99,184,0.35); }
+    svg a.lk:hover .rowname { text-decoration-color: currentColor; }
+    svg .rown { fill: var(--muted); font: 400 12px var(--font-sans); }
+    svg .tick { fill: var(--muted); font: 400 12px var(--font-sans); }
+    svg .axis-title { fill: var(--muted); font: 500 12px var(--font-sans); }
+    svg .val { fill: var(--muted); font: 500 12px var(--font-sans); }
+    svg .focal-val { fill: var(--accent); font-weight: 600; }
+    svg .key { fill: var(--ink); font: 400 12px var(--font-sans); }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">美股同業連動回測・2026-10-16</p>
+    <h1>美股同業的訊息，幾乎都耗在開盤跳空裡</h1>
+
+    <div class="diagram-container">
+      <svg viewBox="0 0 1000 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="peerlag-title peerlag-desc">
+        <title id="peerlag-title">美股同業對台股開盤跳空與開盤後報酬的樣本外 ΔR²</title>
+        <desc id="peerlag-desc">水平啞鈴圖，列出跳空 ΔR² 最大的 8 組美股同業與台股配對。每列實心點是開盤跳空、空心點是開盤到收盤的樣本外 ΔR²（百分點），記憶體鏈的跳空明顯，開盤後幾乎為零。</desc>
+        <rect class="bg" width="100%" height="100%"/>
+        <line class="grid" x1="200" y1="56" x2="200" y2="408"/>
+        <text class="tick" x="200" y="440" text-anchor="middle">−2</text>
+        <line class="grid" x1="327" y1="56" x2="327" y2="408"/>
+        <text class="tick" x="327" y="440" text-anchor="middle">0</text>
+        <line class="grid" x1="453" y1="56" x2="453" y2="408"/>
+        <text class="tick" x="453" y="440" text-anchor="middle">2</text>
+        <line class="grid" x1="580" y1="56" x2="580" y2="408"/>
+        <text class="tick" x="580" y="440" text-anchor="middle">4</text>
+        <line class="grid" x1="707" y1="56" x2="707" y2="408"/>
+        <text class="tick" x="707" y="440" text-anchor="middle">6</text>
+        <line class="grid" x1="833" y1="56" x2="833" y2="408"/>
+        <text class="tick" x="833" y="440" text-anchor="middle">8</text>
+        <line class="grid" x1="960" y1="56" x2="960" y2="408"/>
+        <text class="tick" x="960" y="440" text-anchor="middle">10</text>
+        <line class="axis" x1="327" y1="40" x2="327" y2="420"/>
+        <text class="axis-title" x="580" y="460" text-anchor="middle">樣本外 ΔR²（百分點）：加入美股同業之後，比只用夜盤＋費半多解釋了多少</text>
+        <a class="lk" href="https://tw.stock.yahoo.com/quote/2408" target="_blank" rel="noopener"><text class="rowname" x="188" y="67" text-anchor="end">2408 南亞科 ← 美光</text></a>
+        <text class="rown" x="188" y="82" text-anchor="end">跳空 Holm p = 0.002・通過</text>
+        <line class="conn" x1="347" y1="68" x2="840" y2="68"/>
+        <circle class="ref" cx="347" cy="68" r="6"/>
+        <circle class="focal" cx="840" cy="68" r="6"/>
+        <text class="val" x="335" y="72" text-anchor="end">+0.3</text>
+        <text class="val focal-val" x="852" y="72">+8.1</text>
+        <a class="lk" href="https://tw.stock.yahoo.com/quote/2344" target="_blank" rel="noopener"><text class="rowname" x="188" y="115" text-anchor="end">2344 華邦電 ← 美光</text></a>
+        <text class="rown" x="188" y="130" text-anchor="end">跳空 Holm p = 0.005・通過</text>
+        <line class="conn" x1="325" y1="116" x2="632" y2="116"/>
+        <circle class="ref" cx="325" cy="116" r="6"/>
+        <circle class="focal" cx="632" cy="116" r="6"/>
+        <text class="val" x="313" y="120" text-anchor="end">0.0</text>
+        <text class="val focal-val" x="644" y="120">+4.8</text>
+        <a class="lk" href="https://tw.stock.yahoo.com/quote/2330" target="_blank" rel="noopener"><text class="rowname" x="188" y="163" text-anchor="end">2330 台積電 ← 台積電 ADR</text></a>
+        <text class="rown" x="188" y="178" text-anchor="end">跳空 Holm p = 0.007・通過</text>
+        <line class="conn" x1="351" y1="164" x2="607" y2="164"/>
+        <circle class="ref" cx="351" cy="164" r="6"/>
+        <circle class="focal" cx="607" cy="164" r="6"/>
+        <text class="val" x="339" y="168" text-anchor="end">+0.4</text>
+        <text class="val focal-val" x="619" y="168">+4.4</text>
+        <a class="lk" href="https://tw.stock.yahoo.com/quote/8299" target="_blank" rel="noopener"><text class="rowname" x="188" y="211" text-anchor="end">8299 群聯 ← 美光</text></a>
+        <text class="rown" x="188" y="226" text-anchor="end">跳空 Holm p = 0.047・通過</text>
+        <line class="conn" x1="309" y1="212" x2="529" y2="212"/>
+        <circle class="ref" cx="309" cy="212" r="6"/>
+        <circle class="focal" cx="529" cy="212" r="6"/>
+        <text class="val" x="297" y="216" text-anchor="end">−0.3</text>
+        <text class="val focal-val" x="541" y="216">+3.2</text>
+        <a class="lk" href="https://tw.stock.yahoo.com/quote/4915" target="_blank" rel="noopener"><text class="rowname" x="188" y="259" text-anchor="end">4915 致伸 ← 蘋果</text></a>
+        <text class="rown" x="188" y="274" text-anchor="end">跳空 Holm p = 0.201・未過</text>
+        <line class="conn" x1="293" y1="260" x2="508" y2="260"/>
+        <circle class="ref" cx="293" cy="260" r="6"/>
+        <circle class="focal" cx="508" cy="260" r="6"/>
+        <text class="val" x="281" y="264" text-anchor="end">−0.5</text>
+        <text class="val focal-val" x="520" y="264">+2.9</text>
+        <a class="lk" href="https://tw.stock.yahoo.com/quote/2408" target="_blank" rel="noopener"><text class="rowname" x="188" y="307" text-anchor="end">2408 南亞科 ← 威騰電子</text></a>
+        <text class="rown" x="188" y="322" text-anchor="end">跳空 Holm p = 0.001・通過</text>
+        <line class="conn" x1="326" y1="308" x2="481" y2="308"/>
+        <circle class="ref" cx="326" cy="308" r="6"/>
+        <circle class="focal" cx="481" cy="308" r="6"/>
+        <text class="val" x="314" y="312" text-anchor="end">0.0</text>
+        <text class="val focal-val" x="493" y="312">+2.4</text>
+        <a class="lk" href="https://tw.stock.yahoo.com/quote/3260" target="_blank" rel="noopener"><text class="rowname" x="188" y="355" text-anchor="end">3260 威剛 ← 美光</text></a>
+        <text class="rown" x="188" y="370" text-anchor="end">跳空 Holm p = 0.063・未過</text>
+        <line class="conn" x1="326" y1="356" x2="467" y2="356"/>
+        <circle class="ref" cx="326" cy="356" r="6"/>
+        <circle class="focal" cx="467" cy="356" r="6"/>
+        <text class="val" x="314" y="360" text-anchor="end">0.0</text>
+        <text class="val focal-val" x="479" y="360">+2.2</text>
+        <a class="lk" href="https://tw.stock.yahoo.com/quote/3406" target="_blank" rel="noopener"><text class="rowname" x="188" y="403" text-anchor="end">3406 玉晶光 ← 蘋果</text></a>
+        <text class="rown" x="188" y="418" text-anchor="end">跳空 Holm p = 0.123・未過</text>
+        <line class="conn" x1="319" y1="404" x2="460" y2="404"/>
+        <circle class="ref" cx="319" cy="404" r="6"/>
+        <circle class="focal" cx="460" cy="404" r="6"/>
+        <text class="val" x="307" y="408" text-anchor="end">−0.1</text>
+        <text class="val focal-val" x="472" y="408">+2.1</text>
+        <circle class="ref" cx="212" cy="493" r="6"/><text class="key" x="226" y="497">開盤後才能下單的部分（開盤到收盤）</text>
+        <circle class="focal" cx="470" cy="493" r="6"/><text class="key" x="484" y="497">開盤跳空（開盤前就已經發生，下不了單）</text>
+      </svg>
+    </div>
+    <p class="note"><b>怎麼讀：</b>兩個點在同一把尺上，距離就是「訊息有多少耗在開盤跳空、多少留到開盤之後」。
+      基準是只用台指期夜盤與費半的模型（M0），ΔR² 是加入該美股同業後樣本外 R² 的增加，單位是百分點。
+      由大到小依跳空 ΔR² 排序，只列至少 6 個年度有預測的配對，前 8 名；完整名單與信賴區間在報告表格。</p>
+  </div>
+</body>
+</html>

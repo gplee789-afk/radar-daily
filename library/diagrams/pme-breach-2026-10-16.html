@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>事前已知標籤日與一般日的 80% 區間突破率</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&family=Noto+Serif:ital@0;1&family=Noto+Sans+TC:wght@400;500;600&family=Noto+Serif+TC:wght@400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* 配色：diagram-design 設定檔 taiwan-analysis（取自網站 radar/site_library.html） */
+    :root {
+      --paper: #f4f5f2; --node: #ffffff; --ink: #12170f; --muted: #4c5549; --soft: #5f685c;
+      --rule: rgba(18,23,15,0.12); --accent: #0f5c3c; --accent-tint: rgba(15,92,60,0.08);
+      --font-sans: 'Geist', 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', system-ui, sans-serif;
+      --font-serif: 'Instrument Serif', 'Noto Serif', 'Noto Serif TC', serif;
+      --font-mono: 'Geist Mono', ui-monospace, monospace;
+      --conn: rgba(18,23,15,0.55); --axis: rgba(18,23,15,0.25); --grid: rgba(18,23,15,0.08);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --paper: #0c0f0b; --node: #141913; --ink: #eaf1e6; --muted: #a7b3a2; --soft: #8a9686;
+        --rule: rgba(234,241,230,0.12); --accent: #5cc999; --accent-tint: rgba(92,201,153,0.10);
+        --conn: rgba(234,241,230,0.40); --axis: rgba(234,241,230,0.20); --grid: rgba(234,241,230,0.08);
+      }
+    }
+    body { font-family: var(--font-sans); background: var(--paper); color: var(--ink); padding: 20px 16px 24px; }
+    .frame { max-width: 1000px; margin: 0 auto; }
+    .diagram-container { width: 100%; overflow-x: auto; }
+    .eyebrow { font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 4px; }
+    h1 { font-family: var(--font-serif); font-size: clamp(1.4rem, 2.2vw + 0.7rem, 1.9rem); font-weight: 400; line-height: 1.2; margin-bottom: 14px; }
+    svg { width: 100%; min-width: 960px; display: block; }
+    .note { font-size: 13px; line-height: 1.75; color: var(--muted); margin-top: 12px; max-width: 900px; }
+    .note b { color: var(--ink); font-weight: 600; }
+    svg .bg { fill: var(--paper); }
+    svg .grid { stroke: var(--grid); stroke-width: 0.8; }
+    svg .axis { stroke: var(--axis); stroke-width: 1; }
+    svg .nominal { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 4 3; }
+    svg .conn { stroke: var(--conn); stroke-width: 1; }
+    svg .ref { fill: var(--paper); stroke: var(--muted); stroke-width: 1.5; }
+    svg .tagged { fill: var(--muted); stroke: var(--ink); stroke-width: 1; }
+    svg .focal { fill: var(--accent); stroke: var(--ink); stroke-width: 1; }
+    svg .rowname { fill: var(--ink); font: 600 13px var(--font-sans); }
+    svg .rown { fill: var(--muted); font: 400 12px var(--font-sans); }
+    svg .tick { fill: var(--muted); font: 400 12px var(--font-sans); }
+    svg .axis-title { fill: var(--muted); font: 500 12px var(--font-sans); }
+    svg .val { fill: var(--muted); font: 500 12px var(--font-sans); }
+    svg .focal-val { fill: var(--accent); font-weight: 600; }
+    svg .key { fill: var(--ink); font: 400 12px var(--font-sans); }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">盤前預估誤差來源・2026-10-16</p>
+    <h1>哪些事前已知的日子，80% 區間更常被突破</h1>
+
+    <div class="diagram-container">
+      <svg viewBox="0 0 1000 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="pme-breach-title pme-breach-desc">
+        <title id="pme-breach-title">事前已知標籤日與一般日的 80% 區間突破率</title>
+        <desc id="pme-breach-desc">水平啞鈴圖，列出 15 個事前標籤中突破率差異最大的 8 個。每列空心點是一般日、實心點是標籤日的區間突破率，名目值 20%，Holm 校正後最顯著的是「乖離偏低」。</desc>
+        <rect class="bg" width="100%" height="100%"/>
+        <line class="axis" x1="200" y1="40" x2="200" y2="420"/>
+        <text class="tick" x="200" y="440" text-anchor="middle">0%</text>
+        <line class="grid" x1="352" y1="56" x2="352" y2="408"/>
+        <text class="tick" x="352" y="440" text-anchor="middle">8%</text>
+        <line class="grid" x1="504" y1="56" x2="504" y2="408"/>
+        <text class="tick" x="504" y="440" text-anchor="middle">16%</text>
+        <line class="grid" x1="656" y1="56" x2="656" y2="408"/>
+        <text class="tick" x="656" y="440" text-anchor="middle">24%</text>
+        <line class="grid" x1="808" y1="56" x2="808" y2="408"/>
+        <text class="tick" x="808" y="440" text-anchor="middle">32%</text>
+        <line class="grid" x1="960" y1="56" x2="960" y2="408"/>
+        <text class="tick" x="960" y="440" text-anchor="middle">40%</text>
+        <line class="nominal" x1="580" y1="48" x2="580" y2="412"/>
+        <text class="tick" x="584" y="52">名目 20%</text>
+        <text class="axis-title" x="580" y="460" text-anchor="middle">80% 區間被突破的比率（上破 + 下破）</text>
+        <text class="rowname" x="188" y="67" text-anchor="end">乖離偏低</text>
+        <text class="rown" x="188" y="82" text-anchor="end">n=203・Holm p = 0.003</text>
+        <line class="conn" x1="550" y1="68" x2="827" y2="68"/>
+        <circle class="ref" cx="550" cy="68" r="6"/>
+        <circle class="focal" cx="827" cy="68" r="6"/>
+        <text class="val" x="538" y="72" text-anchor="end">18.4%</text>
+        <text class="val focal-val" x="839" y="72">33.0%</text>
+        <text class="rowname" x="188" y="115" text-anchor="end">外資連賣</text>
+        <text class="rown" x="188" y="130" text-anchor="end">n=175・Holm p = 0.003</text>
+        <line class="conn" x1="556" y1="116" x2="808" y2="116"/>
+        <circle class="ref" cx="556" cy="116" r="6"/>
+        <circle class="tagged" cx="808" cy="116" r="6"/>
+        <text class="val" x="544" y="120" text-anchor="end">18.8%</text>
+        <text class="val" x="820" y="120">32.0%</text>
+        <text class="rowname" x="188" y="163" text-anchor="end">低波動</text>
+        <text class="rown" x="188" y="178" text-anchor="end">n=629・Holm p = 0.003</text>
+        <line class="conn" x1="498" y1="164" x2="744" y2="164"/>
+        <circle class="ref" cx="498" cy="164" r="6"/>
+        <circle class="tagged" cx="744" cy="164" r="6"/>
+        <text class="val" x="486" y="168" text-anchor="end">15.7%</text>
+        <text class="val" x="756" y="168">28.6%</text>
+        <text class="rowname" x="188" y="211" text-anchor="end">FOMC 日</text>
+        <text class="rown" x="188" y="226" text-anchor="end">n=63・Holm p = 0.234</text>
+        <line class="conn" x1="572" y1="212" x2="803" y2="212"/>
+        <circle class="ref" cx="572" cy="212" r="6"/>
+        <circle class="tagged" cx="803" cy="212" r="6"/>
+        <text class="val" x="560" y="216" text-anchor="end">19.6%</text>
+        <text class="val" x="815" y="216">31.7%</text>
+        <text class="rowname" x="188" y="259" text-anchor="end">融資偏高</text>
+        <text class="rown" x="188" y="274" text-anchor="end">n=615・Holm p = 0.022</text>
+        <line class="conn" x1="541" y1="260" x2="660" y2="260"/>
+        <circle class="ref" cx="541" cy="260" r="6"/>
+        <circle class="tagged" cx="660" cy="260" r="6"/>
+        <text class="val" x="529" y="264" text-anchor="end">17.9%</text>
+        <text class="val" x="672" y="264">24.2%</text>
+        <text class="rowname" x="188" y="307" text-anchor="end">週一／連假後</text>
+        <text class="rown" x="188" y="322" text-anchor="end">n=403・Holm p = 0.407</text>
+        <line class="conn" x1="561" y1="308" x2="648" y2="308"/>
+        <circle class="ref" cx="561" cy="308" r="6"/>
+        <circle class="tagged" cx="648" cy="308" r="6"/>
+        <text class="val" x="549" y="312" text-anchor="end">19.0%</text>
+        <text class="val" x="660" y="312">23.6%</text>
+        <text class="rowname" x="188" y="355" text-anchor="end">乖離偏高</text>
+        <text class="rown" x="188" y="370" text-anchor="end">n=257・Holm p = 0.407</text>
+        <line class="conn" x1="488" y1="356" x2="594" y2="356"/>
+        <circle class="ref" cx="594" cy="356" r="6"/>
+        <circle class="tagged" cx="488" cy="356" r="6"/>
+        <text class="val" x="476" y="360" text-anchor="end">15.2%</text>
+        <text class="val" x="606" y="360">20.7%</text>
+        <text class="rowname" x="188" y="403" text-anchor="end">高波動</text>
+        <text class="rown" x="188" y="418" text-anchor="end">n=629・Holm p = 0.003</text>
+        <line class="conn" x1="433" y1="404" x2="653" y2="404"/>
+        <circle class="ref" cx="653" cy="404" r="6"/>
+        <circle class="tagged" cx="433" cy="404" r="6"/>
+        <text class="val" x="421" y="408" text-anchor="end">12.2%</text>
+        <text class="val" x="665" y="408">23.8%</text>
+        <circle class="ref" cx="212" cy="493" r="6"/>
+        <text class="key" x="226" y="497">一般日</text>
+        <circle class="focal" cx="300" cy="493" r="6"/>
+        <text class="key" x="314" y="497">標籤日（綠色 = Holm 校正後最顯著）</text>
+      </svg>
+    </div>
+    <p class="note"><b>怎麼讀：</b>空心點是沒有該標籤的日子，實心點是有標籤的日子；兩點距離越遠，代表這個條件下區間越常被突破。虛線是名目 20%（區間若準，兩邊各 10%）。
+      只畫 15 個標籤中 |差異| 最大的 8 個，由大到小排；全部 15 個與信賴區間在報告表格。標籤日常成串出現，有效樣本比 n 小。</p>
+  </div>
+</body>
+</html>
