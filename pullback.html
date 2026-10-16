@@ -92,7 +92,7 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
       <button id="themeBtn" title="切換深色／淺色" aria-label="切換深色／淺色">◐</button>
     </nav>
   </header>
-  <p class="sub">成交值前 300 名的大型股裡，離 60 日高點跌了 8% 以上、現在回到多方 FVG 或 OB 支撐、上方空方區還有空間的股票。只做多，不追創高。下面的<a href="#log">分析紀錄</a>把每天的名單都當作買了，追蹤到今天賺還是賠。點代號會複製成 TradingView 格式，點名稱打開 Yahoo 股市。</p>
+  <p class="sub">成交值前 300 名的大型股裡，離 60 日高點跌了 8% 以上、現在回到多方 FVG 或 OB 支撐、上方空方區還有空間的股票。只做多，不追創高。下面的<a href="#log">分析紀錄</a>照名單模擬買進（每天最多 3 筆、同時最多 15 筆），追蹤到今天賺還是賠。點代號會複製成 TradingView 格式，點名稱打開 Yahoo 股市。</p>
 
   <div class="stats" id="stats"></div>
 
@@ -100,7 +100,7 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
 
   <div class="section" id="log">
     <h2>📒 分析紀錄<span class="n" id="logAsof"></span></h2>
-    <p class="hint">每天的名單都當作在隔天開盤買進：收盤跌破停損（支撐區下緣）就用當天收盤出場，最多抱 20 個交易日；還沒出場的用最新收盤算。報酬扣來回成本 0.4%，對照同期間買 0050。</p>
+    <p class="hint">從 2026-10-15 的名單開始算。每天照「優先 → A → B、同一級法人近 5 日買超多的先」最多買 3 筆，同時最多持有 15 筆；隔天開盤買進，開盤就在停損以下或已經持有的跳過、換下一檔。收盤跌破停損（FVG 支撐下緣為主）就用當天收盤出場，最多抱 20 個交易日；還沒出場的用最新收盤算。報酬扣來回成本 0.4%，對照同期間買 0050。</p>
     <div class="stats" id="logStats"></div>
     <h3>依級別</h3>
     <div class="tbl" id="byGrade"></div>
@@ -116,7 +116,8 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
       <li><b>條件</b>（60 分 K，Yahoo）：收盤比近 60 日最高收盤低 8% 以上；價格在還沒失效的多方 FVG 或多方 OB（LuxAlgo 取法，Internal 5）裡，或在上緣上方 3% 以內；上方最近的空方 OB、空方 FVG 都在 3% 以外。</li>
       <li><b>分級</b>：上方空間（空方 OB／FVG 取近的）≥ 5% 為 A，3–5% 為 B；A 裡法人當天買超、近 5 日買超 ≥ 5,000 張的標「優先」。排除近 5 日跌超過 10%（還在急跌）和當天漲跌停的。</li>
       <li><b>TV 確認</b>：有標 TV 確認的日子，名單是 Python 篩完再用 TradingView 的 FVG、SMC OB 兩個掃描器逐檔確認過的，掃描器顯示有壓力的剔除並寫明原因。沒標的是每天排程自動分級。</li>
-      <li><b>停損</b>：支撐區下緣（最靠近價格的那個 FVG 或 OB）。紀錄裡開盤就跳到停損以下的不買。</li>
+      <li><b>停損</b>：FVG 支撐下緣為主；只有 OB 支撐的用 OB 下緣。紀錄裡開盤就跳到停損以下的不買。</li>
+      <li><b>紀錄怎麼買</b>：2026-10-15 的名單起算；每天最多買 3 筆、同時最多持有 15 筆，順序是 優先 → A → B、同一級法人近 5 日買超多的先；已經持有的不加碼。帳戶損益假設每筆用 1/15 的資金。</li>
       <li><b>這套條件沒有回測過</b>，這份紀錄就是在檢驗它。回測過的是 <a href="fvg.html">FVG 每日標的</a>（FVG 回踩，驗證期年化 +10.8%，但輸 0050）。</li>
       <li>資料：名單工具（證交所、櫃買）、Yahoo 60 分 K 與日 K。研究輔助，不是投資建議。</li>
     </ul>
@@ -176,7 +177,7 @@ const gchip = g => `<span class="chip ${g === "優先" ? "ok" : g === "A" ? "mut
 // ---------- 當天名單 ----------
 function listTable(rows) {
   const head = `<tr><th class="l">代號</th><th class="l">名稱</th><th>收盤</th><th class="l">支撐區</th><th>停損</th><th>停損距離</th>
-    <th>上方空間</th><th>離 60 日高</th><th>近 5 日</th><th>法人今天</th><th>法人 5 日</th><th>成交值排名</th></tr>`;
+    <th>上方空間</th><th>離 60 日高</th><th>近 5 日</th><th>法人今天</th><th>法人 5 日</th><th>成交值排名</th><th class="l">紀錄</th></tr>`;
   const body = rows.map(r => `<tr>
     <td class="l">${codeCell(r)}</td><td class="l">${nameCell(r)}</td>
     <td class="px">${px(r.close)}</td>
@@ -186,7 +187,7 @@ function listTable(rows) {
     <td>${r.room == null ? "無空方區" : pct(r.room)}</td>
     <td>${pct(r.dd60)}</td><td class="${cls(r.ret5)}">${pct(r.ret5)}</td>
     <td class="${cls(r.inst_today)}">${lots(r.inst_today)}</td><td class="${cls(r.inst5)}">${lots(r.inst5)}</td>
-    <td>${r.rank}</td></tr>`).join("");
+    <td>${r.rank}</td><td class="l">${r._t ? statusChip(r._t) : ""}</td></tr>`).join("");
   return `<div class="tbl"><table><thead>${head}</thead><tbody>${body}</tbody></table></div>`;
 }
 
@@ -197,6 +198,8 @@ const GDESC = {
 };
 
 function renderList(d) {
+  const tm = Object.fromEntries((LOG ? LOG.trades : []).filter(t => t.date === d.date).map(t => [t.code, t]));
+  d.picks.forEach(p => { p._t = tm[p.code]; });
   const by = g => d.picks.filter(p => p.grade === g);
   let html = "";
   for (const g of GRADES) {
@@ -219,6 +222,8 @@ function agg(ts) {
     n: ts.length, in: done.length,
     avg: mean(r), win: done.length ? done.filter(t => t.ret > 0).length / done.length * 100 : null,
     bench: mean(ex.map(t => t.bench)), excess: mean(ex.map(t => t.excess)),
+    plan: ts.filter(t => t.status.startsWith("待進場（")).length,
+    pnl: done.reduce((s, t) => s + t.ret, 0) / 15,
     stop: done.filter(t => t.status === "停損").length,
     open: done.filter(t => t.status === "持有中").length,
     exp: done.filter(t => t.status === "到期").length,
@@ -226,15 +231,15 @@ function agg(ts) {
 }
 
 function statusChip(t) {
-  const m = { "停損": "bad", "持有中": "ok", "到期": "mute", "待進場": "warn", "開盤破停損未進場": "mute", "沒有價格": "mute" };
+  const m = { "停損": "bad", "持有中": "ok", "到期": "mute", "待進場（預定買）": "warn" };
   return `<span class="chip ${m[t.status] || "mute"}">${esc(t.status)}</span>`;
 }
 
 function tradeTable(ts) {
-  const head = `<tr><th class="l">代號</th><th class="l">名稱</th><th class="l">級別</th><th>進場日</th><th>進場價</th><th>停損</th>
+  const head = `<tr><th>順序</th><th class="l">代號</th><th class="l">名稱</th><th class="l">級別</th><th>進場日</th><th>進場價</th><th>停損</th>
     <th class="l">狀態</th><th>出場／最新日</th><th>價格</th><th>天數</th><th>報酬</th><th>0050</th><th>超額</th><th>最大浮盈</th><th>最大浮虧</th></tr>`;
   const body = ts.map(t => `<tr>
-    <td class="l">${codeCell(t)}</td><td class="l">${nameCell(t)}</td><td class="l">${gchip(t.grade)}</td>
+    <td>${t.order ?? ""}</td><td class="l">${codeCell(t)}</td><td class="l">${nameCell(t)}</td><td class="l">${gchip(t.grade)}</td>
     <td>${esc((t.entry_date || "").slice(5)) || "–"}</td><td>${px(t.entry)}</td><td class="stop">${px(t.stop)}</td>
     <td class="l">${statusChip(t)}</td><td>${esc((t.exit_date || "").slice(5)) || "–"}</td><td>${px(t.exit)}</td>
     <td>${t.days || "–"}</td>
@@ -249,11 +254,12 @@ function renderLog(L) {
   const a = agg(T);
   $("#logAsof").textContent = `價格更新到 ${L.asof}`;
   $("#logStats").innerHTML = `
-    <div class="stat"><div class="k">紀錄筆數 / 已進場</div><div class="v">${a.n} / ${a.in}</div><div class="s">停損 ${a.stop}・持有中 ${a.open}・到期 ${a.exp}</div></div>
+    <div class="stat"><div class="k">已買進</div><div class="v">${a.in} 筆</div><div class="s">持有中 ${a.open}・停損 ${a.stop}・到期 ${a.exp}・下個交易日預定買 ${a.plan}</div></div>
+    <div class="stat"><div class="k">帳戶損益（每筆 1/15 資金）</div><div class="v ${cls(a.pnl)}">${pct(a.pnl, 2)}</div><div class="s">已實現＋未實現，不複利</div></div>
     <div class="stat"><div class="k">平均報酬（每筆，扣成本）</div><div class="v ${cls(a.avg)}">${pct(a.avg, 2)}</div><div class="s">勝率 ${a.win == null ? "–" : a.win.toFixed(0) + "%"}</div></div>
     <div class="stat"><div class="k">同期 0050</div><div class="v ${cls(a.bench)}">${pct(a.bench, 2)}</div><div class="s">每筆同一段期間</div></div>
     <div class="stat"><div class="k">比 0050 多賺</div><div class="v ${cls(a.excess)}">${pct(a.excess, 2)}</div><div class="s">正的才代表選股有用</div></div>`;
-  $("#byGrade").innerHTML = `<table><thead><tr><th class="l">級別</th><th>筆數</th><th>已進場</th><th>平均報酬</th><th>勝率</th><th>同期 0050</th><th>超額</th><th>停損</th><th>持有中</th></tr></thead><tbody>`
+  $("#byGrade").innerHTML = `<table><thead><tr><th class="l">級別</th><th>名單筆數</th><th>買進</th><th>平均報酬</th><th>勝率</th><th>同期 0050</th><th>超額</th><th>停損</th><th>持有中</th></tr></thead><tbody>`
     + GRADES.map(g => {
       const s = agg(T.filter(t => t.grade === g));
       return `<tr><td class="l">${gchip(g)}</td><td>${s.n}</td><td>${s.in}</td><td class="${cls(s.avg)}">${pct(s.avg, 2)}</td>
@@ -262,10 +268,10 @@ function renderLog(L) {
     }).join("") + "</tbody></table>";
   const order = { "優先": 0, "A": 1, "B": 2 };
   $("#byDay").innerHTML = L.days.map(d => {
-    const ts = T.filter(t => t.date === d.date).sort((x, y) => order[x.grade] - order[y.grade] || (y.ret ?? -1e9) - (x.ret ?? -1e9));
+    const ts = T.filter(t => t.date === d.date).sort((x, y) => (x.order ?? 0) - (y.order ?? 0));
     const s = agg(ts);
-    const sum = s.in ? `${s.in} 筆已進場・平均 <span class="${cls(s.avg)}">${pct(s.avg, 2)}</span>・勝率 ${s.win.toFixed(0)}%・超額 <span class="${cls(s.excess)}">${pct(s.excess, 2)}</span>`
-      : "還沒進場";
+    const sum = s.in ? `買進 ${s.in} 筆・平均 <span class="${cls(s.avg)}">${pct(s.avg, 2)}</span>・勝率 ${s.win.toFixed(0)}%・超額 <span class="${cls(s.excess)}">${pct(s.excess, 2)}</span>`
+      : (s.plan ? `下個交易日預定買 ${s.plan} 筆` : "沒有買進");
     return `<details${d.date === L.days[0].date ? "" : ""}><summary>${esc(d.date)} 名單 ${d.n} 檔 ${d.tv ? '<span class="chip ok">TV 確認</span>' : '<span class="chip mute">自動分級</span>'}<span class="dsum">${sum}</span></summary>${tradeTable(ts)}</details>`;
   }).join("");
 }
@@ -279,7 +285,7 @@ async function load(day) {
     <div class="stat"><div class="k">名單日期</div><div class="v">${esc(d.date)}</div><div class="s">產生於 ${esc(d.generated)}</div></div>
     <div class="stat"><div class="k">分級方式</div><div class="v">${d.tv ? "TV 確認" : "自動分級"}</div><div class="s">${d.tv ? "TradingView 兩個掃描器逐檔確認" : "Python 篩選，未經 TradingView 確認"}</div></div>
     <div class="stat"><div class="k">優先 / A / B</div><div class="v">${c.g["優先"]} / ${c.g["A"]} / ${c.g["B"]}</div><div class="s">股票池 ${d.universe} 檔</div></div>`
-    + (LOG ? (() => { const s = agg(LOG.trades); return `<div class="stat"><div class="k">紀錄至今（每筆平均）</div><div class="v ${cls(s.avg)}">${pct(s.avg, 2)}</div><div class="s">比 0050 ${pct(s.excess, 2)}・<a href="#log">看紀錄</a></div></div>`; })() : "");
+    + (LOG ? (() => { const s = agg(LOG.trades); return `<div class="stat"><div class="k">紀錄帳戶損益</div><div class="v ${cls(s.pnl)}">${pct(s.pnl, 2)}</div><div class="s">買進 ${s.in} 筆・比 0050 ${pct(s.excess, 2)}・<a href="#log">看紀錄</a></div></div>`; })() : "");
   try { history.replaceState(null, "", `#${day}`); } catch (e) {}
 }
 
