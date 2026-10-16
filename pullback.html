@@ -7,27 +7,12 @@
 <meta name="description" content="大型股回檔到多方 FVG／OB 的每日名單（只做多、不追創高），下面是分析紀錄：每天的名單都當作買了，追蹤賺賠並和 0050 比。">
 <style>
 :root {
-  color-scheme: light;
-  --bg: #f4f5f2; --panel: #ffffff; --line: #dfe2dc;
-  --ink: #12170f; --ink-2: #4c5549; --ink-3: #80887d;
-  --up: #0f5c3c; --up-bg: #e3f1e9; --warn: #8a5a00; --warn-bg: #f6efe0; --down: #b42318; --down-bg: #fbe9e7;
-  --accent: #2a78d6;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    color-scheme: dark;
-    --bg: #0c0f0b; --panel: #141913; --line: #232b21;
-    --ink: #eaf1e6; --ink-2: #a7b3a2; --ink-3: #6f7b6b;
-    --up: #9af5c8; --up-bg: #17291f; --warn: #e8c37a; --warn-bg: #2b2617; --down: #ff8a80; --down-bg: #2c1715;
-    --accent: #3987e5;
-  }
-}
-:root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #0c0f0b; --panel: #141913; --line: #232b21;
-  --ink: #eaf1e6; --ink-2: #a7b3a2; --ink-3: #6f7b6b;
-  --up: #9af5c8; --up-bg: #17291f; --warn: #e8c37a; --warn-bg: #2b2617; --down: #ff8a80; --down-bg: #2c1715;
-  --accent: #3987e5;
+  --bg: #0e0c0a; --panel: #191512; --line: #2d2620; --ink: #f2ebe3; --ink-2: #c2b3a3; --ink-3: #8c7d6e; --up: #ff7a5c; --up-bg: #33190f; --warn: #e8c37a; --warn-bg: #2b2617; --down: #8fb4cc; --down-bg: #15212a; --accent: #f5b461;
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f7f1e8; --panel: #fffaf3; --line: #e6dccd; --ink: #1f1812; --ink-2: #5c4f43; --ink-3: #8a7b6c; --up: #c0392b; --up-bg: #fbe4df; --warn: #8a5a00; --warn-bg: #f6efe0; --down: #2f6f95; --down-bg: #e2edf4; --accent: #b5541c;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
@@ -77,21 +62,24 @@ details .tbl { margin-top: 10px; border: 0; border-radius: 0; }
 .dsum { font-weight: 400; color: var(--ink-2); font-size: 13px; margin-left: 8px; }
 #toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 6px 14px; border-radius: 99px; font-size: 13px; opacity: 0; transition: opacity .2s; pointer-events: none; }
 #toast.on { opacity: 1; }
+.tabs { display: flex; gap: 6px; margin: 8px 0 14px; flex-wrap: wrap; }
+.tabs a { text-decoration: none; color: var(--ink-2); background: var(--panel); border: 1px solid var(--line); border-radius: 99px; padding: 5px 14px; font-size: 14px; font-weight: 600; }
+.tabs a:hover { border-color: var(--ink-3); color: var(--ink); }
+.tabs a[aria-current="page"] { color: var(--bg); background: var(--accent); border-color: var(--accent); }
 footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <h1>🔄 回檔到支撐</h1>
+    <h1>🎯 FVG／回檔標的</h1>
     <nav>
       <a href="index.html">📚 報告庫</a>
-      <a href="ranking.html">📊 排名總表</a>
-      <a href="fvg.html">🎯 FVG 每日標的</a>
       <select id="day" aria-label="名單日期"></select>
       <button id="themeBtn" title="切換深色／淺色" aria-label="切換深色／淺色">◐</button>
     </nav>
   </header>
+  <nav class="tabs" aria-label="交易標的"><a href="fvg.html">🎯 FVG 每日標的</a><a href="pullback.html" aria-current="page">🔄 回檔到支撐</a></nav>
   <p class="sub">成交值前 300 名的大型股裡，離 60 日高點跌了 8% 以上、現在回到多方 FVG 或 OB 支撐、上方空方區還有空間的股票。只做多，不追創高。下面的<a href="#log">分析紀錄</a>照名單模擬買進（每天最多 3 筆、同時最多 15 筆），追蹤到今天賺還是賠。點代號會複製成 TradingView 格式，點名稱打開 Yahoo 股市。</p>
 
   <div class="stats" id="stats"></div>
@@ -140,15 +128,13 @@ const GRADES = ["優先", "A", "B"];
 
 (function theme() {
   let t = null;
-  try { t = localStorage.getItem("theme"); } catch (e) {}
+  try { t = localStorage.getItem("theme-warm"); } catch (e) {}
   if (t) document.documentElement.dataset.theme = t;
   $("#themeBtn").onclick = () => {
-    const dark = document.documentElement.dataset.theme
-      ? document.documentElement.dataset.theme === "dark"
-      : matchMedia("(prefers-color-scheme: dark)").matches;
+    const dark = document.documentElement.dataset.theme !== "light";   // 預設黑底
     const n = dark ? "light" : "dark";
     document.documentElement.dataset.theme = n;
-    try { localStorage.setItem("theme", n); } catch (e) {}
+    try { localStorage.setItem("theme-warm", n); } catch (e) {}
   };
 })();
 

@@ -9,16 +9,16 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     /* 配色：diagram-design 設定檔 taiwan-analysis（取自網站 radar/site_library.html） */
     :root {
-      --paper: #f4f5f2; --node: #ffffff; --ink: #12170f; --muted: #4c5549; --soft: #5f685c;
-      --rule: rgba(18,23,15,0.12); --accent: #0f5c3c; --accent-tint: rgba(15,92,60,0.08);
+      --paper: #0e0c0a; --node: #191512; --ink: #f2ebe3; --muted: #c2b3a3; --soft: #9c8c7c;
+      --rule: rgba(242,235,227,0.12); --accent: #f0a050; --accent-tint: rgba(240,160,80,0.12);
       --font-sans: 'Geist', 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', system-ui, sans-serif;
       --font-serif: 'Instrument Serif', 'Noto Serif', 'Noto Serif TC', serif;
       --font-mono: 'Geist Mono', ui-monospace, monospace;
     }
     @media (prefers-color-scheme: dark) {
       :root {
-        --paper: #0c0f0b; --node: #141913; --ink: #eaf1e6; --muted: #a7b3a2; --soft: #8a9686;
-        --rule: rgba(234,241,230,0.12); --accent: #5cc999; --accent-tint: rgba(92,201,153,0.10);
+        --paper: #0e0c0a; --node: #191512; --ink: #f2ebe3; --muted: #c2b3a3; --soft: #9c8c7c;
+        --rule: rgba(242,235,227,0.12); --accent: #f0a050; --accent-tint: rgba(240,160,80,0.12);
       }
     }
     body { font-family: var(--font-sans); background: var(--paper); color: var(--ink); padding: 20px 16px 24px; }
@@ -49,11 +49,11 @@
     svg a.node:focus-visible { outline: none; }
     svg .t-go { fill: var(--muted); font: 400 12px var(--font-sans); }
     svg a.node:hover .t-go { fill: var(--ink); }
-    svg .co a tspan { fill: var(--link); text-decoration: underline; text-decoration-color: rgba(31,99,184,0.35); }
+    svg .co a tspan { fill: var(--link); text-decoration: underline; text-decoration-color: rgba(247,200,115,0.35); }
     svg .co a:hover tspan { text-decoration-color: currentColor; }
-    @media (prefers-color-scheme: dark) { svg .co a tspan { text-decoration-color: rgba(106,166,238,0.4); } }
-    :root { --link: #1f63b8; }
-    @media (prefers-color-scheme: dark) { :root { --link: #6aa6ee; } }
+    @media (prefers-color-scheme: dark) { svg .co a tspan { text-decoration-color: rgba(247,200,115,0.4); } }
+    :root { --link: #f7c873; }
+    @media (prefers-color-scheme: dark) { :root { --link: #f7c873; } }
     @media print { .diagram-container { overflow-x: visible; } svg { min-width: 0; } }
     /* 題材鏈圖加的：欄位標題連結、資料不足的虛線框 */
     svg a.hd { cursor: pointer; }

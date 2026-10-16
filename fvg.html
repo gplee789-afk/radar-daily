@@ -7,27 +7,12 @@
 <meta name="description" content="大型股多方 FVG 回踩：每天收盤後列出明天可以掛的限價單與停損，只做多、上方沒有空方 OB。">
 <style>
 :root {
-  color-scheme: light;
-  --bg: #f4f5f2; --panel: #ffffff; --line: #dfe2dc;
-  --ink: #12170f; --ink-2: #4c5549; --ink-3: #80887d;
-  --up: #0f5c3c; --up-bg: #e3f1e9; --warn: #8a5a00; --warn-bg: #f6efe0; --down: #b42318;
-  --accent: #2a78d6;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    color-scheme: dark;
-    --bg: #0c0f0b; --panel: #141913; --line: #232b21;
-    --ink: #eaf1e6; --ink-2: #a7b3a2; --ink-3: #6f7b6b;
-    --up: #9af5c8; --up-bg: #17291f; --warn: #e8c37a; --warn-bg: #2b2617; --down: #ff8a80;
-    --accent: #3987e5;
-  }
-}
-:root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #0c0f0b; --panel: #141913; --line: #232b21;
-  --ink: #eaf1e6; --ink-2: #a7b3a2; --ink-3: #6f7b6b;
-  --up: #9af5c8; --up-bg: #17291f; --warn: #e8c37a; --warn-bg: #2b2617; --down: #ff8a80;
-  --accent: #3987e5;
+  --bg: #0e0c0a; --panel: #191512; --line: #2d2620; --ink: #f2ebe3; --ink-2: #c2b3a3; --ink-3: #8c7d6e; --up: #ff7a5c; --up-bg: #33190f; --warn: #e8c37a; --warn-bg: #2b2617; --down: #8fb4cc; --accent: #f5b461;
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f7f1e8; --panel: #fffaf3; --line: #e6dccd; --ink: #1f1812; --ink-2: #5c4f43; --ink-3: #8a7b6c; --up: #c0392b; --up-bg: #fbe4df; --warn: #8a5a00; --warn-bg: #f6efe0; --down: #2f6f95; --accent: #b5541c;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
@@ -73,22 +58,24 @@ details summary { cursor: pointer; font-weight: 700; }
 details li { font-size: 13.5px; color: var(--ink-2); line-height: 1.8; }
 #toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 6px 14px; border-radius: 99px; font-size: 13px; opacity: 0; transition: opacity .2s; pointer-events: none; }
 #toast.on { opacity: 1; }
+.tabs { display: flex; gap: 6px; margin: 8px 0 14px; flex-wrap: wrap; }
+.tabs a { text-decoration: none; color: var(--ink-2); background: var(--panel); border: 1px solid var(--line); border-radius: 99px; padding: 5px 14px; font-size: 14px; font-weight: 600; }
+.tabs a:hover { border-color: var(--ink-3); color: var(--ink); }
+.tabs a[aria-current="page"] { color: var(--bg); background: var(--accent); border-color: var(--accent); }
 footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <h1>🎯 FVG 每日標的</h1>
+    <h1>🎯 FVG／回檔標的</h1>
     <nav>
       <a href="index.html">📚 報告庫</a>
-      <a href="daily.html">📡 日報</a>
-      <a href="ranking.html">📊 排名總表</a>
-      <a href="pullback.html">🔄 回檔到支撐</a>
       <select id="day" aria-label="日期"></select>
       <button id="themeBtn" title="切換深色／淺色" aria-label="切換深色／淺色">◐</button>
     </nav>
   </header>
+  <nav class="tabs" aria-label="交易標的"><a href="fvg.html" aria-current="page">🎯 FVG 每日標的</a><a href="pullback.html">🔄 回檔到支撐</a></nav>
   <p class="sub">每天收盤後，從成交值前 150 名的大型股裡找剛成立的多方 FVG（缺口 ≥ 1 ATR、上方沒有空方 OB），列出明天在上緣掛限價買的單。只做多。點代號會複製成 TradingView 的格式（例如 <code>TWSE:2330</code>），點名稱打開 Yahoo 股市。</p>
 
   <div class="stats" id="stats"></div>
@@ -127,15 +114,13 @@ const pct = (x, sign = true) => x == null ? "–" : (sign && x > 0 ? "+" : "") +
 
 (function theme() {
   let t = null;
-  try { t = localStorage.getItem("theme"); } catch (e) {}
+  try { t = localStorage.getItem("theme-warm"); } catch (e) {}
   if (t) document.documentElement.dataset.theme = t;
   $("#themeBtn").onclick = () => {
-    const dark = document.documentElement.dataset.theme
-      ? document.documentElement.dataset.theme === "dark"
-      : matchMedia("(prefers-color-scheme: dark)").matches;
+    const dark = document.documentElement.dataset.theme !== "light";   // 預設黑底
     const n = dark ? "light" : "dark";
     document.documentElement.dataset.theme = n;
-    try { localStorage.setItem("theme", n); } catch (e) {}
+    try { localStorage.setItem("theme-warm", n); } catch (e) {}
   };
 })();
 

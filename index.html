@@ -4,30 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>台股分析報告庫</title>
-<meta name="description" content="台股分析的所有報告：盤勢與總經、每日日報、事實分數排名、估值、供應鏈深挖、題材卷宗、研究與回測。">
+<meta name="description" content="台股分析的所有報告：盤勢與總經、每日日報、個股報告、估值、供應鏈深挖、題材卷宗、研究與回測。">
 <style>
 :root {
-  color-scheme: light;
-  --bg: #f4f5f2; --panel: #ffffff; --line: #dfe2dc; --grid: #ccd3cc;
-  --ink: #12170f; --ink-2: #4c5549; --ink-3: #80887d;
-  --ev-1: #0f5c3c; --ev-2: #2f8a63; --ev-3: #5aa785; --ev-4: #a9b3a6;
-  --accent: #2a78d6; --tag-auto: #e3f1e9; --tag-ask: #e6eefb; --tag-in: #f6efe0;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    color-scheme: dark;
-    --bg: #0c0f0b; --panel: #141913; --line: #232b21; --grid: #2a3528;
-    --ink: #eaf1e6; --ink-2: #a7b3a2; --ink-3: #6f7b6b;
-    --ev-1: #9af5c8; --ev-2: #5cc999; --ev-3: #3f9a76; --ev-4: #4a5547;
-    --accent: #3987e5; --tag-auto: #17291f; --tag-ask: #172235; --tag-in: #2b2617;
-  }
-}
-:root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #0c0f0b; --panel: #141913; --line: #232b21; --grid: #2a3528;
-  --ink: #eaf1e6; --ink-2: #a7b3a2; --ink-3: #6f7b6b;
-  --ev-1: #9af5c8; --ev-2: #5cc999; --ev-3: #3f9a76; --ev-4: #4a5547;
-  --accent: #3987e5; --tag-auto: #17291f; --tag-ask: #172235; --tag-in: #2b2617;
+  --bg: #0e0c0a; --panel: #191512; --line: #2d2620; --grid: #3a3129; --ink: #f2ebe3; --ink-2: #c2b3a3; --ink-3: #8c7d6e; --ev-1: #ffcf8a; --ev-2: #f0a050; --ev-3: #c97a3a; --ev-4: #5b4b3d; --accent: #f5b461; --tag-auto: #2e2116; --tag-ask: #33201c; --tag-in: #2b2617;
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f7f1e8; --panel: #fffaf3; --line: #e6dccd; --grid: #d8ccb9; --ink: #1f1812; --ink-2: #5c4f43; --ink-3: #8a7b6c; --ev-1: #a8521b; --ev-2: #c9702e; --ev-3: #dc9a5c; --ev-4: #c4b5a3; --accent: #b5541c; --tag-auto: #f6e6d3; --tag-ask: #f7e0da; --tag-in: #f6efe0;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
@@ -93,7 +78,7 @@ h2 { font-size: 17px; margin: 22px 0 10px; }
 #reader .bar b { font-size: 14px; color: var(--ink-2); margin-right: auto; }
 #doc { overflow: auto; padding: 8px 26px 40px; flex: 1; }
 #doc.frame { padding: 0; }
-#doc iframe { border: 0; width: 100%; height: 100%; display: block; background: #fff; }
+#doc iframe { border: 0; width: 100%; height: 100%; display: block; background: var(--bg); }
 #doc h1 { font-size: 24px; margin: 14px 0 4px; }
 #doc h2 { font-size: 19px; margin: 26px 0 8px; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
 #doc h3 { font-size: 16px; margin: 18px 0 6px; }
@@ -114,9 +99,7 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
   <header>
     <h1>📚 台股分析報告庫</h1>
     <nav>
-      <a href="ranking.html">📊 排名總表</a>
-      <a href="fvg.html">🎯 FVG 每日標的</a>
-      <a href="pullback.html">🔄 回檔到支撐</a>
+      <a href="fvg.html">🎯 FVG／回檔標的</a>
       <button id="themeBtn" title="切換深色／淺色" aria-label="切換深色／淺色">◐</button>
     </nav>
   </header>
@@ -156,15 +139,13 @@ let CATS = [], ALL = [], GROUPS = [];
 
 (function theme() {
   let t = null;
-  try { t = localStorage.getItem("theme"); } catch (e) {}
+  try { t = localStorage.getItem("theme-warm"); } catch (e) {}
   if (t) document.documentElement.dataset.theme = t;
   $("#themeBtn").onclick = () => {
-    const dark = document.documentElement.dataset.theme
-      ? document.documentElement.dataset.theme === "dark"
-      : matchMedia("(prefers-color-scheme: dark)").matches;
+    const dark = document.documentElement.dataset.theme !== "light";   // 預設黑底
     const n = dark ? "light" : "dark";
     document.documentElement.dataset.theme = n;
-    try { localStorage.setItem("theme", n); } catch (e) {}
+    try { localStorage.setItem("theme-warm", n); } catch (e) {}
   };
 })();
 
