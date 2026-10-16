@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>K 線圖</title>
+<meta name="description" content="FVG 每日標的、回檔到支撐名單的 60 分 K／日 K，標出多方、空方 FVG 與 OB 區間和停損。">
+<script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #0e0c0a; --panel: #191512; --line: #2d2620; --ink: #f2ebe3; --ink-2: #c2b3a3; --ink-3: #8c7d6e; --accent: #f5b461;
+  --grid: #1d1915; --kup: #ff6b57; --kdn: #3fbf8f; --bull: #5b9cf0; --bear: #e8a33d; --stop: #8fb4cc;
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f7f1e8; --panel: #fffaf3; --line: #e6dccd; --ink: #1f1812; --ink-2: #5c4f43; --ink-3: #8a7b6c; --accent: #b5541c;
+  --grid: #efe6d9; --kup: #d6402c; --kdn: #1f9a6b; --bull: #2f6fd0; --bear: #c27a10; --stop: #2f6f95;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { background: var(--bg); color: var(--ink); display: flex; flex-direction: column; overflow: hidden;
+  font: 13px/1.4 system-ui, -apple-system, "Segoe UI", "Noto Sans TC", "Microsoft JhengHei", sans-serif; }
+a { color: var(--accent); }
+header { display: flex; align-items: center; gap: 6px 10px; padding: 6px 12px; border-bottom: 1px solid var(--line); flex-wrap: wrap; min-height: 46px; }
+.back { text-decoration: none; font-weight: 600; white-space: nowrap; }
+select, button { font: inherit; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px; cursor: pointer; }
+select { font-weight: 600; max-width: 220px; }
+.sep { width: 1px; height: 22px; background: var(--line); }
+.grp { display: flex; align-items: center; gap: 4px; }
+.grp > span { color: var(--ink-3); }
+.seg { display: flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.seg button { border: 0; border-radius: 0; background: transparent; color: var(--ink-2); padding: 4px 9px; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button.on { background: var(--accent); color: var(--bg); font-weight: 600; }
+.nav { display: flex; gap: 2px; }
+.right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+main { flex: 1; position: relative; min-height: 0; }
+#chart { position: absolute; inset: 0; }
+#ov { position: absolute; left: 0; top: 0; pointer-events: none; z-index: 2; }
+#legend { position: absolute; left: 12px; top: 8px; z-index: 3; pointer-events: none; font-variant-numeric: tabular-nums; }
+#legend .sym { font-size: 16px; font-weight: 700; margin-right: 6px; }
+#legend .row2 { margin-top: 2px; }
+#legend b { font-weight: 400; color: var(--ink-3); margin: 0 2px 0 8px; }
+#legend b:first-child { margin-left: 0; }
+#info { position: absolute; left: 12px; top: 56px; z-index: 3; background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+  font-size: 12px; font-variant-numeric: tabular-nums; border-collapse: collapse; opacity: .94; }
+#info td { padding: 3px 10px; white-space: nowrap; }
+#info td:first-child { color: var(--ink-3); }
+#info td:last-child { text-align: right; }
+#info tr + tr td { border-top: 1px solid var(--line); }
+.key { display: inline-block; width: 10px; height: 10px; border-radius: 2px; vertical-align: -1px; margin-right: 4px; }
+#msg { position: absolute; inset: 0; display: none; place-items: center; color: var(--ink-3); text-align: center; padding: 20px; z-index: 4; background: var(--bg); }
+.chip { display: inline-block; font-size: 11.5px; padding: 0 7px; border-radius: 99px; border: 1px solid var(--line); color: var(--ink-2); margin-left: 4px; vertical-align: 2px; }
+@media (max-width: 760px) {
+  #info { top: auto; bottom: 34px; }
+  .right .hint { display: none; }
+}
+</style>
+</head>
+<body>
+<header>
+  <a class="back" id="back" href="trade.html">← 今日交易</a>
+  <div class="sep"></div>
+  <select id="sym" aria-label="切換股票"></select>
+  <div class="nav"><button id="prev" title="上一檔（←）" aria-label="上一檔">‹</button><button id="next" title="下一檔（→）" aria-label="下一檔">›</button></div>
+  <div class="sep"></div>
+  <div class="grp"><span>週期</span><div class="seg" data-key="tf"><button data-v="60" class="on">60 分</button><button data-v="D">日</button></div></div>
+  <div class="grp"><span>FVG</span><div class="seg" data-key="fvg"><button data-v="live" class="on" title="到名單日期還沒失效、離收盤最近的 3 個">現存</button><button data-v="all" title="每個區間從成立畫到失效">全部</button><button data-v="off">關</button></div></div>
+  <div class="grp"><span>OB</span><div class="seg" data-key="ob"><button data-v="live" class="on" title="到名單日期還沒失效、離收盤最近的 3 個">現存</button><button data-v="all" title="每個區間從成立畫到失效">全部</button><button data-v="off">關</button></div></div>
+  <div class="right">
+    <span class="hint" style="color:var(--ink-3)"><span class="key" style="background:var(--bull)"></span>多方 <span class="key" style="background:var(--bear)"></span>空方・實線 FVG・虛線 OB</span>
+    <button id="themeBtn" title="切換深色／淺色" aria-label="切換深色／淺色">◐</button>
+  </div>
+</header>
+<main>
+  <div id="chart"></div>
+  <canvas id="ov"></canvas>
+  <div id="legend"></div>
+  <table id="info"></table>
+  <div id="msg"></div>
+</main>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const px = x => x == null ? "–" : Number(x).toLocaleString("zh-TW", { maximumFractionDigits: 2 });
+const pct = (x, d = 1) => x == null || isNaN(x) ? "–" : (x > 0 ? "+" : "") + Number(x).toFixed(d) + "%";
+const vol = v => v >= 1e8 ? (v / 1e8).toFixed(2) + " 億" : v >= 1e4 ? (v / 1e4).toFixed(0) + " 萬" : String(v);
+const rgba = (c, a) => { const n = parseInt(c.trim().slice(1), 16); return `rgba(${n >> 16 & 255},${n >> 8 & 255},${n & 255},${a})`; };
+const css = k => getComputedStyle(document.documentElement).getPropertyValue(k).trim();
+
+const P = new URLSearchParams(location.search);
+const DAY = P.get("d") || "";
+const STRAT = P.get("s") === "fvg" ? "fvg" : "pullback";          // 哪個策略的名單：回檔到支撐（預設）或 FVG 每日標的
+const FROM = "trade";                                              // ← 返回今日交易（舊的 fvg.html、pullback.html 已併進去）
+const state = { tf: "60", fvg: "live", ob: "live" };
+let chart, candle, volS, stopLine, entryLine, raw = null, cur = null, picks = [], hover = null, dirty = true, lastKey = "", C = {};
+
+function msg(t) { const m = $("#msg"); m.textContent = t; m.style.display = t ? "grid" : "none"; }
+
+// ---------- 主題 ----------
+function colors() {
+  C = Object.fromEntries(["bg", "panel", "line", "ink", "ink-2", "ink-3", "grid", "kup", "kdn", "bull", "bear", "stop"].map(k => [k, css("--" + k)]));
+}
+function applyTheme() {
+  colors();
+  if (!chart) return;
+  chart.applyOptions({ layout: { background: { type: "solid", color: C.bg }, textColor: C["ink-2"] },
+    grid: { vertLines: { color: C.grid }, horzLines: { color: C.grid } },
+    rightPriceScale: { borderColor: C.line }, timeScale: { borderColor: C.line } });
+  candle.applyOptions({ upColor: C.kup, downColor: C.kdn, wickUpColor: C.kup, wickDownColor: C.kdn });
+  if (cur) { setSeries(false); }
+  dirty = true;
+}
+(function theme() {
+  let t = null;
+  try { t = localStorage.getItem("theme-warm"); } catch (e) {}
+  if (t) document.documentElement.dataset.theme = t;
+  $("#themeBtn").onclick = () => {
+    const n = document.documentElement.dataset.theme !== "light" ? "light" : "dark";
+    document.documentElement.dataset.theme = n;
+    try { localStorage.setItem("theme-warm", n); } catch (e) {}
+    applyTheme();
+  };
+})();
+
+// ---------- 圖表 ----------
+function init() {
+  colors();
+  const LC = window.LightweightCharts;
+  chart = LC.createChart($("#chart"), {
+    autoSize: true,
+    layout: { background: { type: "solid", color: C.bg }, textColor: C["ink-2"], fontSize: 12,
+      fontFamily: 'system-ui, "Segoe UI", "Microsoft JhengHei", sans-serif' },
+    grid: { vertLines: { color: C.grid }, horzLines: { color: C.grid } },
+    crosshair: { mode: LC.CrosshairMode.Normal },
+    rightPriceScale: { borderColor: C.line, scaleMargins: { top: 0.1, bottom: 0.2 } },
+    timeScale: { borderColor: C.line, rightOffset: 12, barSpacing: 7 },
+    localization: { locale: "zh-TW" },
+  });
+  candle = chart.addCandlestickSeries({ upColor: C.kup, downColor: C.kdn, borderVisible: false, wickUpColor: C.kup, wickDownColor: C.kdn });
+  volS = chart.addHistogramSeries({ priceScaleId: "vol", priceFormat: { type: "volume" }, lastValueVisible: false, priceLineVisible: false });
+  chart.priceScale("vol").applyOptions({ scaleMargins: { top: 0.84, bottom: 0 } });
+  chart.subscribeCrosshairMove(p => {
+    hover = p && p.point && p.logical != null && cur ? Math.max(0, Math.min(cur.bars.length - 1, Math.round(p.logical))) : null;
+    legend();
+  });
+  document.querySelectorAll(".seg").forEach(seg => seg.addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    seg.querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b));
+    state[seg.dataset.key] = b.dataset.v;
+    if (seg.dataset.key === "tf") build(true);
+    dirty = true;
+  }));
+  requestAnimationFrame(loop);
+}
+
+// 60 分 K → 日 K；區間的索引換成日 K 的索引
+function build(reset) {
+  if (!raw) return;
+  const B = raw.bars;
+  if (state.tf === "60") {
+    cur = { bars: B, map: B.map((_, i) => i), intraday: true };
+  } else {
+    const bars = [], map = [];
+    for (const b of B) {
+      const t = b[0] - b[0] % 86400, last = bars[bars.length - 1];
+      if (last && last[0] === t) {
+        last[2] = Math.max(last[2], b[2]); last[3] = Math.min(last[3], b[3]); last[4] = b[4]; last[5] += b[5];
+      } else bars.push([t, b[1], b[2], b[3], b[4], b[5]]);
+      map.push(bars.length - 1);
+    }
+    cur = { bars, map, intraday: false };
+  }
+  setSeries(reset);
+}
+
+function setSeries(reset) {
+  const B = cur.bars;
+  candle.setData(B.map(b => ({ time: b[0], open: b[1], high: b[2], low: b[3], close: b[4] })));
+  volS.setData(B.map(b => ({ time: b[0], value: b[5], color: rgba(b[4] >= b[1] ? C.kup : C.kdn, 0.35) })));
+  if (stopLine) candle.removePriceLine(stopLine);
+  stopLine = candle.createPriceLine({ price: raw.stop, color: C.stop, lineWidth: 1, lineStyle: 2, axisLabelVisible: true, title: "停損" });
+  if (entryLine) { candle.removePriceLine(entryLine); entryLine = null; }
+  if (raw.entry != null) entryLine = candle.createPriceLine({ price: raw.entry, color: C.ink, lineWidth: 1, lineStyle: 2, axisLabelVisible: true, title: "掛單" });
+  chart.applyOptions({ timeScale: { timeVisible: cur.intraday, secondsVisible: false } });
+  if (reset) {
+    const n = B.length, span = cur.intraday ? 220 : 120;
+    const show = () => chart.timeScale().setVisibleLogicalRange({ from: n - span, to: n + 10 });
+    show(); requestAnimationFrame(show);
+  }
+  legend();
+  dirty = true;
+}
+
+// ---------- 疊在圖上的 FVG／OB 框 ----------
+function loop() { draw(); requestAnimationFrame(loop); }
+
+function draw() {
+  if (!cur) return;
+  const ts = chart.timeScale(), r = ts.getVisibleLogicalRange();
+  if (!r) return;
+  const w = ts.width(), h = $("#chart").clientHeight - ts.height();
+  const ref = candle.priceToCoordinate(raw.close);
+  const key = [r.from.toFixed(2), r.to.toFixed(2), ref, w, h].join();
+  if (!dirty && key === lastKey) return;
+  lastKey = key; dirty = false;
+
+  const cv = $("#ov"), dpr = window.devicePixelRatio || 1;
+  if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) {
+    cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+    cv.style.width = w + "px"; cv.style.height = h + "px";
+  }
+  const ctx = cv.getContext("2d");
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+  ctx.save(); ctx.beginPath(); ctx.rect(0, 0, w, h); ctx.clip();
+  const X = i => ts.logicalToCoordinate(i), Y = p => candle.priceToCoordinate(p);
+  const bw = Math.max(1, X(1) - X(0));
+  ctx.font = '11px system-ui, "Segoe UI", "Microsoft JhengHei", sans-serif';
+  ctx.textBaseline = "middle"; ctx.textAlign = "right";
+
+  const layers = [["ob", "ob_bear", C.bear, "OB"], ["ob", "ob_bull", C.bull, "OB"], ["fvg", "fvg_bear", C.bear, "FVG"], ["fvg", "fvg_bull", C.bull, "FVG"]];
+  for (const [k, field, col, tag] of layers) {
+    if (state[k] === "off") continue;
+    for (const z of raw[field]) {
+      const [top, btm, born, dead] = z, live = dead < 0;
+      if (state[k] === "live" && !raw.near.has(z)) continue;
+      const a = cur.map[born], b = live ? null : cur.map[Math.min(dead, cur.map.length - 1)];
+      if (b != null && b < r.from - 2) continue;
+      if (a > r.to + 2) continue;
+      const y1 = Y(top), y2 = Y(btm);
+      if (y1 == null || y2 == null) continue;
+      const x1 = X(a) - bw / 2, x2 = live ? w : X(b) + bw / 2;
+      const yt = Math.min(y1, y2), bh = Math.max(1, Math.abs(y2 - y1));
+      const isSup = field.endsWith("bull") && raw.support === tag && Math.abs(btm - raw.zone_lo) < 1e-6 && Math.abs(top - raw.zone_hi) < 1e-6;
+      ctx.globalAlpha = live ? 1 : 0.45;
+      ctx.fillStyle = rgba(col, isSup ? 0.26 : tag === "FVG" ? 0.14 : 0.09);
+      ctx.fillRect(x1, yt, x2 - x1, bh);
+      ctx.setLineDash(tag === "OB" ? [4, 3] : []);
+      ctx.strokeStyle = rgba(col, isSup ? 1 : 0.6);
+      ctx.lineWidth = isSup ? 1.5 : 1;
+      ctx.strokeRect(Math.round(x1) + 0.5, Math.round(yt) + 0.5, Math.round(x2 - x1), Math.round(bh));
+      ctx.setLineDash([]);
+      if (live && x2 - x1 > 110) {
+        ctx.fillStyle = col;
+        ctx.fillText(`${isSup ? "支撐 " : ""}${tag} ${px(btm)}–${px(top)}`, x2 - 6, bh > 15 ? yt + bh / 2 : yt - 7);
+      }
+    }
+  }
+  ctx.globalAlpha = 1;
+
+  // FVG 每日標的：訊號是日 K 的 FVG，60 分 K 算出來的區間不一定有它，另外畫（從成立那天畫到右邊）
+  if (raw.mark) {
+    const t0 = Date.parse(raw.mark.born + "T00:00:00Z") / 1000;
+    const a = cur.bars.findIndex(b => b[0] >= t0), y1 = Y(raw.mark.hi), y2 = Y(raw.mark.lo);
+    if (a >= 0 && y1 != null && y2 != null) {
+      const x1 = X(a) - bw / 2, yt = Math.min(y1, y2), bh = Math.max(1, Math.abs(y2 - y1));
+      ctx.fillStyle = rgba(C.bull, 0.26); ctx.fillRect(x1, yt, w - x1, bh);
+      ctx.strokeStyle = C.bull; ctx.lineWidth = 1.5;
+      ctx.strokeRect(Math.round(x1) + 0.5, Math.round(yt) + 0.5, Math.round(w - x1), Math.round(bh));
+      ctx.fillStyle = C.bull;
+      ctx.fillText(`訊號 ${raw.mark.label} ${px(raw.mark.lo)}–${px(raw.mark.hi)}`, w - 6, bh > 15 ? yt + bh / 2 : yt - 7);
+    }
+  }
+  ctx.restore();
+}
+
+// ---------- 左上 OHLC、右上資訊 ----------
+function legend() {
+  if (!cur) return;
+  const i = hover ?? cur.bars.length - 1, b = cur.bars[i], p = i > 0 ? cur.bars[i - 1][4] : b[1];
+  const chg = b[4] - p, col = chg >= 0 ? C.kup : C.kdn;
+  const d = new Date(b[0] * 1000).toISOString(), when = cur.intraday ? d.slice(0, 10) + " " + d.slice(11, 16) : d.slice(0, 10);
+  $("#legend").innerHTML = `<div><span class="sym">${esc(raw.code)} ${esc(raw.name)}</span><span style="color:var(--ink-3)">${cur.intraday ? "60 分" : "日"} · ${when}</span><span class="chip">${esc(raw.grade)}</span></div>`
+    + `<div class="row2"><b>開</b><span style="color:${col}">${px(b[1])}</span><b>高</b><span style="color:${col}">${px(b[2])}</span>`
+    + `<b>低</b><span style="color:${col}">${px(b[3])}</span><b>收</b><span style="color:${col}">${px(b[4])}</span>`
+    + `<span style="color:${col};margin-left:8px">${chg >= 0 ? "+" : ""}${px(chg)} (${pct(chg / p * 100, 2)})</span><b>量</b><span>${vol(b[5])}</span></div>`;
+}
+
+function info() {
+  const near = (Z, above) => {
+    const live = Z.filter(z => z[3] < 0 && (above ? z[1] > raw.close : z[0] < raw.close));
+    if (!live.length) return null;
+    return live.reduce((m, z) => above ? (z[1] < m[1] ? z : m) : (z[0] > m[0] ? z : m));
+  };
+  const rs = [near(raw.fvg_bear, true), near(raw.ob_bear, true)].filter(Boolean).sort((a, b) => a[1] - b[1])[0];
+  $("#info").innerHTML = `
+    <tr><td>名單日期</td><td>${esc(DAY)}</td></tr>
+    <tr><td>收盤</td><td>${px(raw.close)}</td></tr>
+    ${raw.entry != null ? `<tr><td>掛單價（限價買）</td><td>${px(raw.entry)}（${pct((raw.entry / raw.close - 1) * 100)}）</td></tr>` : ""}
+    <tr><td><span class="key" style="background:${C.bull}"></span>${raw.mark ? "訊號 " + esc(raw.mark.label) : "支撐 " + esc(raw.support)}</td><td>${px(raw.zone_lo)}–${px(raw.zone_hi)}</td></tr>
+    <tr><td>停損</td><td style="color:${C.stop}">${px(raw.stop)}（${pct((raw.stop / raw.close - 1) * 100)}）</td></tr>
+    <tr><td><span class="key" style="background:${C.bear}"></span>上方最近壓力</td><td>${rs ? px(rs[1]) + "–" + px(rs[0]) + "（" + pct((rs[1] / raw.close - 1) * 100) + "）" : "無空方區"}</td></tr>
+    <tr><td>離 60 日高</td><td>${pct(raw.dd60)}</td></tr>
+    <tr><td>成交值排名</td><td>${raw.rank}</td></tr>`;
+}
+
+// ---------- 載入 ----------
+async function open(code, push) {
+  msg("載入中…");
+  try {
+    const r = await fetch(`data/${STRAT}/chart/${encodeURIComponent(DAY)}/${encodeURIComponent(code)}.json`, { cache: "no-cache" });
+    if (!r.ok) throw new Error(r.status);
+    raw = await r.json();
+  } catch (e) {
+    raw = null; cur = null;
+    msg(`${DAY} 的 ${code} 沒有圖表資料。`);
+    return;
+  }
+  msg("");
+  // 「現存」只畫還沒失效、離收盤最近的 3 個（每一類各自算），太遠的舊區間只在「全部」裡出現
+  raw.near = new Set(["fvg_bull", "fvg_bear", "ob_bull", "ob_bear"].flatMap(f => raw[f].filter(z => z[3] < 0)
+    .sort((a, b) => Math.min(Math.abs(a[0] - raw.close), Math.abs(a[1] - raw.close)) - Math.min(Math.abs(b[0] - raw.close), Math.abs(b[1] - raw.close)))
+    .slice(0, 3)));
+  document.title = `${raw.code} ${raw.name}・K 線圖`;
+  $("#sym").value = code;
+  const u = `chart.html?${STRAT === "fvg" ? "s=fvg&" : ""}d=${encodeURIComponent(DAY)}&c=${encodeURIComponent(code)}${FROM === "trade" ? "&from=trade" : ""}`;
+  try { push ? history.pushState(null, "", u) : history.replaceState(null, "", u); } catch (e) {}
+  hover = null;
+  build(true);
+  info();
+}
+
+function step(k) {
+  const i = picks.findIndex(p => p.code === $("#sym").value);
+  if (i < 0 || !picks.length) return;
+  open(picks[(i + k + picks.length) % picks.length].code, true);
+}
+
+(async () => {
+  $("#back").href = `${FROM}.html#${encodeURIComponent(DAY)}`;
+  if (!window.LightweightCharts) { msg("圖表程式庫載入失敗（需要連到 unpkg.com）。"); return; }
+  init();
+  try {
+    const d = await (await fetch(`data/${STRAT}/${STRAT}-${encodeURIComponent(DAY)}.json`, { cache: "no-cache" })).json();
+    picks = STRAT === "fvg" ? d.picks.map(p => ({ ...p, grade: p.status === "filled" ? "今天成交" : "可掛單" })) : d.picks;
+  } catch (e) { picks = []; }
+  const code = P.get("c") || (picks[0] && picks[0].code);
+  if (!picks.some(p => p.code === code) && code) picks.unshift({ code, name: "", grade: "" });
+  $("#sym").innerHTML = picks.map(p => `<option value="${esc(p.code)}">${esc(p.code)} ${esc(p.name)}${p.grade ? "・" + esc(p.grade) : ""}</option>`).join("");
+  $("#sym").onchange = () => open($("#sym").value, true);
+  $("#prev").onclick = () => step(-1);
+  $("#next").onclick = () => step(1);
+  document.addEventListener("keydown", e => {
+    if (e.target.tagName === "SELECT" || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+    if (e.key === "ArrowLeft") step(-1);
+    if (e.key === "ArrowRight") step(1);
+  });
+  window.addEventListener("popstate", () => { const c = new URLSearchParams(location.search).get("c"); if (c) open(c, false); });
+  if (code) open(code, false); else msg("缺少股票代號。");
+})();
+</script>
+</body>
+</html>
