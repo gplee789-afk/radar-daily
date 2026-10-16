@@ -398,6 +398,19 @@ function cards() {
   const row = (k, v, c = "") => `<div class="row"><span>${k}</span><span class="${c}">${v}</span></div>`;
   const hlPb = (a ? `上線 <span class="${cls(a.pnl)}">${pct(a.pnl, 2)}</span>（0050 ${pct(a.bench, 2)}）・` : "") + "回測年化 +0.4%／+122%";
   $("#cards").innerHTML = `
+    <div class="box strat" id="strat-pb"><div class="head">${S.pb} 回檔到支撐（2026-10-17 停用，已買的追蹤到出場） <span class="hl">${hlPb}</span></div>
+      <div class="charts"><div class="c-live"></div><div class="c-bt"></div></div>
+      <details class="more"><summary>詳細數值</summary><div class="rows">
+      ${a ? row("上線紀錄（2026-10-15 起）", `買進 ${a.in} 筆・持有 ${a.open}・停損 ${a.stop}`)
+        + row("帳戶損益（每筆 1/15 資金）", pct(a.pnl, 2), cls(a.pnl))
+        + row("平均每筆（扣成本）", `${pct(a.avg, 2)}・勝率 ${a.win == null ? "–" : a.win.toFixed(0) + "%"}`, cls(a.avg))
+        + row("同期 0050", pct(a.bench, 2), cls(a.bench))
+        + row("比 0050 多賺", pct(a.excess, 2), cls(a.excess)) : row("上線紀錄", "還沒有")}
+      ${row("回測 2024-01～2025-03 年化", "+0.4%（回撤 −18%）")}
+      ${row("回測 2025-04～2026-09 年化", "+122%（回撤 −26%）")}
+      ${row("同規則隨機選股（中位數）", "−5.4%／+42.2%")}
+      ${row("同期 0050", "+26.2%／+89.9%")}
+      <p>回測兩段都贏同規則隨機選股；前段輸 0050、後段贏。2026-10-17 起不再產生新名單（20 年日 K 回測比 FVG 差，見規則與限制），上線紀錄只剩停用前買進的部位。</p></div></details></div>
     <div class="box strat" id="strat-fvg"><div class="head">${S.fvg} FVG 每日標的 <span class="hl">回測驗證期年化 +11.8%（0050 +24%）・上線紀錄還沒有</span></div>
       <div class="charts"><div class="c-bt"></div></div>
       <details class="more"><summary>詳細數值</summary><div class="rows">
