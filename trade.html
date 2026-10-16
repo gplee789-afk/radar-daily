@@ -126,7 +126,7 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
     </nav>
   </header>
   <nav class="tabs" aria-label="交易標的"><a href="trade.html" aria-current="page"><svg class="ico" viewBox="0 0 512 512" width="1em" height="1em" aria-hidden="true" style="vertical-align:-.12em"><g fill="currentColor"><rect x="28" y="172" width="96" height="310" rx="26"/><rect x="148" y="238" width="96" height="244" rx="26"/><rect x="268" y="304" width="96" height="178" rx="26"/><rect x="388" y="238" width="96" height="244" rx="26"/></g><path d="M62 42 197 140H258L318 218 450 80M392 77H452V137" fill="none" stroke="currentColor" stroke-width="42" stroke-linecap="round" stroke-linejoin="round"/></svg> FVG 實驗室</a></nav>
-  <p class="sub">兩個只做多的策略合在一起看：<span class="chip fvg">FVG</span> 剛成立的多方 FVG，在上緣掛限價買；<span class="chip pb">回檔</span> 從高點回檔到多方 FVG／OB 支撐，隔天開盤買。點代號複製 TradingView 格式，點名稱打開 K 線圖。</p>
+  <p class="sub">只做多、回踩多方支撐：剛成立的多方 FVG（上緣以上沒有空方 OB 壓著），在上緣掛限價買；只列隔天比較可能成交的單。點代號複製 TradingView 格式，點名稱打開 K 線圖。</p>
 
   <div class="strip" id="strip"></div>
 
@@ -135,15 +135,15 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
   <div class="tbl" id="todo"></div>
 
   <h2>② 目前持有<span class="n" id="holdN"></span></h2>
-  <p class="hint">回檔紀錄裡還沒出場的部位（收盤跌破停損就出場、最多 20 個交易日），加上 FVG 今天成交、算買進的單（FVG 目前還沒有持倉追蹤）。</p>
+  <p class="hint">FVG 今天成交、算買進的單（FVG 目前還沒有持倉追蹤），加上回檔策略停用前買進的部位（照原規則：收盤跌破停損就出場、最多 20 個交易日）。</p>
   <div class="tbl" id="hold"></div>
 
   <h2>③ 觀察名單</h2>
-  <p class="hint">FVG 掛單價離收盤太遠（隔天幾乎買不到）或排在 5 名外的單、成交了但沒算買進的單，和回檔名單裡這天沒輪到買的股票（兩邊都是每天最多買 3 筆）。不用動作，預設收起來。</p>
+  <p class="hint">掛單價離收盤太遠（隔天幾乎買不到）或排在 5 名外的單，和成交了但沒算買進的單（每天最多買 3 筆）。不用動作，預設收起來。</p>
   <div id="watch"></div>
 
   <h2>④ 策略成績</h2>
-  <p class="hint">兩個都要拿來跟買 0050 比：贏不了 0050 的選股就沒有意義。</p>
+  <p class="hint">要拿來跟買 0050 比：贏不了 0050 的選股就沒有意義。</p>
   <div class="strats" id="cards"></div>
   <div id="logDetail"></div>
 
@@ -151,8 +151,8 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
     <summary>規則與限制</summary>
     <ul>
       <li><span class="chip fvg">FVG</span> <b>股票池</b>成交值前 300 名。<b>訊號</b>：日 K 多方 FVG，缺口 ≥ 1 ATR，上緣以上沒有還活著的空方 OB。<b>名單</b>：只列隔天高機率成交的單：掛單價在收盤下 0.5 ATR 以內（回測隔天成交率約 55%），依缺口大小（ATR 倍）排序最多 5 檔，沒有就不列、不用列滿；掛更遠的單隔天幾乎買不到（2 ATR 以外成交率 &lt; 1%），收在「③ 觀察名單」。<b>進場</b>：成立後 10 個交易日內在上緣掛限價買，開盤在停損以下就撤單；同一天成交超過 3 檔只算名次前 3 的，沒成交就不買（2026-10-17 起；之前是前 150 名、掛 3 天、每張都掛）。<b>停損</b>：下緣 − 0.1 ATR；收盤跌破前 10 天最低隔天開盤賣，最多 120 天。收盤在 60 日高 3% 以內的淡化顯示（創高中，不追）。</li>
-      <li><span class="chip pb">回檔</span> <b>股票池</b>成交值前 300 名。<b>條件</b>（60 分 K）：離 60 日高 ≥ 8%，價格在多方 FVG 或 OB 裡或上緣上方 3% 內，上方空方 OB／FVG 都在 3% 外。<b>分級</b>：上方空間 ≥ 5% 為 A、3–5% 為 B，A 裡法人當天買超、5 日買超 ≥ 5,000 張為優先。<b>進場</b>：隔天開盤買，每天最多 3 筆、同時最多 15 筆；進場日 08:10 盤前預估 P(收紅) &lt; 15% 整天不買。<b>停損</b>：收盤跌破支撐下緣再往下 0.5 個日 ATR（FVG 下緣為主，只有 OB 才用 OB 下緣），最多 20 個交易日。<b>回測</b>（2024-01～2026-09）：停損放寬 0.5 ATR 比停在下緣剛好兩段期間都好，2024-01～2025-03 年化 +0.4%（0050 +26.2%）、2025-04～2026-09 +122%（0050 +89.9%），兩段都贏同規則隨機選股的中位數。</li>
-      <li>FVG 用 Yahoo 日 K、每個交易日 21:30 更新；回檔名單 07:30 產生、08:50 依盤前預估決定買不買（09:00 開盤前更新），14:45 收盤後更新持有部位。兩邊同一檔股票的停損可能不同，各照各的規則。</li>
+      <li><b>回檔到支撐</b>：2026-10-17 停用。把兩套規則放進同一個 2005–2026 日 K 回測比較，回檔那套多出來的條件（加 OB、離高 8%、隔天開盤買、固定 20 天出場）每一項都讓成績變差或沒差，所以只留 FVG。停用前已買的部位照原規則追蹤到出場。</li>
+      <li>FVG 用 Yahoo 日 K、每個交易日 21:30 更新（缺收盤的用 60 分 K 補）；回檔的舊部位 14:45 收盤後更新。</li>
       <li>研究輔助，不是投資建議。紀錄是照規則模擬的，不是實際成交。</li>
     </ul>
   </details>
@@ -226,26 +226,12 @@ function todo(day, F, PB) {
       r.bfv ? `<span class="chip warn">上方空方 FVG ${r.bfv}</span>` : "", `<span class="chip mute">還能掛 ${r.days_left} 天</span>`].join(" "),
     dd60: -r.below_high_pct, rank: r.rank,
   });
-  // 回檔：紀錄照規則挑出來要買的（待進場、或已經買了的）
-  const picked = LOG ? LOG.trades.filter(t => t.date === day && (t.status === "待進場（預定買）" || t.entry != null)) : [];
-  const pmap = PB ? Object.fromEntries(PB.picks.map(p => [p.code, p])) : {};
-  for (const t of picked.sort((a, b) => (a.order ?? 0) - (b.order ?? 0))) {
-    const p = pmap[t.code] || {};
-    rows.push({
-      s: "pullback", r: { ...p, ...t }, day,
-      act: t.entry_date ? `開盤買 ${px(t.entry)}` : "開盤買", ref: t.entry ?? p.close, stop: t.stop,
-      zone: `${esc(p.support || t.support || "")} ${p.zone_lo != null ? px(p.zone_lo) + "–" + px(p.zone_hi) : esc(t.zone || "")}`,
-      note: `${gchip(t.grade)} ${statusChip(t.status)}`, dd60: p.dd60, rank: p.rank,
-    });
-  }
-  const pbN = picked.length, fN = rows.length - pbN;
+  const fN = rows.length;
   const latest = day === $("#day").options[0].value;      // 舊名單：這些單已經執行過了，狀態看備註
   $("#todoH").textContent = latest ? "① 下個交易日要做的" : `① ${day.slice(5)} 名單要做的（已過）`;
-  $("#todoN").textContent = `${rows.length} 筆（FVG ${fN}・回檔 ${pbN}）`;
-  const decTxt = !dec ? "" : dec.decision === "照常買" ? `回檔：進場日 ${esc((dec.entry_day || "").slice(5))} 盤前 P(收紅) ${dec.pm_p_up?.toFixed(0)}%，照常買。`
-    : dec.decision.endsWith("不買") ? `回檔：進場日盤前判斷「${esc(dec.decision)}」，這天的單都不買。` : `回檔：${esc(dec.decision)}（P(收紅) < 15% 就整天不買）。`;
-  $("#todoHint").innerHTML = `${esc(day)} 收盤後產生、下一個交易日執行。FVG 只列掛單價在收盤下 0.5 ATR 以內、隔天比較可能成交的單（最多 5 檔，沒有就不列），在掛單價掛限價買，開盤就在停損以下撤單；同一天成交超過 3 檔只算名次前 3 的，沒成交就不買；回檔開盤買，開盤在停損以下跳過。${decTxt}`;
-  if (!rows.length) { $("#todo").innerHTML = '<div class="empty">這天兩個策略都沒有要下的單。沒有單是常態，不用勉強找。</div>'; return; }
+  $("#todoN").textContent = `${rows.length} 筆`;
+  $("#todoHint").innerHTML = `${esc(day)} 收盤後產生、下一個交易日執行。只列掛單價在收盤下 0.5 ATR 以內、隔天比較可能成交的單（最多 5 檔，沒有就不列），在掛單價掛限價買，開盤就在停損以下撤單；同一天成交超過 3 檔只算名次前 3 的，沒成交就不買。`;
+  if (!rows.length) { $("#todo").innerHTML = '<div class="empty">這天沒有要下的單：沒有掛單價在收盤附近（0.5 ATR 內）的 FVG。沒有單是常態，不用勉強找；掛很遠的單收在「③ 觀察名單」。</div>'; return; }
   $("#todo").innerHTML = `<table><thead><tr><th class="l">代號</th><th class="l">名稱</th><th class="l">動作</th><th>停損</th><th>停損距離</th>
     <th class="l">支撐／訊號區</th><th>離 60 日高</th><th>成交值排名</th><th class="l">備註</th></tr></thead><tbody>`
     + rows.map(x => `<tr class="${x.dim ? "dim" : ""}"><td class="l">${codeCell(x.r)}</td>
@@ -296,20 +282,7 @@ function fvgRest(day, F) {
 }
 
 function watch(day, PB, F) {
-  if (!PB) { $("#watch").innerHTML = fvgRest(day, F) + `<div class="tbl"><div class="empty">回檔：${esc(day)} 沒有名單。</div></div>`; return; }
-  const tm = Object.fromEntries((LOG ? LOG.trades : []).filter(t => t.date === day).map(t => [t.code, t]));
-  const rest = PB.picks.filter(p => { const t = tm[p.code]; return !(t && (t.status === "待進場（預定買）" || t.entry != null)); });
-  const n = g => rest.filter(p => p.grade === g).length;
-  const ex = Object.entries(PB.excluded || {});
-  $("#watch").innerHTML = fvgRest(day, F) + `<details class="box"><summary>回檔名單 ${esc(day)}<span class="n">${rest.length} 檔・優先 ${n("優先")}・A ${n("A")}・B ${n("B")}${PB.tv ? "・TV 確認" : "・自動分級"}${ex.length ? `・剔除 ${ex.length}` : ""}</span></summary>
-    <div class="tbl"><table><thead><tr><th class="l">級別</th><th class="l">代號</th><th class="l">名稱</th><th>收盤</th><th class="l">支撐區</th><th>停損</th><th>停損距離</th>
-    <th>上方空間</th><th>離 60 日高</th><th>近 5 日</th><th>法人 5 日</th><th>成交值排名</th><th class="l">紀錄</th></tr></thead><tbody>`
-    + rest.map(r => { const t = tm[r.code]; return `<tr><td class="l">${gchip(r.grade)}</td><td class="l">${codeCell(r)}</td><td class="l">${nameCell(r, "pullback", day)}</td>
-      <td class="px">${px(r.close)}</td><td class="l">${esc(r.support)} ${px(r.zone_lo)}–${px(r.zone_hi)}</td><td class="stop">${px(r.stop)}</td>
-      <td>${pct((r.stop / r.close - 1) * 100)}</td><td>${r.room == null ? "無空方區" : pct(r.room)}</td><td>${pct(r.dd60)}</td>
-      <td class="${cls(r.ret5)}">${pct(r.ret5)}</td><td class="${cls(r.inst5)}">${lots(r.inst5)}</td><td>${r.rank}</td>
-      <td class="l">${t ? statusChip(t.status) : ""}</td></tr>`; }).join("") + "</tbody></table></div>"
-    + (ex.length ? `<ul class="excl">${ex.map(([c, why]) => `<li><b>${esc(c)}</b>：${esc(why)}</li>`).join("")}</ul>` : "") + "</details>";
+  $("#watch").innerHTML = fvgRest(day, F) || '<div class="tbl"><div class="empty">這天沒有其他 FVG 單。</div></div>';
 }
 
 // ---------- ④ 策略成績：損益折線圖直接顯示，詳細數值收在「詳細數值」折疊區塊 ----------
@@ -425,19 +398,6 @@ function cards() {
   const row = (k, v, c = "") => `<div class="row"><span>${k}</span><span class="${c}">${v}</span></div>`;
   const hlPb = (a ? `上線 <span class="${cls(a.pnl)}">${pct(a.pnl, 2)}</span>（0050 ${pct(a.bench, 2)}）・` : "") + "回測年化 +0.4%／+122%";
   $("#cards").innerHTML = `
-    <div class="box strat" id="strat-pb"><div class="head">${S.pb} 回檔到支撐 <span class="hl">${hlPb}</span></div>
-      <div class="charts"><div class="c-live"></div><div class="c-bt"></div></div>
-      <details class="more"><summary>詳細數值</summary><div class="rows">
-      ${a ? row("上線紀錄（2026-10-15 起）", `買進 ${a.in} 筆・持有 ${a.open}・停損 ${a.stop}`)
-        + row("帳戶損益（每筆 1/15 資金）", pct(a.pnl, 2), cls(a.pnl))
-        + row("平均每筆（扣成本）", `${pct(a.avg, 2)}・勝率 ${a.win == null ? "–" : a.win.toFixed(0) + "%"}`, cls(a.avg))
-        + row("同期 0050", pct(a.bench, 2), cls(a.bench))
-        + row("比 0050 多賺", pct(a.excess, 2), cls(a.excess)) : row("上線紀錄", "還沒有")}
-      ${row("回測 2024-01～2025-03 年化", "+0.4%（回撤 −18%）")}
-      ${row("回測 2025-04～2026-09 年化", "+122%（回撤 −26%）")}
-      ${row("同規則隨機選股（中位數）", "−5.4%／+42.2%")}
-      ${row("同期 0050", "+26.2%／+89.9%")}
-      <p>回測兩段都贏同規則隨機選股；前段輸 0050、後段贏。上線紀錄筆數還太少，先別下結論。</p></div></details></div>
     <div class="box strat" id="strat-fvg"><div class="head">${S.fvg} FVG 每日標的 <span class="hl">回測驗證期年化 +11.8%（0050 +24%）・上線紀錄還沒有</span></div>
       <div class="charts"><div class="c-bt"></div></div>
       <details class="more"><summary>詳細數值</summary><div class="rows">
@@ -488,10 +448,7 @@ function strip(day, F, PB) {
   $("#strip").innerHTML = `
     <div><span class="k">名單日期</span><span class="v">${esc(day)}</span></div>
     <div><span class="k">加權 vs 200 日線</span><span class="v ${m ? (m.above ? "up" : "dn") : ""}">${m ? (m.above ? "在線上" : "在線下") + " " + px(m.close) : "–"}</span></div>
-    <div><span class="k">回檔進場日盤前判斷</span><span class="v ${dec ? (dec.decision.endsWith("不買") ? "dn" : dec.decision === "照常買" ? "up" : "") : ""}">${dec ? esc(dec.decision) : "–"}</span></div>
-    <div><span class="k">回檔名單</span><span class="v">${PB ? `${PB.picks.length} 檔${PB.tv ? "・TV 確認" : ""}` : "–"}</span></div>
-    <div><span class="k">回檔紀錄損益</span><span class="v ${a ? cls(a.pnl) : ""}">${a ? pct(a.pnl, 2) + "（比 0050 " + pct(a.excess, 2) + "）" : "–"}</span></div>
-    <div><span class="k">資料產生</span><span class="v" style="font-weight:400">${F ? "FVG " + esc(F.generated.slice(5)) : "FVG –"}・${PB ? "回檔 " + esc(PB.generated.slice(5)) : "回檔 –"}</span></div>`;
+    <div><span class="k">資料產生</span><span class="v" style="font-weight:400">${F ? esc(F.generated.slice(5)) : "–"}</span></div>`;
 }
 
 async function load(day) {
@@ -510,11 +467,11 @@ async function load(day) {
     getJSON("data/pullback/pullback-track.json").catch(() => null),
   ]);
   getJSON("data/pullback/strategy-curves.json").then(c => { CURVES = c; drawCharts("pb"); drawCharts("fvg"); }).catch(() => {});
-  const days = [...new Set([...FVG_IDX.dates, ...PB_IDX.dates])].sort().reverse();
+  const days = [...FVG_IDX.dates].sort().reverse();
   cards(); logDetail();
   if (!days.length) { $("#todo").innerHTML = '<div class="empty">還沒有資料。</div>'; return; }
   const sel = $("#day");
-  sel.innerHTML = days.map(d => `<option value="${esc(d)}">${esc(d)}${FVG_IDX.dates.includes(d) ? "" : "（無 FVG）"}${PB_IDX.dates.includes(d) ? "" : "（無回檔）"}</option>`).join("");
+  sel.innerHTML = days.map(d => `<option value="${esc(d)}">${esc(d)}</option>`).join("");
   const want = location.hash.slice(1);
   sel.value = days.includes(want) ? want : days[0];
   sel.onchange = () => load(sel.value);
