@@ -153,7 +153,7 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 30px; }
     <div class="board" id="board">
       <div class="cols"><span>#</span><span>題材</span><span>觀點</span><span>營收／EPS 預估</span><span>估值</span><span>已大漲</span><span>候選股（點題材看全部）</span></div>
     </div>
-    <p class="legend">候選股依合成分數排序：<span class="up">紅色＝偏多</span>，加刪除線＝股價已大漲。估值看學界模型，越便宜分數越高。</p>
+    <p class="legend">候選股依合成分數排序：<span class="up">紅色＝偏多</span>，加刪除線＝股價已大漲。「已大漲」看 12 個月漲幅是自身年波動的幾倍（1.25 倍以上）：權值股波動小，漲 90% 就算大漲；小型股波動大，要漲更多才算。估值看學界模型，越便宜分數越高。</p>
   </section>
 
   <section class="sec hide" id="leadsSec">
@@ -249,6 +249,7 @@ function picks(B) {
   const card = c => `<a class="pick" href="${quote(c.code)}" target="_blank" rel="noopener">
       <span class="pc" title="合成分數全市場百分位">${c.pct}</span><span class="nm">${esc(c.name)}</span><span class="cd">${esc(c.code)}</span>
       <div class="th">${esc(c.theme)}${c.yoy != null ? `・營收年增 ${sgn(c.yoy)}%` : ""}</div>
+      ${c.r12 != null ? `<div class="wt">股價 12 個月 ${sgn(c.r12)}%（自身波動的 ${c.mv} 倍）</div>` : ""}
       ${c.pros.length ? `<div class="why">${esc(pros(c))}</div>` : ""}
       <div class="wt">${c.w == null ? "上櫃，不在加權指數" : `指數權重 ${c.w}%（第 ${c.wr} 大）`}</div></a>`;
   $("#picks").innerHTML = small.length ? small.slice(0, 8).map(card).join("") : `<p class="mute">今天沒有符合條件的中小型公司。</p>`;
@@ -264,7 +265,7 @@ function board(B) {
     const news = t.stage ? `新聞${t.stage}・${t.events} 則` : "近期沒有新聞";
     const rows = t.companies.map(c => `<tr><td><a href="${quote(c.code)}" target="_blank" rel="noopener">${esc(c.name)}</a> <span class="mute">${esc(c.code)}</span></td>
         <td><span class="view ${VIEW[c.view] || ""}">${esc(c.view)}</span></td><td class="r">${c.pct}</td>
-        <td class="r">${c.yoy == null ? "—" : sgn(c.yoy) + "%"}</td><td>${esc(c.priced.replace("股價", ""))}</td><td class="r">${c.w == null ? "上櫃" : c.w + "%"}</td>
+        <td class="r">${c.yoy == null ? "—" : sgn(c.yoy) + "%"}</td><td title="${c.mv == null ? "" : `12 個月漲幅是自身年波動的 ${c.mv} 倍`}">${esc(c.priced.replace("股價", ""))}${c.r12 == null ? "" : `<span class="mute">・${sgn(c.r12)}%</span>`}</td><td class="r">${c.w == null ? "上櫃" : c.w + "%"}</td>
         <td class="mute">${esc(pros(c))}</td></tr>`).join("");
     return `<details class="theme"><summary>
         <span class="rk">${t.rank}</span>
@@ -276,7 +277,7 @@ function board(B) {
         <span class="chips c-chips">${top.map(chip).join("")}</span>
       </summary>
       <div class="detail"><div class="tbl-wrap"><table>
-        <thead><tr><th>公司</th><th>觀點</th><th class="r">合成分數</th><th class="r">營收年增</th><th>股價</th><th class="r">指數權重</th><th>強項</th></tr></thead>
+        <thead><tr><th>公司</th><th>觀點</th><th class="r">合成分數</th><th class="r">營收年增</th><th>股價（12 個月）</th><th class="r">指數權重</th><th>強項</th></tr></thead>
         <tbody>${rows}</tbody></table></div>
         ${t.path ? `<div class="more"><a href="${rep(t.path)}">看「${esc(t.name)}」題材分析 →</a></div>` : ""}
       </div></details>`;
