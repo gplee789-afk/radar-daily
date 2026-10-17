@@ -3,353 +3,229 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>台股分析報告庫</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22 color=%22%23f5b461%22%3E%3Cg fill=%22none%22 stroke=%22currentColor%22 stroke-width=%2218%22%3E%3Cpath d=%22M150 46V45Q150 26 170 26H440Q461 26 461 47V442%22/%3E%3Cpath d=%22M111 104V75Q111 56 131 56H372L433 117V448Q433 469 412 469H132Q111 469 111 448V266%22/%3E%3Cpath d=%22M372 56V118H433%22/%3E%3Ccircle cx=%22125%22 cy=%22180%22 r=%2270%22/%3E%3Cpath d=%22M125 124V236M151 158Q151 143 125 143Q100 143 100 163Q100 180 125 180Q151 180 151 198Q151 217 125 217Q100 217 100 202%22/%3E%3Cpath d=%22M225 103H242M258 103H318M225 133H318%22/%3E%3Cpath d=%22M168 300H377M191 300V256H231V300M253 300V220H293V300M315 300V188H355V300%22/%3E%3Crect x=%22173%22 y=%22346%22 width=%2284%22 height=%2278%22/%3E%3Cpath d=%22M297 355H392M297 389H392M297 422H392%22/%3E%3C/g%3E%3C/svg%3E">
-<meta name="description" content="台股分析的所有報告：盤勢與總經、每日日報、個股報告、估值、供應鏈深挖、題材卷宗、研究與回測。">
+<title>台股題材看板</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22 color=%22%23f5b461%22%3E%3Cg fill=%22none%22 stroke=%22currentColor%22 stroke-width=%2218%22%3E%3Cpath d=%22M150 46V45Q150 26 170 26H440Q461 26 461 47V442%22/%3E%3Cpath d=%22M111 104V75Q111 56 131 56H372L433 117V448Q433 469 412 469H132Q111 469 111 448V266%22/%3E%3Cpath d=%22M372 56V118H433%22/%3E%3Ccircle cx=%22125%22 cy=%22180%22 r=%2270%22/%3E%3Cpath d=%22M125 124V236M151 158Q151 143 125 143Q100 143 100 163Q100 180 125 180Q151 180 151 198Q151 217 125 217Q100 217 100 202%22/%3E%3Cpath d=%22M168 300H377M191 300V256H231V300M253 300V220H293V300M315 300V188H355V300%22/%3E%3C/g%3E%3C/svg%3E">
+<meta name="description" content="從產業找標的：每個題材的觀點、營收、估值、新聞熱度與候選股。">
+<script>
+  // 舊連結（?r=報告路徑）都在報告庫，轉過去
+  if (new URLSearchParams(location.search).get("r")) location.replace("reports.html" + location.search + location.hash);
+</script>
 <style>
 :root {
   color-scheme: dark;
-  --bg: #0e0c0a; --panel: #191512; --line: #2d2620; --grid: #3a3129; --ink: #f2ebe3; --ink-2: #c2b3a3; --ink-3: #8c7d6e; --ev-1: #ffcf8a; --ev-2: #f0a050; --ev-3: #c97a3a; --ev-4: #5b4b3d; --accent: #f5b461; --tag-auto: #2e2116; --tag-ask: #33201c; --tag-in: #2b2617; --up: #ff7a5c; --down: #8fb4cc;
+  --bg: #0e0c0a; --panel: #191512; --line: #2d2620; --ink: #f2ebe3; --ink-2: #c2b3a3; --ink-3: #8c7d6e;
+  --ev-2: #f0a050; --ev-4: #5b4b3d; --accent: #f5b461; --up: #ff7a5c; --down: #8fb4cc; --up-bg: #3a1d16; --down-bg: #1b2830; --chip: #221c17;
 }
 :root[data-theme="light"] {
   color-scheme: light;
-  --bg: #f7f1e8; --panel: #fffaf3; --line: #e6dccd; --grid: #d8ccb9; --ink: #1f1812; --ink-2: #5c4f43; --ink-3: #8a7b6c; --ev-1: #a8521b; --ev-2: #c9702e; --ev-3: #dc9a5c; --ev-4: #c4b5a3; --accent: #b5541c; --tag-auto: #f6e6d3; --tag-ask: #f7e0da; --tag-in: #f6efe0; --up: #c8432a; --down: #3f6f8f;
+  --bg: #f7f1e8; --panel: #fffaf3; --line: #e6dccd; --ink: #1f1812; --ink-2: #5c4f43; --ink-3: #8a7b6c;
+  --ev-2: #c9702e; --ev-4: #c4b5a3; --accent: #b5541c; --up: #c8432a; --down: #3f6f8f; --up-bg: #fbe3dc; --down-bg: #e1ecf2; --chip: #f3eadf;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
 body { background: var(--bg); color: var(--ink); font: 15px/1.6 system-ui, -apple-system, "Segoe UI", "Noto Sans TC", "Microsoft JhengHei", sans-serif; }
 a { color: var(--accent); }
 .wrap { max-width: 1120px; margin: 0 auto; padding: 22px 16px 60px; }
-header { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px 20px; }
+header { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; }
 h1 { font-size: 24px; margin: 0; line-height: 1.25; }
-header nav { margin-left: auto; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; font-size: 14px; }
-header nav a { text-decoration: none; }
-input, button { font: inherit; font-size: 14px; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; }
-button { cursor: pointer; }
-.sub { color: var(--ink-3); font-size: 13px; margin: 8px 0 0; }
+header nav { margin-left: auto; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; font-size: 14px; }
+header nav a { text-decoration: none; color: var(--ink-2); font-weight: 600; }
+header nav a:hover, header nav a[aria-current] { color: var(--accent); }
+button { font: inherit; font-size: 14px; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; cursor: pointer; }
 .hide { display: none !important; }
+h2 { font-size: 18px; margin: 0; }
+.sec { margin-top: 30px; }
+.sec-hd { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; margin-bottom: 10px; }
+.sec-hd p { margin: 0; color: var(--ink-3); font-size: 13px; }
+.up { color: var(--up); } .down { color: var(--down); } .mute { color: var(--ink-3); }
 
-/* 今日大盤（最新盤前預估） */
-.hero { margin-top: 18px; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 18px 22px; }
-.hero .hhd { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; margin-bottom: 14px; }
-.hero .hhd h2 { font-size: 20px; }
-.hero .hhd .when { color: var(--ink-3); font-size: 13px; }
-.hero .hhd a { margin-left: auto; font-size: 14px; font-weight: 600; text-decoration: none; }
-.hero .hbody { display: grid; grid-template-columns: 200px 1fr 300px; gap: 18px 32px; align-items: start; }
-@media (max-width: 900px) { .hero .hbody { grid-template-columns: 1fr 1fr; } .hero .track { grid-column: 1 / -1; } }
-@media (max-width: 560px) { .hero .hbody { grid-template-columns: 1fr; } .hero { padding: 16px; } }
-.hero .lbl { color: var(--ink-3); font-size: 12.5px; }
-.hero .pct { font-size: 56px; font-weight: 800; line-height: 1.05; font-variant-numeric: tabular-nums; letter-spacing: -1px; }
-.hero .verdict { font-size: 15px; font-weight: 700; margin-top: 2px; }
-.up { color: var(--up); } .down { color: var(--down); } .flat { color: var(--ink); }
-.hero .kv { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; font-size: 14px; margin: 2px 0 14px; }
-.hero .kv span:nth-child(odd) { color: var(--ink-3); font-size: 12.5px; padding-top: 1px; }
-.hero .kv b { font-variant-numeric: tabular-nums; }
-.scen { display: flex; height: 26px; border-radius: 6px; overflow: hidden; font-size: 11.5px; font-weight: 600; }
-.scen div { display: flex; align-items: center; justify-content: center; min-width: 0; white-space: nowrap; overflow: hidden; color: #1a1410; }
-.scen-lg { color: var(--ink-3); font-size: 11.5px; margin-top: 4px; }
-.track h3 { font-size: 13px; color: var(--ink-2); margin: 0 0 4px; font-weight: 600; }
-.track .tr { all: unset; box-sizing: border-box; cursor: pointer; display: grid; grid-template-columns: 44px 1fr 1fr 20px; gap: 8px; width: 100%;
-             padding: 5px 0; border-bottom: 1px dashed var(--line); font-size: 13px; font-variant-numeric: tabular-nums; }
-.track .tr:hover { color: var(--accent); }
-.track .tr .d { color: var(--ink-3); }
-.track .ok { color: var(--accent); } .track .ng { color: var(--ink-3); }
-.track .acc { color: var(--ink-3); font-size: 12px; margin-top: 8px; }
+/* 今日大盤：一行 */
+.mkt { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; margin-top: 16px; padding: 10px 16px; background: var(--panel);
+       border: 1px solid var(--line); border-radius: 12px; font-size: 14px; text-decoration: none; color: var(--ink); }
+.mkt:hover { border-color: var(--ink-3); }
+.mkt b { font-size: 18px; font-variant-numeric: tabular-nums; }
+.mkt .go { margin-left: auto; color: var(--accent); font-weight: 600; }
 
-/* 搜尋＋區塊捷徑：捲動時固定在上方 */
-.toolbar { position: sticky; top: 0; z-index: 5; background: var(--bg); display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px;
-           padding: 12px 0; margin-top: 14px; border-bottom: 1px solid var(--line); }
-#q { width: min(340px, 100%); }
-.gnav { display: flex; flex-wrap: wrap; gap: 4px 16px; }
-.gnav a { text-decoration: none; color: var(--ink-2); font-size: 14px; font-weight: 600; }
-.gnav a:hover { color: var(--accent); }
-.gnav a small { font-weight: 400; color: var(--ink-3); margin-left: 3px; font-variant-numeric: tabular-nums; }
+/* 值得先看 */
+.picks { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+.pick { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; text-decoration: none; color: var(--ink); display: block; }
+.pick:hover { border-color: var(--ink-3); }
+.pick .nm { font-weight: 700; font-size: 16px; }
+.pick .cd { color: var(--ink-3); font-size: 12px; margin-left: 4px; }
+.pick .pc { float: right; color: var(--up); font-weight: 700; font-variant-numeric: tabular-nums; }
+.pick .th { color: var(--ink-2); font-size: 12.5px; margin-top: 2px; }
+.pick .why { color: var(--ink-3); font-size: 12px; margin-top: 4px; }
 
-h2 { font-size: 15px; margin: 0; }
-.sec-hd { display: flex; align-items: baseline; gap: 10px; margin: 30px 0 8px; }
-.sec-hd .note { color: var(--ink-3); font-size: 12.5px; }
+/* 題材看板 */
+.board { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.cols, .theme > summary { display: grid; grid-template-columns: 30px minmax(0, 1.4fr) 64px 120px 70px 64px minmax(0, 2fr); gap: 12px; align-items: center; padding: 10px 16px; }
+.cols { color: var(--ink-3); font-size: 12px; border-bottom: 1px solid var(--line); }
+.theme { border-bottom: 1px solid var(--line); }
+.theme:last-child { border-bottom: 0; }
+.theme > summary { list-style: none; cursor: pointer; font-size: 14px; }
+.theme > summary::-webkit-details-marker { display: none; }
+.theme > summary:hover { background: color-mix(in srgb, var(--ink) 4%, transparent); }
+.theme > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.theme[open] > summary { background: color-mix(in srgb, var(--ink) 4%, transparent); }
+.rk { color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.tn { font-weight: 700; }
+.tn small { display: block; font-weight: 400; color: var(--ink-3); font-size: 12px; }
+.view { display: inline-block; font-size: 12.5px; font-weight: 700; padding: 1px 9px; border-radius: 99px; background: var(--chip); color: var(--ink-2); }
+.view.b { background: var(--up-bg); color: var(--up); } .view.s { background: var(--down-bg); color: var(--down); }
+.num { font-variant-numeric: tabular-nums; font-size: 13px; }
+.chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.chip { font-size: 12.5px; padding: 1px 8px; border-radius: 6px; background: var(--chip); color: var(--ink-2); white-space: nowrap; }
+.chip.b { background: var(--up-bg); color: var(--up); font-weight: 600; }
+.chip.hot { text-decoration: line-through; text-decoration-thickness: 1.5px; }
+.lbl { display: none; color: var(--ink-3); font-size: 12px; margin-right: 4px; }
+.detail { padding: 4px 16px 16px 58px; }
+.detail table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.detail th, .detail td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+.detail th { color: var(--ink-3); font-weight: 400; font-size: 12px; }
+.detail td.r, .detail th.r { text-align: right; font-variant-numeric: tabular-nums; }
+.detail .more { margin-top: 10px; font-size: 13.5px; font-weight: 600; }
+.tbl-wrap { overflow-x: auto; }
+@media (max-width: 860px) {
+  .cols { display: none; }
+  .theme > summary { grid-template-columns: 26px minmax(0, 1fr) auto; row-gap: 6px; }
+  .theme > summary > .c-num, .theme > summary > .c-chips { grid-column: 2 / -1; }
+  .lbl { display: inline; }
+  .detail { padding: 4px 12px 14px; }
+}
+.legend { color: var(--ink-3); font-size: 12.5px; margin: 8px 2px 0; }
 
-/* 最近更新：每類只列最新一篇 */
-.latest { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; border-top: 1px solid var(--line); }
-@media (max-width: 760px) { .latest { grid-template-columns: minmax(0, 1fr); } }
-.row { all: unset; box-sizing: border-box; display: flex; align-items: baseline; gap: 12px; width: 100%; padding: 8px 2px; border-bottom: 1px solid var(--line);
-       cursor: pointer; font-size: 14px; min-width: 0; }
-.row .dt { flex: none; width: 52px; white-space: nowrap; color: var(--ink-3); font-size: 12.5px; font-variant-numeric: tabular-nums; }
-.row .ct { flex: none; width: 92px; color: var(--ink-3); font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.row .tx { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
-.row .tt { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.row .sm { color: var(--ink-3); font-size: 12.5px; line-height: 1.55; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.row .sm.lead { color: var(--ink-2); white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-.row.lead .tt { font-weight: 700; white-space: normal; }
-.row:hover .tt, .row:focus-visible .tt { color: var(--accent); }
-.row:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; border-radius: 4px; }
-
-/* 區塊：一個面板，裡面每個類別一列（左：說明，右：最新幾篇） */
-.group { margin-top: 36px; scroll-margin-top: 70px; }
-.group > .ghd { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
-.group > .ghd h2 { font-size: 20px; padding-left: 12px; border-left: 4px solid var(--ev-2); line-height: 1.3; }
-.group > .ghd p { color: var(--ink-3); font-size: 13px; margin: 0; }
-.group.method > .ghd h2 { border-left-color: var(--ev-4); font-size: 17px; }
-.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 0 20px; }
-.cat { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 6px 28px; padding: 16px 0; }
-.cat + .cat { border-top: 1px solid var(--line); }
-@media (max-width: 760px) { .cat { grid-template-columns: minmax(0, 1fr); } .panel { padding: 0 14px; } }
-.cat h3 { font-size: 16px; margin: 0; }
-.cat .how { font-size: 12px; color: var(--ink-3); margin-top: 3px; }
-.tag { font-size: 11.5px; padding: 1px 8px; border-radius: 99px; color: var(--ink-2); }
-.tag.auto { background: var(--tag-auto); } .tag.ask { background: var(--tag-ask); } .tag.in { background: var(--tag-in); }
-.cat .desc { font-size: 12.5px; color: var(--ink-3); margin: 6px 0 0; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-.cat ul { list-style: none; margin: 0; padding: 0; }
-.cat li .row { padding: 7px 2px; border-bottom: 1px dashed var(--line); }
-.cat li:last-child .row { border-bottom: 0; }
-.cat .more { all: unset; cursor: pointer; margin-top: 6px; font-size: 13px; color: var(--accent); }
-.cat .more:hover { text-decoration: underline; }
-.cat .empty { font-size: 13px; color: var(--ink-3); padding: 6px 0; }
-
-/* 閱讀器 */
-#reader { position: fixed; inset: 0; z-index: 20; display: none; }
-#reader.open { display: block; }
-#reader .shade { position: absolute; inset: 0; background: rgba(0,0,0,.45); }
-#reader .sheet { position: absolute; top: 0; right: 0; bottom: 0; width: min(900px, 100%); background: var(--panel); border-left: 1px solid var(--line);
-                 display: flex; flex-direction: column; animation: slide .25s ease-out; }
-@keyframes slide { from { transform: translateX(40px); opacity: 0; } to { transform: none; opacity: 1; } }
-#reader .bar { display: flex; gap: 8px; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
-#reader .bar b { font-size: 14px; color: var(--ink-2); margin-right: auto; }
-#doc { overflow: auto; padding: 8px 26px 40px; flex: 1; }
-#doc.frame { padding: 0; }
-#doc iframe { border: 0; width: 100%; height: 100%; display: block; background: var(--bg); }
-#doc h1 { font-size: 24px; margin: 14px 0 4px; }
-#doc h2 { font-size: 19px; margin: 26px 0 8px; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
-#doc h3 { font-size: 16px; margin: 18px 0 6px; }
-#doc p, #doc li { line-height: 1.8; }
-#doc table { border-collapse: collapse; font-size: 13px; margin: 10px 0; display: block; overflow-x: auto; }
-#doc th, #doc td { border-bottom: 1px solid var(--line); padding: 6px 9px; text-align: left; white-space: nowrap; }
-#doc th { color: var(--ink-2); }
-#doc blockquote { margin: 10px 0; padding: 6px 14px; border-left: 3px solid var(--ev-2); color: var(--ink-2); background: var(--bg); border-radius: 0 8px 8px 0; }
-#doc code { font-size: 12.5px; background: var(--bg); padding: 1px 5px; border-radius: 5px; }
-#doc pre { overflow-x: auto; background: var(--bg); padding: 10px; border-radius: 8px; }
-@media (max-width: 640px) { #doc { padding: 6px 16px 40px; } }
-footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
-@media (prefers-reduced-motion: reduce) { #reader .sheet { animation: none; } }
-.owner { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 6px 0 0; font-size: 12.5px; line-height: 1.5; }
-.owner a { color: var(--ink-3); text-decoration: none; }
-.owner a:hover { color: var(--ink); text-decoration: underline; }
-.owner .gh { display: inline-flex; align-items: center; gap: 5px; }
+/* 新冒出的題材 */
+.leads { display: flex; flex-wrap: wrap; gap: 8px; }
+.lead { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; text-decoration: none; color: var(--ink); font-size: 14px; }
+.lead:hover { border-color: var(--ink-3); }
+.lead small { color: var(--ink-3); margin-left: 6px; }
+footer { color: var(--ink-3); font-size: 12px; margin-top: 30px; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <div>
-    <h1><span style="color:var(--accent, #f5b461)"><svg class="ico" viewBox="0 0 512 512" width="1em" height="1em" aria-hidden="true" style="vertical-align:-.12em"><g fill="none" stroke="currentColor" stroke-width="18"><path d="M150 46V45Q150 26 170 26H440Q461 26 461 47V442"/><path d="M111 104V75Q111 56 131 56H372L433 117V448Q433 469 412 469H132Q111 469 111 448V266"/><path d="M372 56V118H433"/><circle cx="125" cy="180" r="70"/><path d="M125 124V236M151 158Q151 143 125 143Q100 143 100 163Q100 180 125 180Q151 180 151 198Q151 217 125 217Q100 217 100 202"/><path d="M225 103H242M258 103H318M225 133H318"/><path d="M168 300H377M191 300V256H231V300M253 300V220H293V300M315 300V188H355V300"/><rect x="173" y="346" width="84" height="78"/><path d="M297 355H392M297 389H392M297 422H392"/></g></svg></span> 台股分析報告庫</h1>
-  <div class="owner">
-    <a class="gh" href="https://github.com/gplee789-afk" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>gplee789-afk</a>
-    <a class="mail" href="mailto:gplee789@gmail.com">聯繫我：gplee789@gmail.com</a>
-  </div>
-    </div>
+    <h1><span style="color:var(--accent)"><svg viewBox="0 0 512 512" width="1em" height="1em" aria-hidden="true" style="vertical-align:-.12em"><g fill="none" stroke="currentColor" stroke-width="18"><path d="M150 46V45Q150 26 170 26H440Q461 26 461 47V442"/><path d="M111 104V75Q111 56 131 56H372L433 117V448Q433 469 412 469H132Q111 469 111 448V266"/><path d="M372 56V118H433"/><circle cx="125" cy="180" r="70"/><path d="M125 124V236M151 158Q151 143 125 143Q100 143 100 163Q100 180 125 180Q151 180 151 198Q151 217 125 217Q100 217 100 202"/><path d="M168 300H377M191 300V256H231V300M253 300V220H293V300M315 300V188H355V300"/></g></svg></span> 台股題材看板</h1>
     <nav>
-      <a href="trade.html"><svg class="ico" viewBox="0 0 512 512" width="1em" height="1em" aria-hidden="true" style="vertical-align:-.12em"><g fill="currentColor"><rect x="28" y="172" width="96" height="310" rx="26"/><rect x="148" y="238" width="96" height="244" rx="26"/><rect x="268" y="304" width="96" height="178" rx="26"/><rect x="388" y="238" width="96" height="244" rx="26"/></g><path d="M62 42 197 140H258L318 218 450 80M392 77H452V137" fill="none" stroke="currentColor" stroke-width="42" stroke-linecap="round" stroke-linejoin="round"/></svg> FVG 實驗室</a>
+      <a href="index.html" aria-current="page">題材看板</a>
+      <a href="reports.html">全部報告</a>
+      <a href="trade.html">FVG 實驗室</a>
       <button id="themeBtn" title="切換深色／淺色" aria-label="切換深色／淺色">◐</button>
     </nav>
   </header>
 
-  <section class="hero hide" id="hero" aria-labelledby="heroTitle"></section>
+  <a class="mkt hide" id="mkt"></a>
 
-  <div class="toolbar">
-    <input id="q" type="search" placeholder="搜尋報告標題，例如：記憶體、玻璃基板、估值" aria-label="搜尋報告">
-    <nav class="gnav" id="gnav" aria-label="報告區塊"></nav>
-  </div>
-
-  <section id="latestSec">
-    <div class="sec-hd"><h2>最近更新</h2></div>
-    <div class="latest" id="latest"></div>
+  <section class="sec hide" id="picksSec">
+    <div class="sec-hd"><h2>先看這幾家</h2><p>偏多、而且股價還沒大漲的公司</p></div>
+    <div class="picks" id="picks"></div>
   </section>
 
-  <div id="groups"></div>
+  <section class="sec">
+    <div class="sec-hd"><h2>題材看板</h2><p id="boardDate"></p></div>
+    <div class="board" id="board">
+      <div class="cols"><span>#</span><span>題材</span><span>觀點</span><span>營收／EPS 預估</span><span>估值</span><span>已大漲</span><span>候選股（點題材看全部）</span></div>
+    </div>
+    <p class="legend">候選股依合成分數排序：<span class="up">紅色＝偏多</span>，加刪除線＝股價已大漲。估值看學界模型，越便宜分數越高。</p>
+  </section>
+
+  <section class="sec hide" id="leadsSec">
+    <div class="sec-hd"><h2>新冒出的題材</h2><p>新聞裡最近突然變多、還沒列進看板的名詞</p></div>
+    <div class="leads" id="leads"></div>
+  </section>
 
   <footer>研究輔助，不是投資建議。</footer>
 </div>
 
-<div id="reader" aria-hidden="true">
-  <div class="shade" data-close></div>
-  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="readerTitle">
-    <div class="bar">
-      <b id="readerTitle"></b>
-      <a id="raw" target="_blank" rel="noopener">原始檔 ↗</a>
-      <button data-close>✕ 關閉</button>
-    </div>
-    <article id="doc"></article>
-  </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
 <script>
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-const TAG = { "每天自動": "auto", "每月自動": "auto", "每週更新": "auto", "不定期更新": "ask", "每天自動＋深挖": "ask" };
-const SHOW = 4;
-let CATS = [], ALL = [], GROUPS = [], HERO = null;
+const sgn = (x, d = 0) => x == null ? "—" : (x > 0 ? "+" : x < 0 ? "−" : "") + Math.abs(x).toFixed(d);
+const rep = p => "reports.html?r=" + encodeURIComponent(p);
+const quote = c => `https://tw.stock.yahoo.com/quote/${encodeURIComponent(c)}`;
+const VIEW = { 偏多: "b", 偏空: "s" };
 
 (function theme() {
   let t = null;
   try { t = localStorage.getItem("theme-warm"); } catch (e) {}
   if (t) document.documentElement.dataset.theme = t;
   $("#themeBtn").onclick = () => {
-    const dark = document.documentElement.dataset.theme !== "light";   // 預設黑底
-    const n = dark ? "light" : "dark";
+    const n = document.documentElement.dataset.theme !== "light" ? "light" : "dark";
     document.documentElement.dataset.theme = n;
     try { localStorage.setItem("theme-warm", n); } catch (e) {}
   };
 })();
 
-// 列表旁邊已經有日期欄，標題裡的「（2026-10-16）」「 2026-10-16」拿掉
-const short = t => t.replace(/[（(]\s*\d{4}-\d{2}(?:-\d{2})?\s*[）)]/g, "").replace(/\s+\d{4}-\d{2}-\d{2}\s*$/, "").replace(/^\d{4}-\d{2}-\d{2}\s+/, "").trim() || t;
-let YEAR = "";
-const day = d => !d ? "—" : d.length === 10 && d.startsWith(YEAR) ? d.slice(5) : d;   // 今年的日期只寫月-日
-// 標題都一樣（盤前預估、外資動向…）的類別，主文字改用報告裡抽出的一句話
-function label(r, cat, dup) {
-  let t = short(r.title);
-  if (cat && t.startsWith(cat + "：")) t = t.slice(cat.length + 1);   // 類別裡不用再寫「題材鏈分析：」
-  const generic = t === cat || (dup && dup[t] > 1);
-  return { t, generic, main: generic && r.sum ? r.sum : t, sub: generic ? "" : r.sum || "" };
-}
-function row(r, withCat, cat, dup, lead) {
-  const L = label(r, withCat ? r.cat : cat, dup);
-  const ct = withCat ? `<span class="ct">${esc(r.cat)}</span>` : "";
-  const sub = !withCat && L.sub ? `<span class="sm${lead ? " lead" : ""}">${esc(L.sub)}</span>` : "";
-  return `<button class="row${lead ? " lead" : ""}" data-path="${esc(r.path)}" title="${esc(r.full || r.title)}"><span class="dt">${esc(day(r.date))}</span>${ct}<span class="tx"><span class="tt">${esc(L.main)}</span>${sub}</span></button>`;
-}
+const hot = c => c.priced === "股價已大幅反映";
+const pros = c => c.pros.map(p => p.replace(/（[^）]*）/g, "")).join("、");     // 「學界估值（ML／V/P／GLS） 83%」→「學界估值 83%」
+const val = a => a == null ? "—" : a >= 65 ? "便宜" : a < 50 ? "偏貴" : "合理";   // 和題材報告「學界估值中位數 < 50% 偏貴」一致
 
-const WD = "日一二三四五六";
-const sgn = (x, d = 2) => (x > 0 ? "+" : x < 0 ? "−" : "") + Math.abs(x).toLocaleString("en-US", { minimumFractionDigits: d, maximumFractionDigits: d });
-const tone = p => p >= 60 ? "up" : p <= 40 ? "down" : "flat";
-function hero(h) {
+function market(h) {
   if (!h) return;
-  const today = new Date(Date.now() + 8 * 3600e3).toISOString().slice(0, 10);
-  const when = `${h.date.slice(5).replace("-", "/")}（${WD[new Date(h.date + "T12:00:00Z").getUTCDay()]}）盤前預估` +
-               (h.date === today ? "・今天 08:40 前發布" : "・最近一個交易日，下一份在下個交易日 08:40 前發布");
-  const verdict = { up: "偏多：收紅機率較高", down: "偏空：收黑機率較高", flat: "方向不明：紅黑機率接近" }[tone(h.p_up)];
-  const SC = { 大跌: "var(--down)", 小跌: "color-mix(in srgb, var(--down) 55%, var(--panel))", 小漲: "color-mix(in srgb, var(--up) 55%, var(--panel))", 大漲: "var(--up)" };
-  const scen = (h.scen || []).length ? `<div class="lbl" style="margin-bottom:4px">四種情境的機率</div>
-    <div class="scen" role="img" aria-label="${h.scen.map(([k, v]) => k + " " + v + "%").join("，")}">${h.scen.map(([k, v]) =>
-      `<div style="flex:${Math.max(v, 0.5)};background:${SC[k]}" title="${k} ${v}%">${v >= 18 ? k + " " + v + "%" : v >= 8 ? v + "%" : ""}</div>`).join("")}</div>
-    <div class="scen-lg">大跌 &lt;−1%、小跌 −1%～0、小漲 0～+1%、大漲 &gt;+1%</div>` : "";
-  const kv = [h.exp != null && ["預期漲跌", `<b class="${h.exp > 0 ? "up" : h.exp < 0 ? "down" : ""}">${sgn(h.exp)}%</b>（約 ${sgn(h.pts, 0)} 點，昨收 ${h.prev.toLocaleString()}）`],
-              h.lo != null && ["可能區間", `<b>${h.lo_pt.toLocaleString()} ～ ${h.hi_pt.toLocaleString()}</b>（${sgn(h.lo)}% ～ ${sgn(h.hi)}%，8 成機率落在這裡）`]]
-             .filter(Boolean).map(([a, b]) => `<span>${a}</span><span>${b}</span>`).join("");
-  const track = (h.track || []).map(t => `<button class="tr" data-path="${esc(t.path)}"><span class="d">${esc(t.date.slice(5))}</span>
-      <span>收紅 ${t.p_up}%</span><span class="${t.act == null ? "" : t.act > 0 ? "up" : "down"}">${t.act == null ? "等收盤" : "實際 " + sgn(t.act) + "%"}</span>
-      <span class="${t.hit ? "ok" : "ng"}" title="${t.hit == null ? "" : t.hit ? "猜對方向" : "猜錯方向"}">${t.hit == null ? "" : t.hit ? "✓" : "✗"}</span></button>`).join("");
-  $("#hero").innerHTML = `<div class="hhd"><h2 id="heroTitle">今日大盤</h2><span class="when">${esc(when)}</span>
-      <a href="#" data-path="${esc(h.path)}">看完整預估與依據 →</a></div>
-    <div class="hbody">
-      <div><div class="lbl">加權指數收紅機率</div><div class="pct ${tone(h.p_up)}">${h.p_up}%</div><div class="verdict ${tone(h.p_up)}">${verdict}</div></div>
-      <div><div class="kv">${kv}</div>${scen}</div>
-      <div class="track"><h3>最近幾天：預估 vs. 實際收盤</h3>${track}
-        ${h.acc ? `<div class="acc">過去 8 年回測準確率 ${h.acc}%</div>` : ""}</div>
-    </div>`;
-  $("#hero").classList.remove("hide");
+  const wd = "日一二三四五六"[new Date(h.date + "T12:00:00Z").getUTCDay()];
+  const tr = (h.track || []).filter(t => t.hit != null);
+  const ok = tr.filter(t => t.hit).length;
+  const cls = h.p_up >= 60 ? "up" : h.p_up <= 40 ? "down" : "";
+  const m = $("#mkt");
+  m.href = rep(h.path);
+  m.innerHTML = `<span class="mute">今日大盤・${h.date.slice(5).replace("-", "/")}（${wd}）</span>
+    <span>收紅機率 <b class="${cls}">${h.p_up}%</b></span>
+    ${h.exp != null ? `<span>預期 <span class="${h.exp > 0 ? "up" : "down"}">${sgn(h.exp, 2)}%</span></span>` : ""}
+    ${tr.length ? `<span class="mute">最近 ${tr.length} 天猜對 ${ok} 次</span>` : ""}
+    <span class="go">看預估 →</span>`;
+  m.classList.remove("hide");
 }
 
-function render() {
-  YEAR = ALL.map(r => r.date || "").sort().pop().slice(0, 4);
-  const newest = CATS.filter(c => c.items.length && c.key !== "premarket").map(c => ({ ...c.items[0], cat: c.name }));
-  $("#latest").innerHTML = newest.sort((a, b) => (b.date || "").localeCompare(a.date || "")).slice(0, 10).map(r => row(r, true)).join("");
-  const card = c => {
-    const n = c.items.length;
-    const dup = {};
-    c.items.forEach(r => { const t = label(r, c.name).t; dup[t] = (dup[t] || 0) + 1; });
-    const body = n ? `<ul>${c.items.map((r, i) => `<li data-t="${esc((r.title + " " + (r.full || "") + " " + (r.sum || "")).toLowerCase())}"${i >= SHOW ? ' data-x="1" class="hide"' : ""}>${row(r, false, c.name, dup, i === 0)}</li>`).join("")}</ul>
-             ${n > SHOW ? `<button class="more">全部 ${n} 篇</button>` : ""}`
-          : `<div class="empty">還沒有這類報告。</div>`;
-    return `<section class="cat" data-key="${c.key}">
-      <div><h3>${esc(c.name)}</h3>
-        <div class="how"><span class="tag ${TAG[c.how] || "auto"}">${esc(c.how)}</span>　${n} 篇</div>
-        <p class="desc">${esc(c.desc)}</p></div>
-      <div>${body}</div></section>`;
-  };
-  const count = g => g.cats.reduce((a, c) => a + c.items.length, 0);
-  $("#gnav").innerHTML = GROUPS.map(g => `<a href="#g-${g.key}">${esc(g.name)}<small>${count(g)}</small></a>`).join("");
-  $("#groups").innerHTML = GROUPS.map(g => `<section class="group ${g.key}" id="g-${g.key}">
-      <div class="ghd"><h2>${esc(g.name)}</h2><p>${esc(g.desc)}</p></div>
-      <div class="panel">${g.cats.map(card).join("")}</div></section>`).join("");
+function picks(B) {
+  const seen = new Set(), out = [];
+  for (const t of B.themes) for (const c of t.companies)
+    if (c.view === "偏多" && !hot(c) && !seen.has(c.code)) { seen.add(c.code); out.push({ ...c, theme: t.name }); }
+  out.sort((a, b) => b.pct - a.pct);
+  if (!out.length) return;
+  $("#picks").innerHTML = out.slice(0, 8).map(c => `<a class="pick" href="${quote(c.code)}" target="_blank" rel="noopener">
+      <span class="pc" title="合成分數全市場百分位">${c.pct}</span><span class="nm">${esc(c.name)}</span><span class="cd">${esc(c.code)}</span>
+      <div class="th">${esc(c.theme)}${c.yoy != null ? `・營收年增 ${sgn(c.yoy)}%` : ""}</div>
+      ${c.pros.length ? `<div class="why">${esc(pros(c))}</div>` : ""}</a>`).join("");
+  $("#picksSec").classList.remove("hide");
 }
 
-document.addEventListener("click", e => {
-  const m = e.target.closest(".more");
-  if (m) {
-    const box = m.closest(".cat"), open = m.dataset.open === "1";
-    box.querySelectorAll("li[data-x]").forEach(x => x.classList.toggle("hide", open));
-    m.dataset.open = open ? "" : "1";
-    m.textContent = open ? m.textContent.replace("收合", "全部") : m.textContent.replace("全部", "收合");
-    return;
-  }
-  const b = e.target.closest("[data-path]");
-  if (b) { e.preventDefault(); openDoc(b.dataset.path); }
-});
-
-$("#q").addEventListener("input", () => {
-  const q = $("#q").value.trim().toLowerCase();
-  $("#latestSec").classList.toggle("hide", !!q);
-  $("#hero").classList.toggle("hide", !!q || !HERO);
-  document.querySelectorAll(".cat").forEach(c => {
-    let hit = 0;
-    c.querySelectorAll("li").forEach(x => {
-      const ok = !q ? !x.dataset.x : x.dataset.t.includes(q);
-      x.classList.toggle("hide", !ok); hit += ok;
-    });
-    const more = c.querySelector(".more"); if (more) more.classList.toggle("hide", !!q);
-    c.classList.toggle("hide", !!q && !hit);
-  });
-  document.querySelectorAll(".group").forEach(g => g.classList.toggle("hide", !!q && !g.querySelector(".cat:not(.hide)")));
-});
-
-/* ---------- 閱讀器 ---------- */
-let lastFocus = null;
-async function openDoc(path) {
-  const r = ALL.find(x => x.path === path); if (!r) return;
-  // 圖裡的連結會帶 #sec=段落開頭，開報告後捲到那一段
-  const sec = decodeURIComponent((location.hash.match(/^#sec=(.+)$/) || [])[1] || "");
-  lastFocus = document.activeElement;
-  $("#reader").classList.add("open"); $("#reader").setAttribute("aria-hidden", "false");
-  $("#readerTitle").textContent = r.title.startsWith(r.cat) ? r.title : r.cat + "｜" + r.title;
-  $("#raw").href = r.path;
-  history.replaceState(null, "", "?r=" + encodeURIComponent(path));
-  const doc = $("#doc");
-  if (r.kind === "html") {
-    doc.className = "frame";
-    doc.innerHTML = `<iframe src="${esc(r.path)}" title="${esc(r.title)}"></iframe>`;
-  } else {
-    doc.className = ""; doc.innerHTML = `<p class="sub">載入中…</p>`;
-    try { doc.innerHTML = marked.parse(await (await fetch(r.path, { cache: "no-cache" })).text()); }
-    catch (e) { doc.innerHTML = `<p>報告載入失敗：${esc(e.message)}</p>`; }
-    doc.scrollTop = 0;
-    const hs = [...doc.querySelectorAll("h2, h3")];
-    hs.forEach((h, i) => h.id = "s" + i);
-    const hit = sec && hs.find(h => h.textContent.trim().startsWith(sec));
-    if (hit) doc.scrollTop = hit.getBoundingClientRect().top - doc.getBoundingClientRect().top - 8;
-  }
-  $("#reader [data-close]").focus({ preventScroll: true });
+function board(B) {
+  $("#boardDate").textContent = `${B.date} 更新・${B.market.split("（")[0]}`;
+  $("#board").insertAdjacentHTML("beforeend", B.themes.map(t => {
+    const top = t.companies.slice(0, 5);
+    const chip = c => `<span class="chip ${c.view === "偏多" ? "b" : ""} ${hot(c) ? "hot" : ""}" title="${esc(c.name)}：${esc(c.view)}，合成分數第 ${c.pct} 百分位，${esc(c.priced)}">${esc(c.name)}</span>`;
+    const news = t.stage ? `新聞${t.stage}・${t.events} 則` : "近期沒有新聞";
+    const rows = t.companies.map(c => `<tr><td><a href="${quote(c.code)}" target="_blank" rel="noopener">${esc(c.name)}</a> <span class="mute">${esc(c.code)}</span></td>
+        <td><span class="view ${VIEW[c.view] || ""}">${esc(c.view)}</span></td><td class="r">${c.pct}</td>
+        <td class="r">${c.yoy == null ? "—" : sgn(c.yoy) + "%"}</td><td>${esc(c.priced.replace("股價", ""))}</td>
+        <td class="mute">${esc(pros(c))}</td></tr>`).join("");
+    return `<details class="theme"><summary>
+        <span class="rk">${t.rank}</span>
+        <span class="tn">${esc(t.name)}<small>${esc(news)}・${t.n} 家</small></span>
+        <span><span class="view ${VIEW[t.view] || ""}">${esc(t.view)}</span></span>
+        <span class="num c-num"><span class="lbl">營收／EPS 預估</span>${t.yoy == null ? "—" : sgn(t.yoy) + "%"}／${t.eps == null ? "—" : (t.eps >= 0 ? "上修 " : "下修 ") + Math.abs(t.eps) + "%"}</span>
+        <span class="num c-num" title="學界估值中位數 ${t.aca ?? "—"}%（越高越便宜）"><span class="lbl">估值</span>${val(t.aca)}</span>
+        <span class="num c-num"><span class="lbl">已大漲</span>${t.big}/${t.n}</span>
+        <span class="chips c-chips">${top.map(chip).join("")}</span>
+      </summary>
+      <div class="detail"><div class="tbl-wrap"><table>
+        <thead><tr><th>公司</th><th>觀點</th><th class="r">合成分數</th><th class="r">營收年增</th><th>股價</th><th>強項</th></tr></thead>
+        <tbody>${rows}</tbody></table></div>
+        ${t.path ? `<div class="more"><a href="${rep(t.path)}">看「${esc(t.name)}」題材分析 →</a></div>` : ""}
+      </div></details>`;
+  }).join(""));
 }
-function closeReader() {
-  $("#reader").classList.remove("open"); $("#reader").setAttribute("aria-hidden", "true");
-  $("#doc").innerHTML = "";
-  history.replaceState(null, "", location.pathname);
-  lastFocus?.focus?.();
+
+function leads(B) {
+  if (!B.leads?.length) return;
+  $("#leads").innerHTML = B.leads.map(l => `<a class="lead" href="${l.path ? rep(l.path) : rep(B.leads_path)}">${esc(l.name)}<small>近 4 週 ${l.n4} 則・${esc(l.acc)}</small></a>`).join("");
+  $("#leadsSec").classList.remove("hide");
 }
-document.querySelectorAll("[data-close]").forEach(el => el.onclick = closeReader);
-addEventListener("keydown", e => { if (e.key === "Escape" && $("#reader").classList.contains("open")) closeReader(); });
 
 (async function boot() {
-  const L = await (await fetch("data/library.json", { cache: "no-cache" })).json();
-  CATS = L.categories;
-  GROUPS = L.groups || [{ key: "all", name: "報告類別", desc: "", cats: CATS }];
-  ALL = CATS.flatMap(c => c.items.map(r => ({ ...r, cat: c.name })));
-  HERO = L.hero || null;
-  render(); hero(HERO);
-  const want = new URLSearchParams(location.search).get("r");
-  if (want) openDoc(want);
-})().catch(e => $(".wrap").insertAdjacentHTML("beforeend", `<p class="sub">資料載入失敗：${esc(e.message)}</p>`));
+  const B = await (await fetch("data/board.json", { cache: "no-cache" })).json();
+  market(B.hero); picks(B); board(B); leads(B);
+})().catch(e => $(".wrap").insertAdjacentHTML("beforeend", `<p class="mute">資料載入失敗：${esc(e.message)}</p>`));
 </script>
 </body>
 </html>
