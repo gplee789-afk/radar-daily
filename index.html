@@ -46,6 +46,25 @@ h2 { font-size: 18px; margin: 0; }
 .mkt b { font-size: 18px; font-variant-numeric: tabular-nums; }
 .mkt .go { margin-left: auto; color: var(--accent); font-weight: 600; }
 
+.mktbox { margin-top: 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; }
+.mktbox .mkt { margin: 0; border: 0; border-bottom: 1px solid var(--line); border-radius: 12px 12px 0 0; background: none; }
+.chart { padding: 10px 16px 12px; }
+.chart svg { display: block; width: 100%; height: 190px; overflow: visible; }
+.chart .ax { fill: var(--ink-3); font-size: 11px; font-variant-numeric: tabular-nums; }
+.chart .grid { stroke: var(--line); }
+.chart .zero { stroke: var(--ink-3); stroke-dasharray: 3 3; }
+.chart .band { fill: var(--accent); opacity: .13; }
+.chart .pred { fill: none; stroke: var(--accent); stroke-width: 2; }
+.chart .act { fill: none; stroke: var(--ink); stroke-width: 1.6; }
+.chart .live { fill: var(--ink); opacity: .05; }
+.chart .hov { fill: transparent; }
+.chart .hov:hover { fill: var(--ink); opacity: .06; }
+.cleg { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 12.5px; color: var(--ink-3); margin-top: 6px; }
+.cleg i { display: inline-block; width: 14px; height: 3px; vertical-align: middle; margin-right: 5px; border-radius: 2px; }
+.cleg b { color: var(--ink-2); font-weight: 600; }
+.subhd { color: var(--ink-2); font-size: 13.5px; font-weight: 600; margin: 14px 0 8px; }
+.subhd small { color: var(--ink-3); font-weight: 400; margin-left: 6px; }
+
 /* 值得先看 */
 .picks { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
 .pick { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; text-decoration: none; color: var(--ink); display: block; }
@@ -55,6 +74,7 @@ h2 { font-size: 18px; margin: 0; }
 .pick .pc { float: right; color: var(--up); font-weight: 700; font-variant-numeric: tabular-nums; }
 .pick .th { color: var(--ink-2); font-size: 12.5px; margin-top: 2px; }
 .pick .why { color: var(--ink-3); font-size: 12px; margin-top: 4px; }
+.pick .wt { color: var(--ink-3); font-size: 11.5px; margin-top: 4px; }
 
 /* 題材看板 */
 .board { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
@@ -114,11 +134,18 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 30px; }
     </nav>
   </header>
 
-  <a class="mkt hide" id="mkt"></a>
+  <section class="mktbox hide" id="mktbox" aria-label="今日大盤">
+    <a class="mkt" id="mkt"></a>
+    <div class="chart"><div id="chart"></div>
+      <div class="cleg"><span><i style="background:var(--accent)"></i>預估漲跌</span><span><i style="background:var(--ink)"></i>實際漲跌</span>
+        <span><i style="background:var(--accent);opacity:.3;height:8px"></i>8 成機率區間</span><span id="chartNote"></span></div></div>
+  </section>
 
   <section class="sec hide" id="picksSec">
     <div class="sec-hd"><h2>先看這幾家</h2><p>偏多、而且股價還沒大漲的公司</p></div>
     <div class="picks" id="picks"></div>
+    <div id="bigSec" class="hide"><div class="subhd">權值股<small>加權指數前 30 大，股價多半跟著大盤走，題材的影響比較小</small></div>
+    <div class="picks" id="bigPicks"></div></div>
   </section>
 
   <section class="sec">
@@ -173,8 +200,43 @@ function market(h) {
     ${h.exp != null ? `<span>預期 <span class="${h.exp > 0 ? "up" : "down"}">${sgn(h.exp, 2)}%</span></span>` : ""}
     ${tr.length ? `<span class="mute">最近 ${tr.length} 天猜對 ${ok} 次</span>` : ""}
     <span class="go">看預估 →</span>`;
-  m.classList.remove("hide");
+  $("#mktbox").classList.remove("hide");
 }
+
+/* 預估 vs 實際：手刻 SVG，依容器寬度重畫 */
+let PM = [];
+function chart() {
+  const box = $("#chart"), D = PM;
+  if (!D.length) return;
+  const W = box.clientWidth || 600, H = 190, L = 34, R = 6, T = 8, Bm = 20;
+  const vals = D.flatMap(x => [x.lo, x.hi, x.a].filter(v => v != null));
+  const top = Math.max(1, Math.ceil(Math.max(...vals))), bot = Math.min(-1, Math.floor(Math.min(...vals)));
+  const X = i => L + (D.length === 1 ? 0 : i * (W - L - R) / (D.length - 1));
+  const Y = v => T + (top - v) * (H - T - Bm) / (top - bot);
+  const step = (top - bot) > 6 ? 2 : 1;
+  let g = "";
+  for (let v = bot; v <= top; v += step) g += `<line class="grid" x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}"/><text class="ax" x="${L - 6}" y="${Y(v) + 4}" text-anchor="end">${v > 0 ? "+" : ""}${v}%</text>`;
+  g += `<line class="zero" x1="${L}" x2="${W - R}" y1="${Y(0)}" y2="${Y(0)}"/>`;
+  const li = D.findIndex(x => x.live);
+  if (li >= 0) g += `<rect class="live" x="${X(li) - 6}" y="${T}" width="${W - R - X(li) + 6}" height="${H - T - Bm}"/>
+      <text class="ax" x="${W - R}" y="${T + 10}" text-anchor="end">正式發布</text>`;
+  g += `<polygon class="band" points="${D.map((x, i) => `${X(i)},${Y(x.hi)}`).join(" ")} ${[...D].reverse().map((x, i) => `${X(D.length - 1 - i)},${Y(x.lo)}`).join(" ")}"/>`;
+  g += `<polyline class="pred" points="${D.map((x, i) => `${X(i)},${Y(x.e)}`).join(" ")}"/>`;
+  const A = D.map((x, i) => x.a == null ? null : `${X(i)},${Y(x.a)}`).filter(Boolean);
+  g += `<polyline class="act" points="${A.join(" ")}"/>`;
+  D.forEach((x, i) => { if (x.a != null) g += `<circle cx="${X(i)}" cy="${Y(x.a)}" r="2.6" fill="var(--${x.a > 0 ? "up" : "down"})"/>`; });
+  const lab = new Set([0, Math.floor(D.length / 2), D.length - 1]);
+  D.forEach((x, i) => { if (lab.has(i)) g += `<text class="ax" x="${X(i)}" y="${H - 4}" text-anchor="${i === 0 ? "start" : i === D.length - 1 ? "end" : "middle"}">${x.d.slice(5).replace("-", "/")}</text>`; });
+  const cw = (W - L - R) / Math.max(1, D.length - 1);
+  D.forEach((x, i) => g += `<rect class="hov" x="${X(i) - cw / 2}" y="${T}" width="${cw}" height="${H - T - Bm}"><title>${x.d}${x.live ? "（正式發布）" : "（回測）"}
+收紅機率 ${x.p}%，預估 ${sgn(x.e, 2)}%（${sgn(x.lo, 2)}% ～ ${sgn(x.hi, 2)}%）
+實際 ${x.a == null ? "等收盤" : sgn(x.a, 2) + "%"}</title></rect>`);
+  box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="最近 ${D.length} 個交易日預估漲跌與實際漲跌">${g}</svg>`;
+  const done = D.filter(x => x.a != null);
+  const hit = done.filter(x => (x.p > 50) === (x.a > 0)).length, inb = done.filter(x => x.a >= x.lo && x.a <= x.hi).length;
+  $("#chartNote").innerHTML = `近 ${done.length} 天：方向猜對 <b>${hit}</b> 天、實際落在區間內 <b>${inb}</b> 天`;
+}
+addEventListener("resize", () => { clearTimeout(chart.t); chart.t = setTimeout(chart, 150); });
 
 function picks(B) {
   const seen = new Set(), out = [];
@@ -182,10 +244,15 @@ function picks(B) {
     if (c.view === "偏多" && !hot(c) && !seen.has(c.code)) { seen.add(c.code); out.push({ ...c, theme: t.name }); }
   out.sort((a, b) => b.pct - a.pct);
   if (!out.length) return;
-  $("#picks").innerHTML = out.slice(0, 8).map(c => `<a class="pick" href="${quote(c.code)}" target="_blank" rel="noopener">
+  // 加權指數前 30 大的權值股另外放：漲跌多半跟大盤、外資進出，不是題材挖出來的
+  const big = out.filter(c => c.wr != null && c.wr <= 30), small = out.filter(c => !(c.wr != null && c.wr <= 30));
+  const card = c => `<a class="pick" href="${quote(c.code)}" target="_blank" rel="noopener">
       <span class="pc" title="合成分數全市場百分位">${c.pct}</span><span class="nm">${esc(c.name)}</span><span class="cd">${esc(c.code)}</span>
       <div class="th">${esc(c.theme)}${c.yoy != null ? `・營收年增 ${sgn(c.yoy)}%` : ""}</div>
-      ${c.pros.length ? `<div class="why">${esc(pros(c))}</div>` : ""}</a>`).join("");
+      ${c.pros.length ? `<div class="why">${esc(pros(c))}</div>` : ""}
+      <div class="wt">${c.w == null ? "上櫃，不在加權指數" : `指數權重 ${c.w}%（第 ${c.wr} 大）`}</div></a>`;
+  $("#picks").innerHTML = small.length ? small.slice(0, 8).map(card).join("") : `<p class="mute">今天沒有符合條件的中小型公司。</p>`;
+  if (big.length) { $("#bigPicks").innerHTML = big.slice(0, 6).map(card).join(""); $("#bigSec").classList.remove("hide"); }
   $("#picksSec").classList.remove("hide");
 }
 
@@ -197,7 +264,7 @@ function board(B) {
     const news = t.stage ? `新聞${t.stage}・${t.events} 則` : "近期沒有新聞";
     const rows = t.companies.map(c => `<tr><td><a href="${quote(c.code)}" target="_blank" rel="noopener">${esc(c.name)}</a> <span class="mute">${esc(c.code)}</span></td>
         <td><span class="view ${VIEW[c.view] || ""}">${esc(c.view)}</span></td><td class="r">${c.pct}</td>
-        <td class="r">${c.yoy == null ? "—" : sgn(c.yoy) + "%"}</td><td>${esc(c.priced.replace("股價", ""))}</td>
+        <td class="r">${c.yoy == null ? "—" : sgn(c.yoy) + "%"}</td><td>${esc(c.priced.replace("股價", ""))}</td><td class="r">${c.w == null ? "上櫃" : c.w + "%"}</td>
         <td class="mute">${esc(pros(c))}</td></tr>`).join("");
     return `<details class="theme"><summary>
         <span class="rk">${t.rank}</span>
@@ -209,7 +276,7 @@ function board(B) {
         <span class="chips c-chips">${top.map(chip).join("")}</span>
       </summary>
       <div class="detail"><div class="tbl-wrap"><table>
-        <thead><tr><th>公司</th><th>觀點</th><th class="r">合成分數</th><th class="r">營收年增</th><th>股價</th><th>強項</th></tr></thead>
+        <thead><tr><th>公司</th><th>觀點</th><th class="r">合成分數</th><th class="r">營收年增</th><th>股價</th><th class="r">指數權重</th><th>強項</th></tr></thead>
         <tbody>${rows}</tbody></table></div>
         ${t.path ? `<div class="more"><a href="${rep(t.path)}">看「${esc(t.name)}」題材分析 →</a></div>` : ""}
       </div></details>`;
@@ -224,7 +291,7 @@ function leads(B) {
 
 (async function boot() {
   const B = await (await fetch("data/board.json", { cache: "no-cache" })).json();
-  market(B.hero); picks(B); board(B); leads(B);
+  market(B.hero); PM = B.pm || []; chart(); picks(B); board(B); leads(B);
 })().catch(e => $(".wrap").insertAdjacentHTML("beforeend", `<p class="mute">資料載入失敗：${esc(e.message)}</p>`));
 </script>
 </body>
