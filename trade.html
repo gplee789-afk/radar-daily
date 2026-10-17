@@ -144,7 +144,7 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
   <div class="tbl" id="hold"></div>
 
   <h2>③ 觀察名單</h2>
-  <p class="hint">掛單價離收盤太遠（隔天幾乎買不到）或排在 5 名外的單，和成交了但沒算買進的單（每天最多買 3 筆）。不用動作，預設收起來。</p>
+  <p class="hint">被排除的單（缺口 &gt; 1.8 ATR、跟多方 OB 重疊、20 日漲 &gt; 25%）、掛單價離收盤太遠（隔天幾乎買不到）或排在 5 名外的單，和成交了但沒算買進的單（每天最多買 3 筆）。不用動作，預設收起來。</p>
   <div id="watch"></div>
 
   <h2>④ 策略成績</h2>
@@ -155,7 +155,7 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
   <details class="box">
     <summary>規則與限制</summary>
     <ul>
-      <li><span class="chip fvg">FVG</span> <b>股票池</b>成交值前 300 名。<b>訊號</b>：日 K 多方 FVG，缺口 ≥ 1 ATR，上緣以上沒有還活著的空方 OB。<b>名單</b>：只列隔天高機率成交的單：掛單價在收盤下 0.5 ATR 以內（回測隔天成交率約 55%），依缺口大小（ATR 倍）排序最多 5 檔，沒有就不列、不用列滿；掛更遠的單隔天幾乎買不到（2 ATR 以外成交率 &lt; 1%），收在「③ 觀察名單」。<b>進場</b>：成立後 10 個交易日內在上緣掛限價買，開盤在停損以下就撤單；同一天成交超過 3 檔只算名次前 3 的，沒成交就不買（2026-10-17 起；之前是前 150 名、掛 3 天、每張都掛）。<b>停損</b>：下緣 − 0.1 ATR；收盤跌破前 10 天最低隔天開盤賣，最多 120 天。收盤在 60 日高 3% 以內的淡化顯示（創高中，不追）。</li>
+      <li><span class="chip fvg">FVG</span> <b>股票池</b>成交值前 300 名。<b>訊號</b>：日 K 多方 FVG，缺口 ≥ 1 ATR，上緣以上沒有還活著的空方 OB。<b>名單</b>：只列隔天高機率成交的單：掛單價在收盤下 0.5 ATR 以內（回測隔天成交率約 55%），依缺口大小（ATR 倍）排序最多 5 檔，沒有就不列、不用列滿；掛更遠的單隔天幾乎買不到（2 ATR 以外成交率 &lt; 1%），收在「③ 觀察名單」。<b>排除</b>（2026-10-17 起）：缺口 &gt; 1.8 ATR、跟多方 OB 重疊、20 日漲 &gt; 25% 的不列。回測這三種單兩段期間都比較差，排除後最大回撤 −40% → −25%，2016–2026 年化 +11.8% → +10.3%。<b>進場</b>：成立後 10 個交易日內在上緣掛限價買，開盤在停損以下就撤單；同一天成交超過 3 檔只算名次前 3 的，沒成交就不買（2026-10-17 起；之前是前 150 名、掛 3 天、每張都掛）。<b>停損</b>：下緣 − 0.1 ATR；收盤跌破前 10 天最低隔天開盤賣，最多 120 天。收盤在 60 日高 3% 以內的淡化顯示（創高中，不追）。</li>
       <li><b>回檔到支撐</b>：2026-10-17 停用。把兩套規則放進同一個 2005–2026 日 K 回測比較，回檔那套多出來的條件（加 OB、離高 8%、隔天開盤買、固定 20 天出場）每一項都讓成績變差或沒差，所以只留 FVG。停用前已買的部位照原規則追蹤到出場。</li>
       <li>FVG 用 Yahoo 日 K、每個交易日 21:30 更新（缺收盤的用 60 分 K 補）；回檔的舊部位 14:45 收盤後更新。</li>
       <li>研究輔助，不是投資建議。紀錄是照規則模擬的，不是實際成交。</li>
@@ -236,7 +236,7 @@ function todo(day, F, PB) {
   $("#todoH").textContent = latest ? "① 下個交易日要做的" : `① ${day.slice(5)} 名單要做的（已過）`;
   $("#todoN").textContent = `${rows.length} 筆`;
   $("#todoHint").innerHTML = `${esc(day)} 收盤後產生、下一個交易日執行。只列掛單價在收盤下 0.5 ATR 以內、隔天比較可能成交的單（最多 5 檔，沒有就不列），在掛單價掛限價買，開盤就在停損以下撤單；同一天成交超過 3 檔只算名次前 3 的，沒成交就不買。`;
-  if (!rows.length) { $("#todo").innerHTML = '<div class="empty">這天沒有要下的單：沒有掛單價在收盤附近（0.5 ATR 內）的 FVG。沒有單是常態，不用勉強找；掛很遠的單收在「③ 觀察名單」。</div>'; return; }
+  if (!rows.length) { $("#todo").innerHTML = '<div class="empty">這天沒有要下的單：沒有掛單價在收盤附近（0.5 ATR 內）、又沒被排除的 FVG。沒有單是常態，不用勉強找；其他的單和排除原因收在「③ 觀察名單」。</div>'; return; }
   $("#todo").innerHTML = `<table><thead><tr><th class="l">代號</th><th class="l">名稱</th><th class="l">動作</th><th>停損</th><th>停損距離</th>
     <th class="l">支撐／訊號區</th><th>離 60 日高</th><th>成交值排名</th><th class="l">備註</th></tr></thead><tbody>`
     + rows.map(x => `<tr class="${x.dim ? "dim" : ""}"><td class="l">${codeCell(x.r)}</td>
@@ -281,7 +281,8 @@ function fvgRest(day, F) {
     <th>離 60 日高</th><th>成交值排名</th><th class="l">狀態</th></tr></thead><tbody>`
     + [...rest, ...nb].map(r => `<tr class="${r.near_high ? "dim" : ""}"><td class="l">${codeCell(r)}</td><td class="l">${nameCell(r, "fvg", day, r.industry)}</td>
       <td class="px">${px(r.close)}</td><td>${px(r.entry)}</td><td class="stop">${px(r.stop)}</td><td>${r.gap_atr}</td><td>${pct(-r.below_high_pct)}</td><td>${r.rank}</td>
-      <td class="l">${r.status === "pending" ? (r.dist_atr != null && r.dist_atr > 0.5 ? `<span class="chip warn">掛單價離收盤 ${r.dist_atr} ATR・隔天成交約 ${Math.round((r.fill_p ?? 0) * 100)}%</span> ` : `<span class="chip mute">排在 5 名外</span> `)
+      <td class="l">${r.status === "pending" ? (r.excl && r.excl.length ? `<span class="chip warn">排除：${esc(r.excl.join("、"))}</span> ` : "")
+        + (r.dist_atr != null && r.dist_atr > 0.5 ? `<span class="chip warn">掛單價離收盤 ${r.dist_atr} ATR・隔天成交約 ${Math.round((r.fill_p ?? 0) * 100)}%</span> ` : (r.excl && r.excl.length ? "" : `<span class="chip mute">排在 5 名外</span> `))
         + `<span class="chip mute">還能掛 ${r.days_left} 天</span>` : `<span class="chip bad">不買：${esc(r.why || "")}</span>`}</td></tr>`).join("")
     + "</tbody></table></div></details>";
 }
@@ -416,17 +417,18 @@ function cards() {
       ${row("同規則隨機選股（中位數）", "−5.4%／+42.2%")}
       ${row("同期 0050", "+26.2%／+89.9%")}
       <p>回測兩段都贏同規則隨機選股；前段輸 0050、後段贏。2026-10-17 起不再產生新名單（20 年日 K 回測比 FVG 差，見規則與限制），上線紀錄只剩停用前買進的部位。</p></div></details></div>
-    <details class="box strat" id="strat-fvg"><summary class="head">${S.fvg} FVG 每日標的 <span class="hl">回測驗證期年化 +11.8%（0050 +24%）・上線紀錄還沒有</span></summary>
+    <details class="box strat" id="strat-fvg"><summary class="head">${S.fvg} FVG 每日標的 <span class="hl">回測驗證期年化 +10.3%（0050 +24%）・上線紀錄還沒有</span></summary>
       <div class="charts"><div class="c-bt"></div></div>
       <details class="more"><summary>詳細數值</summary><div class="rows">
       ${row("上線紀錄", "還沒有（目前只列當天的單）")}
-      ${row("回測驗證期 2016–2026 年化", "+11.8%", "up")}
-      ${row("最大回撤", "−40%", "dn")}
+      ${row("回測驗證期 2016–2026 年化", "+10.3%", "up")}
+      ${row("最大回撤", "−25%", "dn")}
+      ${row("回測挑參數期 2005–2015 年化", "+0.3%（回撤 −34%）")}
       ${row("名單隔天成交率", "約 55%（約一半的日子有單）")}
-      ${row("同規則、名單裡隨機挑（中位數）", "+10.7%")}
+      ${row("不加三個排除", "+11.8%（回撤 −40%）")}
       ${row("不限掛單距離（名單隔天只有 13% 成交）", "+15.5%")}
       ${row("同期 0050 含息年化", "+24%", "up")}
-      <p>只列隔天高機率買得到的單，回測報酬比不限距離低；依缺口排序只比隨機好一點。<b>贏不了買進 0050</b>，2016–2026 裡 2016、2017、2018、2021、2022 都虧。</p></div></details></details>`;
+      <p>只列隔天高機率買得到的單，再排除缺口過大、跟 OB 重疊、20 日漲太多的單：回撤小很多，但報酬也少一點；排除門檻是看過兩段資料才定的，數字偏樂觀。<b>贏不了買進 0050</b>，2016–2026 裡 2016、2018、2020、2022 都虧。</p></div></details></details>`;
   drawCharts("pb"); drawCharts("fvg");
   $("#strat-fvg").addEventListener("toggle", () => drawCharts("fvg"));   // 收起來時寬度是 0，打開再畫一次
 }
