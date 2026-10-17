@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>鴻海業務與驅動因素</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&family=Noto+Serif:ital@0;1&family=Noto+Sans+TC:wght@400;500;600&family=Noto+Serif+TC:wght@400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* 配色：diagram-design 設定檔 taiwan-analysis（取自網站 radar/site_library.html） */
+    :root {
+      --paper: #0e0c0a; --node: #191512; --ink: #f2ebe3; --muted: #c2b3a3; --soft: #9c8c7c;
+      --rule: rgba(242,235,227,0.12); --accent: #f0a050; --accent-tint: rgba(240,160,80,0.12);
+      --link: #f7c873;
+      --font-sans: 'Geist', 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', system-ui, sans-serif;
+      --font-serif: 'Instrument Serif', 'Noto Serif', 'Noto Serif TC', serif;
+      --font-mono: 'Geist Mono', ui-monospace, monospace;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --paper: #0e0c0a; --node: #191512; --ink: #f2ebe3; --muted: #c2b3a3; --soft: #9c8c7c;
+        --rule: rgba(242,235,227,0.12); --accent: #f0a050; --accent-tint: rgba(240,160,80,0.12);
+        --link: #f7c873;
+      }
+    }
+    body { font-family: var(--font-sans); background: var(--paper); color: var(--ink); padding: 20px 16px 24px; }
+    .frame { max-width: 1000px; margin: 0 auto; }
+    .diagram-container { width: 100%; overflow-x: auto; }
+    .eyebrow { font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 4px; }
+    h1 { font-family: var(--font-serif); font-size: clamp(1.4rem, 2.2vw + 0.7rem, 1.9rem); font-weight: 400; line-height: 1.2; margin-bottom: 14px; }
+    svg { width: 100%; min-width: 960px; display: block; }
+    .note { font-size: 13px; line-height: 1.75; color: var(--muted); margin-top: 12px; max-width: 900px; }
+    .note b { color: var(--ink); font-weight: 600; }
+
+    svg .bg { fill: var(--paper); }
+    svg .wire { fill: none; stroke: var(--muted); stroke-width: 1; }
+    svg .wire.dash { stroke-dasharray: 5,4; }
+    svg .box { fill: var(--node); stroke: var(--ink); stroke-width: 1; }
+    svg .box.focal { fill: var(--accent-tint); stroke: var(--accent); stroke-width: 1.2; }
+    svg .box.risk { stroke-dasharray: 5,4; }
+    svg .tag { fill: none; stroke: var(--soft); stroke-width: 0.8; }
+    svg .tag.focal { stroke: var(--accent); }
+    svg .t-tag { fill: var(--ink); font: 500 12px var(--font-sans); }
+    svg .t-tag.focal { fill: var(--accent); }
+    svg .t-name { fill: var(--ink); font: 600 13px var(--font-sans); }
+    svg .t-root { fill: var(--ink); font: 600 16px var(--font-sans); }
+    svg .t-sub { fill: var(--muted); font: 400 12px var(--font-sans); }
+    svg .t-co { fill: var(--ink); font: 600 12px var(--font-sans); }
+    svg .t-col { fill: var(--muted); font: 500 12px var(--font-sans); }
+    svg a.node { cursor: pointer; }
+    svg a.node:hover .box, svg a.node:focus-visible .box { stroke-width: 2; }
+    svg a.node:focus-visible { outline: none; }
+    svg .co a tspan { fill: var(--link); text-decoration: underline; text-decoration-color: rgba(247,200,115,0.35); }
+    svg .co a:hover tspan { text-decoration-color: currentColor; }
+    @media (prefers-color-scheme: dark) { svg .co a tspan { text-decoration-color: rgba(247,200,115,0.4); } }
+    @media print { .diagram-container { overflow-x: visible; } svg { min-width: 0; } }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">個股報告・2026-10-17</p>
+    <h1>鴻海：四條產品線，AI 機櫃撐起成長</h1>
+
+    <div class="diagram-container">
+      <svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="co-2317-title co-2317-desc">
+        <title id="co-2317-title">鴻海業務與驅動因素</title>
+        <desc id="co-2317-desc">鴻海的雲端網路、消費智能、電腦終端與元件、轉投資與新事業四塊業務各自的營收占比、驅動因素與相關台股公司，以及毛利率偏低與營運現金流轉負這項主要風險。</desc>
+
+        <rect class="bg" width="100%" height="100%"/>
+
+        <text class="t-col" x="40" y="56">公司</text>
+        <text class="t-col" x="320" y="56">產品線 → 驅動因素</text>
+        <text class="t-col" x="640" y="56">客戶、同業、轉投資</text>
+
+        <!-- 連線：先畫線再畫框 -->
+        <path class="wire" d="M 240 288 H 280"/>
+        <path class="wire" d="M 320 112 H 288 Q 280 112 280 120 V 480 Q 280 488 288 488 H 320"/>
+        <path class="wire" d="M 280 204 H 320"/>
+        <path class="wire" d="M 280 296 H 320"/>
+        <path class="wire" d="M 280 388 H 320"/>
+
+        <!-- 根節點 -->
+        <a class="node" href="../../?r=library/company/company-2026-10-17-2317-鴻海.md#sec=一、投資摘要" target="_top" aria-label="看投資摘要">
+          <rect class="bg" x="40" y="232" width="200" height="112" rx="6"/>
+          <rect class="box" x="40" y="232" width="200" height="112" rx="6"/>
+          <rect class="tag" x="52" y="244" width="40" height="18" rx="2"/>
+          <text class="t-tag" x="72" y="257" text-anchor="middle">偏多</text>
+          <text class="t-root" x="52" y="288">2317 鴻海</text>
+          <text class="t-sub" x="52" y="312">Q2 營收 2.53 兆，年增 41%</text>
+          <text class="t-sub" x="52" y="330">營益率 3.75%，毛利率 6.1%</text>
+        </a>
+
+        <!-- 雲端網路（焦點：成長主因） -->
+        <a class="node" href="../../?r=library/company/company-2026-10-17-2317-鴻海.md#sec=論點一" target="_top" aria-label="看論點一：AI 機櫃放量">
+          <rect class="bg" x="320" y="76" width="280" height="72" rx="6"/>
+          <rect class="box focal" x="320" y="76" width="280" height="72" rx="6"/>
+          <rect class="tag focal" x="332" y="88" width="52" height="18" rx="2"/>
+          <text class="t-tag focal" x="358" y="101" text-anchor="middle">主引擎</text>
+          <text class="t-name" x="396" y="102">雲端網路　占 51%</text>
+          <text class="t-sub" x="332" y="130">AI 機櫃 Q3 季增高雙位數、全年倍增</text>
+        </a>
+        <text class="t-co co" x="640" y="104"><tspan>微軟・NVIDIA・Oracle</tspan><tspan>（客戶）</tspan></text>
+        <text class="t-sub" x="640" y="126"><tspan>同業 </tspan></text>
+        <text class="t-co co" x="672" y="126"><a href="https://tw.stock.yahoo.com/quote/2382" target="_blank" rel="noopener"><tspan>2382 廣達</tspan></a><tspan>・</tspan><a href="https://tw.stock.yahoo.com/quote/3231" target="_blank" rel="noopener"><tspan>3231 緯創</tspan></a><tspan>・</tspan><a href="https://tw.stock.yahoo.com/quote/6669" target="_blank" rel="noopener"><tspan>6669 緯穎</tspan></a></text>
+
+        <!-- 消費智能 -->
+        <a class="node" href="../../?r=library/company/company-2026-10-17-2317-鴻海.md#sec=二、公司與產業位置" target="_top" aria-label="看公司與產業位置">
+          <rect class="bg" x="320" y="168" width="280" height="72" rx="6"/>
+          <rect class="box" x="320" y="168" width="280" height="72" rx="6"/>
+          <rect class="tag" x="332" y="180" width="40" height="18" rx="2"/>
+          <text class="t-tag" x="352" y="193" text-anchor="middle">基本盤</text>
+          <text class="t-name" x="384" y="194">消費智能　占 29%</text>
+          <text class="t-sub" x="332" y="222">iPhone 代工，Q2 營收年增約 17%</text>
+        </a>
+        <text class="t-co co" x="640" y="196"><tspan>Apple・Sony・Nintendo（客戶）</tspan></text>
+        <text class="t-sub" x="640" y="218"><tspan>轉投資 夏普、富智康（非台股）</tspan></text>
+
+        <!-- 電腦終端與元件 -->
+        <a class="node" href="../../?r=library/company/company-2026-10-17-2317-鴻海.md#sec=二、公司與產業位置" target="_top" aria-label="看公司與產業位置">
+          <rect class="bg" x="320" y="260" width="280" height="72" rx="6"/>
+          <rect class="box" x="320" y="260" width="280" height="72" rx="6"/>
+          <rect class="tag" x="332" y="272" width="40" height="18" rx="2"/>
+          <text class="t-tag" x="352" y="285" text-anchor="middle">次要</text>
+          <text class="t-name" x="384" y="286">電腦終端 15%＋元件 5%</text>
+          <text class="t-sub" x="332" y="314">筆電、桌機、連接器；Q3 預期季減</text>
+        </a>
+        <text class="t-co co" x="640" y="288"><a href="https://tw.stock.yahoo.com/quote/2357" target="_blank" rel="noopener"><tspan>2357 華碩</tspan></a><tspan>（客戶）</tspan><tspan>・</tspan><a href="https://tw.stock.yahoo.com/quote/6414" target="_blank" rel="noopener"><tspan>6414 樺漢</tspan></a></text>
+        <text class="t-sub" x="640" y="310"><tspan>競爭 </tspan></text>
+        <text class="t-co co" x="672" y="310"><a href="https://tw.stock.yahoo.com/quote/2324" target="_blank" rel="noopener"><tspan>2324 仁寶</tspan></a><tspan>・</tspan><a href="https://tw.stock.yahoo.com/quote/4938" target="_blank" rel="noopener"><tspan>4938 和碩</tspan></a></text>
+
+        <!-- 轉投資與新事業（焦點：獲利來源） -->
+        <a class="node" href="../../?r=library/company/company-2026-10-17-2317-鴻海.md#sec=論點二" target="_top" aria-label="看論點二：費用槓桿與工業富聯">
+          <rect class="bg" x="320" y="352" width="280" height="72" rx="6"/>
+          <rect class="box focal" x="320" y="352" width="280" height="72" rx="6"/>
+          <rect class="tag focal" x="332" y="364" width="40" height="18" rx="2"/>
+          <text class="t-tag focal" x="352" y="377" text-anchor="middle">獲利</text>
+          <text class="t-name" x="384" y="378">工業富聯＋電動車、儲能</text>
+          <text class="t-sub" x="332" y="406">費用 +5% 對營收 +41%，營益率 +60bp</text>
+        </a>
+        <text class="t-co co" x="640" y="380"><tspan>工業富聯 601138.SH（持股約 84%）</tspan></text>
+        <text class="t-sub" x="640" y="402"><tspan>EV </tspan></text>
+        <text class="t-co co" x="662" y="402"><a href="https://tw.stock.yahoo.com/quote/2258" target="_blank" rel="noopener"><tspan>2258 鴻華先進</tspan></a><tspan>・</tspan><a href="https://tw.stock.yahoo.com/quote/2328" target="_blank" rel="noopener"><tspan>2328 廣宇</tspan></a><tspan>・</tspan><a href="https://tw.stock.yahoo.com/quote/4958" target="_blank" rel="noopener"><tspan>4958 臻鼎</tspan></a></text>
+
+        <!-- 風險 -->
+        <a class="node" href="../../?r=library/company/company-2026-10-17-2317-鴻海.md#sec=七、風險與反方" target="_top" aria-label="看風險與反方">
+          <rect class="bg" x="320" y="452" width="280" height="72" rx="6"/>
+          <rect class="box risk" x="320" y="452" width="280" height="72" rx="6"/>
+          <rect class="tag" x="332" y="464" width="40" height="18" rx="2"/>
+          <text class="t-tag" x="352" y="477" text-anchor="middle">風險</text>
+          <text class="t-name" x="384" y="478">毛利薄、現金被營運資金吃掉</text>
+          <text class="t-sub" x="332" y="506">H1 自由現金流 −1,500 億，淨現金 −32%</text>
+        </a>
+        <text class="t-co co" x="640" y="480"><tspan>機櫃市占 46%→39%（大摩）</tspan></text>
+        <text class="t-sub" x="640" y="502"><tspan>337 調查（Vicor）・10/13 外資賣超</tspan></text>
+
+        <!-- 圖例 -->
+        <line x1="40" y1="552" x2="920" y2="552" stroke="var(--rule)" stroke-width="0.8"/>
+        <rect x="40" y="566" width="16" height="12" rx="2" fill="var(--accent-tint)" stroke="var(--accent)" stroke-width="1"/>
+        <text class="t-sub" x="64" y="576">焦點：成長主因／獲利來源</text>
+        <rect x="300" y="566" width="16" height="12" rx="2" fill="var(--node)" stroke="var(--ink)" stroke-width="1" stroke-dasharray="4,3"/>
+        <text class="t-sub" x="324" y="576">虛線框：風險</text>
+        <text class="t-sub" x="460" y="576">點方框看報告段落；黃字連到個股報價</text>
+      </svg>
+    </div>
+    <p class="note"><b>怎麼讀：</b>占比是 2026 年第二季各產品領域占營收比重（法說簡報 2026-08-12）；雲端網路首度過半，成長幾乎都來自這一塊，毛利率卻沒有跟著升。獲利有很大一部分集中在持股約 84% 的工業富聯（持股比例為 2025 年報導，未見 2026 年更新）。</p>
+  </div>
+</body>
+</html>

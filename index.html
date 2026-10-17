@@ -75,6 +75,7 @@ h2 { font-size: 18px; margin: 0; }
 .pick .th { color: var(--ink-2); font-size: 12.5px; margin-top: 2px; }
 .pick .why { color: var(--ink-3); font-size: 12px; margin-top: 4px; }
 .pick .wt { color: var(--ink-3); font-size: 11.5px; margin-top: 4px; }
+.pick .go { color: var(--accent); font-size: 12.5px; font-weight: 600; margin-top: 8px; }
 
 /* 題材看板 */
 .board { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
@@ -246,12 +247,14 @@ function picks(B) {
   if (!out.length) return;
   // 加權指數前 30 大的權值股另外放：漲跌多半跟大盤、外資進出，不是題材挖出來的
   const big = out.filter(c => c.wr != null && c.wr <= 30), small = out.filter(c => !(c.wr != null && c.wr <= 30));
-  const card = c => `<a class="pick" href="${quote(c.code)}" target="_blank" rel="noopener">
+  // 有個股報告（stock-dive）就連到報告，沒有才連 Yahoo 股價頁
+  const card = c => `<a class="pick" href="${c.rpt ? rep(c.rpt) : quote(c.code)}"${c.rpt ? "" : ` target="_blank" rel="noopener"`}>
       <span class="pc" title="合成分數全市場百分位">${c.pct}</span><span class="nm">${esc(c.name)}</span><span class="cd">${esc(c.code)}</span>
       <div class="th">${esc(c.theme)}${c.yoy != null ? `・營收年增 ${sgn(c.yoy)}%` : ""}</div>
       ${c.r12 != null ? `<div class="wt">股價 12 個月 ${sgn(c.r12)}%（自身波動的 ${c.mv} 倍）</div>` : ""}
       ${c.pros.length ? `<div class="why">${esc(pros(c))}</div>` : ""}
-      <div class="wt">${c.w == null ? "上櫃，不在加權指數" : `指數權重 ${c.w}%（第 ${c.wr} 大）`}</div></a>`;
+      <div class="wt">${c.w == null ? "上櫃，不在加權指數" : `指數權重 ${c.w}%（第 ${c.wr} 大）`}</div>
+      ${c.rpt ? `<div class="go">看個股報告 →</div>` : ""}</a>`;
   $("#picks").innerHTML = small.length ? small.slice(0, 8).map(card).join("") : `<p class="mute">今天沒有符合條件的中小型公司。</p>`;
   if (big.length) { $("#bigPicks").innerHTML = big.slice(0, 6).map(card).join(""); $("#bigSec").classList.remove("hide"); }
   $("#picksSec").classList.remove("hide");
@@ -263,7 +266,7 @@ function board(B) {
     const top = t.companies.slice(0, 5);
     const chip = c => `<span class="chip ${c.view === "偏多" ? "b" : ""} ${hot(c) ? "hot" : ""}" title="${esc(c.name)}：${esc(c.view)}，合成分數第 ${c.pct} 百分位，${esc(c.priced)}">${esc(c.name)}</span>`;
     const news = t.stage ? `新聞${t.stage}・${t.events} 則` : "近期沒有新聞";
-    const rows = t.companies.map(c => `<tr><td><a href="${quote(c.code)}" target="_blank" rel="noopener">${esc(c.name)}</a> <span class="mute">${esc(c.code)}</span></td>
+    const rows = t.companies.map(c => `<tr><td>${c.rpt ? `<a href="${rep(c.rpt)}">${esc(c.name)}</a>` : `<a href="${quote(c.code)}" target="_blank" rel="noopener">${esc(c.name)}</a>`} <span class="mute">${esc(c.code)}</span></td>
         <td><span class="view ${VIEW[c.view] || ""}">${esc(c.view)}</span></td><td class="r">${c.pct}</td>
         <td class="r">${c.yoy == null ? "—" : sgn(c.yoy) + "%"}</td><td title="${c.mv == null ? "" : `12 個月漲幅是自身年波動的 ${c.mv} 倍`}">${esc(c.priced.replace("股價", ""))}${c.r12 == null ? "" : `<span class="mute">・${sgn(c.r12)}%</span>`}</td><td class="r">${c.w == null ? "上櫃" : c.w + "%"}</td>
         <td class="mute">${esc(pros(c))}</td></tr>`).join("");
