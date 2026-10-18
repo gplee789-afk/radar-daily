@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-17 03:22",
+ "generated": "2026-10-19 07:30",
  "asof": "2026-10-16",
  "rule": {
   "hold": 20,
@@ -24,7 +24,7 @@
   {
    "date": "2026-10-16",
    "pnl": 0.344,
-   "bench": -0.32
+   "bench": -0.411
   }
  ],
  "trades": [
@@ -45,8 +45,8 @@
    "exit": 39.65,
    "days": 1,
    "ret": -0.02,
-   "bench": -0.32,
-   "excess": 0.3,
+   "bench": -0.41,
+   "excess": 0.39,
    "mfe": 0.38,
    "mae": 0.38,
    "order": 1
@@ -68,8 +68,8 @@
    "exit": 116.5,
    "days": 1,
    "ret": -0.4,
-   "bench": -0.32,
-   "excess": -0.08,
+   "bench": -0.41,
+   "excess": 0.01,
    "mfe": 0.0,
    "mae": 0.0,
    "order": 2
@@ -91,8 +91,8 @@
    "exit": 248.0,
    "days": 1,
    "ret": 5.58,
-   "bench": -0.32,
-   "excess": 5.9,
+   "bench": -0.41,
+   "excess": 5.99,
    "mfe": 5.98,
    "mae": 5.98,
    "order": 3
