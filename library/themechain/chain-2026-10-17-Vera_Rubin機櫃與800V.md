@@ -1,7 +1,7 @@
 # Vera Rubin 機櫃與 800V 聯想式供應鏈深挖（2026-10-17）
 
 > 研究輔助，不是投資建議。〔公司〕〔媒〕〔法人〕〔推論〕〔傳聞〕〔單一來源〕標示可信度；數字都附來源日期。
-> 股價與營收：`invest.py profile --fetch`（股價到 2026-10-15，營收到 2026-09）。起點卷宗：`research/dossier/2026-10-17-Vera_Rubin.md`、`-800V.md`。大盤狀態：過去半年 +29.4%，上行（`research/ledger.md`）。
+> 股價與營收：本機整理的公開資料（股價到 2026-10-15，營收到 2026-09）。起點卷宗：`research/dossier/2026-10-17-Vera_Rubin.md`、`-800V.md`。大盤狀態：過去半年 +29.4%，上行（`research/ledger.md`）。
 
 <iframe src="library/diagrams/vera-rubin-800v-2026-10-17.html" style="width:100%;height:960px;border:0" title="Vera Rubin 機櫃與 800V 供應鏈圖"></iframe>
 
@@ -157,7 +157,7 @@
 ## 鏈 F：高功率電源測試（強度：中）
 
 - **推理**：110kW 電源架、±400V／800V HVDC、BBU 與儲能都要新的高功率測試設備，電源廠擴產就先買測試機。
-- **證據**：致茂執行長說 AI 相關營收約六成，HVDC 與 ESS 帶動電源測試需求〔公司，2026-07 法說，經工商時報〕；電源測試營收 2025 年年增 55%〔媒，單一來源〕；近 18 個月台達電向 CHROMA ATE INC. 取得設備 6 筆、合計 66.0 億元（重大訊息資本支出公告，`deals.db`，見 Vera Rubin 卷宗第 6 節），是「電源廠擴產先買測試機」的直接證據。
+- **證據**：致茂執行長說 AI 相關營收約六成，HVDC 與 ESS 帶動電源測試需求〔公司，2026-07 法說，經工商時報〕；電源測試營收 2025 年年增 55%〔媒，單一來源〕；近 18 個月台達電向 CHROMA ATE INC. 取得設備 6 筆、合計 66.0 億元（重大訊息資本支出公告，資本支出公告，見 Vera Rubin 卷宗第 6 節），是「電源廠擴產先買測試機」的直接證據。
 - **財務與已反映**：致茂近 3 月營收年增 179%、加速 +68pp、事實 91%、偏多（85）；但 12 個月 +197%、本益比 51.6、隱含 23%，**部分反映**。
 - **反方**：測試設備是一次性採購，電源廠擴產完就回落。若 10～12 月營收平均年增低於 80%，論點失效。
 
@@ -224,7 +224,7 @@
 
 ## 論點登記
 
-給 `invest.py ledger` 對答案；事件揭曉後把 status 改成 yes／no 並填 evidence。
+給 本機整理的公開資料 對答案；事件揭曉後把 status 改成 yes／no 並填 evidence。
 
 ```ledger
 report: Vera Rubin機櫃與800V
@@ -435,7 +435,7 @@ claims:
 ## 已加進 `data/supply_chain.yaml`（2026-10-17）
 
 - 「電源／電力」題材加入 2476 鉅祥（BBU 機構件）、4931 新盛力（BBU）、3357 臺慶科（TLVR 電感）、2375 凱美、6449 鈺邦（電容）、2478 大毅、3624 光頡（電流感測、電阻），並新增電感、電容、電流感測三個標準元件。
-- 新增「設施電力」題材（1519 華城、1513 中興電、1514 亞力），和電源／電力分開，避免把變壓器訂單算成 AI 伺服器電源的熱度。`run.py init` 核對通過。
+- 新增「設施電力」題材（1519 華城、1513 中興電、1514 亞力），和電源／電力分開，避免把變壓器訂單算成 AI 伺服器電源的熱度。自動產生 核對通過。
 
 ## 來源
 
@@ -449,4 +449,4 @@ claims:
 - 富世達產能與驗證（工商時報 2026-09-22）https://www.ctee.com.tw/news/20260922700251-430502 ；健策（經濟日報）https://money.udn.com/money/story/5607/9423686 ；Rubin Ultra 冷板（工商時報 2026-09-29）https://www.ctee.com.tw/news/20260929700204-439901
 - PCB：TrendForce 板材（科技新報 2025-11-20）https://technews.tw/2025/11/20/pcb-industry-processing-core/ ；中板與 M8.5（工商時報 2026-01-17）https://www.ctee.com.tw/news/20260117700010-430502 ；鑽針壽命（工商時報 2026-07-12）https://www.ctee.com.tw/news/20260712700038-430502 ；日東紡（TrendForce 2026-08-06）https://www.trendforce.com/news/2026/08/06/news-nittobo-raises-fy2027-net-profit-forecast-by-jpy-3b-no-further-t-glass-price-hikes-planned/
 - 大毅法說（2026-08-12）https://blog.fugle.tw/post/earnings-call-2478-2026-08-12 ；致茂法說（工商時報 2026-07-30）https://www.ctee.com.tw/news/20260730701766-430201 ；華城（工商時報 2026-10-16）https://www.ctee.com.tw/news/20261016700678-430503
-- 專案資料：`invest.py profile --fetch`（月營收、事實分數、股價、學界估值）、`radar.stance`（觀點）、`research/dossier/2026-10-17-Vera_Rubin.md`、`-800V.md`、`data/deals.db`（台達電 → 中茂電子設備公告）。
+- 專案資料：本機整理的公開資料（月營收、事實分數、股價、學界估值）、`radar.stance`（觀點）、`research/dossier/2026-10-17-Vera_Rubin.md`、`-800V.md`、資本支出公告（台達電 → 中茂電子設備公告）。

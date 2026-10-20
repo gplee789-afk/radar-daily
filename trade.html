@@ -468,7 +468,7 @@ function strip(day, F, PB) {
   const a = LOG ? agg(LOG.trades) : null;
   $("#strip").innerHTML = `
     <div><span class="k">名單日期</span><span class="v">${esc(day)}</span></div>
-    <div><span class="k">加權 vs 200 日線</span><span class="v ${m ? (m.above ? "up" : "dn") : ""}">${m ? (m.above ? "在線上" : "在線下") + " " + px(m.close) : "–"}</span></div>
+    <div><span class="k">加權 vs 200 日線</span><span class="v ${m ? (m.above ? "up" : "dn") : ""}">${m ? (m.above ? "在線上" : "在線下") + " " + px(m.close) + (m.date ? `（${m.date.slice(5).replace("-", "/")}）` : "") : "–"}</span></div>
     <div><span class="k">資料產生</span><span class="v" style="font-weight:400">${F ? esc(F.generated.slice(5)) : "–"}</span></div>`;
 }
 

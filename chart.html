@@ -334,6 +334,7 @@ function step(k) {
   if (!window.LightweightCharts) { msg("圖表程式庫載入失敗（需要連到 unpkg.com）。"); return; }
   init();
   try {
+    if (!DAY) throw new Error("沒有名單日期");     // 直接開 chart.html（沒帶日期）時不要去抓 pullback-.json
     const d = await (await fetch(`data/${STRAT}/${STRAT}-${encodeURIComponent(DAY)}.json`, { cache: "no-cache" })).json();
     picks = STRAT === "fvg" ? d.picks.map(p => ({ ...p, grade: p.status === "filled" ? "今天成交" : "可掛單" })) : d.picks;
   } catch (e) { picks = []; }

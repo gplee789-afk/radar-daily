@@ -307,8 +307,41 @@ $("#q").addEventListener("input", () => {
 
 /* ---------- 閱讀器 ---------- */
 let lastFocus = null;
+// 報告內文的連結是寫報告時的相對路徑（themechain/x.md、chain-x.md…），網站上要換成 ?r=library/類別/檔名
+const byFile = name => ALL.find(x => x.file === name || x.path.split("/").pop() === name);
+function fixLinks(doc) {
+  doc.querySelectorAll("a[href]").forEach(a => {
+    const href = a.getAttribute("href");
+    if (/^(https?:|mailto:|#)/.test(href)) return;
+    const q = href.match(/^\?r=([^#]+)/);
+    const target = q ? decodeURIComponent(q[1]) : href.split("#")[0];
+    const name = decodeURIComponent(target.split("/").pop() || "");
+    const hit = ALL.find(x => x.path === target) || (/\.(md|html)$/.test(name) && byFile(name));
+    if (hit) { a.setAttribute("href", "?r=" + encodeURIComponent(hit.path)); a.dataset.path = hit.path; }
+    else if (/\.md$/.test(name)) {                        // 沒公開的工作檔（卷宗等）：拿掉連結，只留文字
+      const sp = document.createElement("span"); sp.textContent = a.textContent; a.replaceWith(sp);
+    }
+  });
+}
+
+// 表格整理（顯示前）：格子裡緊貼文字的 |（絕對值 |x|、新聞標題）跳脫、分隔列欄數跟表頭一致、nan 顯示成 —
+function tidyTables(md) {
+  const L = md.split("\n"), sep = l => /^\|[\s:|-]+\|\s*$/.test(l);
+  const cells = l => l.trim().slice(1, -1).replace(/(?<=\S)(?<!\\)\|(?=\S)|(?<=\S)(?<!\\)\|(?= )(?!\s*$)|(?<= )\|(?=\S)/g, "\\|")
+                      .split(/(?<!\\)\|/).map(c => /^\s*[+-]?nan\s*$/i.test(c) ? " — " : c.replace(/NaN（/g, "（"));
+  for (let i = 0; i < L.length; i++) {
+    const l = L[i];
+    if (!l.startsWith("|") || !l.trim().endsWith("|") || sep(l)) continue;
+    const c = cells(l);
+    L[i] = "|" + c.join("|") + "|";
+    if (sep(L[i + 1] || "") && !(i > 0 && L[i - 1].startsWith("|"))) L[i + 1] = "|" + c.map(() => "---").join("|") + "|";
+  }
+  return L.join("\n");
+}
+
 async function openDoc(path) {
-  const r = ALL.find(x => x.path === path); if (!r) return;
+  const r = ALL.find(x => x.path === path) || byFile(decodeURIComponent(path.split("/").pop() || "")); if (!r) return;
+  path = r.path;
   // 圖裡的連結會帶 #sec=段落開頭，開報告後捲到那一段
   const sec = decodeURIComponent((location.hash.match(/^#sec=(.+)$/) || [])[1] || "");
   lastFocus = document.activeElement;
@@ -322,7 +355,7 @@ async function openDoc(path) {
     doc.innerHTML = `<iframe src="${esc(r.path)}" title="${esc(r.title)}"></iframe>`;
   } else {
     doc.className = ""; doc.innerHTML = `<p class="sub">載入中…</p>`;
-    try { doc.innerHTML = marked.parse(await (await fetch(r.path, { cache: "no-cache" })).text()); }
+    try { doc.innerHTML = marked.parse(tidyTables(await (await fetch(r.path, { cache: "no-cache" })).text())); fixLinks(doc); }
     catch (e) { doc.innerHTML = `<p>報告載入失敗：${esc(e.message)}</p>`; }
     doc.scrollTop = 0;
     const hs = [...doc.querySelectorAll("h2, h3")];

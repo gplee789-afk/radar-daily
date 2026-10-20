@@ -185,6 +185,8 @@ const VIEW = { 偏多: "b", 偏空: "s" };
 })();
 
 const hot = c => c.priced === "股價已大幅反映";
+// 個股報告是某一天寫的，觀點可能和今天的分數不同，連結上標出報告日期
+const rdate = p => ((p || "").match(/(\d{4})-(\d{2})-(\d{2})/) || []).slice(2).join("/") || "";
 const pros = c => c.pros.map(p => p.replace(/（[^）]*）/g, "")).join("、");     // 「學界估值（ML／V/P／GLS） 83%」→「學界估值 83%」
 const val = a => a == null ? "—" : a >= 65 ? "便宜" : a < 50 ? "偏貴" : "合理";   // 和題材報告「學界估值中位數 < 50% 偏貴」一致
 
@@ -196,7 +198,8 @@ function market(h) {
   const cls = h.p_up >= 60 ? "up" : h.p_up <= 40 ? "down" : "";
   const m = $("#mkt");
   m.href = rep(h.path);
-  m.innerHTML = `<span class="mute">今日大盤・${h.date.slice(5).replace("-", "/")}（${wd}）</span>
+  const isToday = h.date === new Date(Date.now() + 8 * 3600e3).toISOString().slice(0, 10);
+  m.innerHTML = `<span class="mute">${isToday ? "今日大盤" : "最新盤前預估"}・${h.date.slice(5).replace("-", "/")}（${wd}）</span>
     <span>收紅機率 <b class="${cls}">${h.p_up}%</b></span>
     ${h.exp != null ? `<span>預期 <span class="${h.exp > 0 ? "up" : "down"}">${sgn(h.exp, 2)}%</span></span>` : ""}
     ${tr.length ? `<span class="mute">最近 ${tr.length} 天猜對 ${ok} 次</span>` : ""}
@@ -254,7 +257,7 @@ function picks(B) {
       ${c.r12 != null ? `<div class="wt">股價 12 個月 ${sgn(c.r12)}%（自身波動的 ${c.mv} 倍）</div>` : ""}
       ${c.pros.length ? `<div class="why">${esc(pros(c))}</div>` : ""}
       <div class="wt">${c.w == null ? "上櫃，不在加權指數" : `指數權重 ${c.w}%（第 ${c.wr} 大）`}</div>
-      ${c.rpt ? `<div class="go">看個股報告 →</div>` : ""}</a>`;
+      ${c.rpt ? `<div class="go">看個股報告（${rdate(c.rpt)}）→</div>` : ""}</a>`;
   $("#picks").innerHTML = small.length ? small.slice(0, 8).map(card).join("") : `<p class="mute">今天沒有符合條件的中小型公司。</p>`;
   if (big.length) { $("#bigPicks").innerHTML = big.slice(0, 6).map(card).join(""); $("#bigSec").classList.remove("hide"); }
   $("#picksSec").classList.remove("hide");
@@ -266,7 +269,7 @@ function board(B) {
     const top = t.companies.slice(0, 5);
     const chip = c => `<span class="chip ${c.view === "偏多" ? "b" : ""} ${hot(c) ? "hot" : ""}" title="${esc(c.name)}：${esc(c.view)}，合成分數第 ${c.pct} 百分位，${esc(c.priced)}">${esc(c.name)}</span>`;
     const news = t.stage ? `新聞${t.stage}・${t.events} 則` : "近期沒有新聞";
-    const rows = t.companies.map(c => `<tr><td>${c.rpt ? `<a href="${rep(c.rpt)}">${esc(c.name)}</a>` : `<a href="${quote(c.code)}" target="_blank" rel="noopener">${esc(c.name)}</a>`} <span class="mute">${esc(c.code)}</span></td>
+    const rows = t.companies.map(c => `<tr><td>${c.rpt ? `<a href="${rep(c.rpt)}" title="個股報告（${rdate(c.rpt)} 寫的，觀點以當天分數為準）">${esc(c.name)}</a>` : `<a href="${quote(c.code)}" target="_blank" rel="noopener">${esc(c.name)}</a>`} <span class="mute">${esc(c.code)}</span></td>
         <td><span class="view ${VIEW[c.view] || ""}">${esc(c.view)}</span></td><td class="r">${c.pct}</td>
         <td class="r">${c.yoy == null ? "—" : sgn(c.yoy) + "%"}</td><td title="${c.mv == null ? "" : `12 個月漲幅是自身年波動的 ${c.mv} 倍`}">${esc(c.priced.replace("股價", ""))}${c.r12 == null ? "" : `<span class="mute">・${sgn(c.r12)}%</span>`}</td><td class="r">${c.w == null ? "上櫃" : c.w + "%"}</td>
         <td class="mute">${esc(pros(c))}</td></tr>`).join("");
@@ -289,7 +292,7 @@ function board(B) {
 
 function leads(B) {
   if (!B.leads?.length) return;
-  $("#leads").innerHTML = B.leads.map(l => `<a class="lead" href="${l.path ? rep(l.path) : rep(B.leads_path)}">${esc(l.name)}<small>近 4 週 ${l.n4} 則・${esc(l.acc)}</small></a>`).join("");
+  $("#leads").innerHTML = B.leads.map(l => `<a class="lead" href="${l.path ? rep(l.path) : rep(B.leads_path)}">${esc(l.name)}<small>近 4 週 ${l.n4} 則・比前 12 週${esc(l.acc.replace("×", "多 ").replace(/(\d+\.\d)\d+/, "$1"))} 倍</small></a>`).join("");
   $("#leadsSec").classList.remove("hide");
 }
 

@@ -1,7 +1,7 @@
 # 特斯拉 Roadster 與 Optimus 聯想式供應鏈深挖（2026-10-17）
 
 > 研究輔助，不是投資建議。〔公司〕〔媒〕〔法人〕〔推論〕〔傳聞〕〔單一來源〕標示可信度；數字都附來源日期。
-> 股價：圖譜內公司到 2026-10-15，其他到 2026-10-08（`invest.py profile`）。起點卷宗：`research/dossier/2026-10-17-人形機器人.md`、`-Optimus.md`、`-特斯拉.md`（我們的新聞庫對人形機器人幾乎沒有覆蓋，這份主要靠網路查證）。
+> 股價：圖譜內公司到 2026-10-15，其他到 2026-10-08（本機整理的公開資料）。起點卷宗：`research/dossier/2026-10-17-人形機器人.md`、`-Optimus.md`、`-特斯拉.md`（我們的新聞庫對人形機器人幾乎沒有覆蓋，這份主要靠網路查證）。
 
 <iframe src="library/diagrams/tesla-optimus-2026-10-17.html" style="width:100%;height:800px;border:0" title="特斯拉 Roadster 與 Optimus 供應鏈圖"></iframe>
 
@@ -174,7 +174,7 @@
 
 ## 論點登記
 
-給 `invest.py ledger` 對答案；事件揭曉後把 status 改成 yes／no 並填 evidence。
+給 本機整理的公開資料 對答案；事件揭曉後把 status 改成 yes／no 並填 evidence。
 
 ```ledger
 report: 特斯拉Roadster與Optimus
@@ -336,4 +336,4 @@ claims:
 - Euronews 2026-10-16（分析師評論）：https://www.euronews.com/2026/10/16/could-teslas-flying-car-send-sales-and-shares-soaring
 - Toray IR（高壓氣瓶碳纖維市占）：https://www.toray.com/ir/pdf/lib/lib_a526.pdf
 - 永豐 2026-10-01（全球出貨）：https://www.sinotrade.com.tw/richclub/hotstock/
-- 本機資料：`invest.py profile`（2026-10-17）、`radar.stance`、卷宗 `research/dossier/2026-10-17-*.md`
+- 本機資料：本機整理的公開資料（2026-10-17）、`radar.stance`、卷宗 `research/dossier/2026-10-17-*.md`
