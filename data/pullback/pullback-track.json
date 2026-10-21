@@ -1,6 +1,6 @@
 {
- "generated": "2026-10-21 08:50",
- "asof": "2026-10-20",
+ "generated": "2026-10-21 14:45",
+ "asof": "2026-10-21",
  "rule": {
   "hold": 20,
   "cost_pct": 0.4,
@@ -35,6 +35,11 @@
    "date": "2026-10-20",
    "pnl": 0.129,
    "bench": -2.101
+  },
+  {
+   "date": "2026-10-21",
+   "pnl": 0.121,
+   "bench": -1.188
   }
  ],
  "trades": [
@@ -51,12 +56,12 @@
    "status": "持有中",
    "entry_date": "2026-10-16",
    "entry": 39.5,
-   "exit_date": "2026-10-20",
-   "exit": 40.15,
-   "days": 3,
-   "ret": 1.25,
-   "bench": -2.1,
-   "excess": 3.35,
+   "exit_date": "2026-10-21",
+   "exit": 40.1,
+   "days": 4,
+   "ret": 1.12,
+   "bench": -1.19,
+   "excess": 2.31,
    "mfe": 1.65,
    "mae": 0.38,
    "order": 1
@@ -74,12 +79,12 @@
    "status": "持有中",
    "entry_date": "2026-10-16",
    "entry": 116.5,
-   "exit_date": "2026-10-20",
-   "exit": 113.5,
-   "days": 3,
-   "ret": -2.98,
-   "bench": -2.1,
-   "excess": -0.88,
+   "exit_date": "2026-10-21",
+   "exit": 115.0,
+   "days": 4,
+   "ret": -1.69,
+   "bench": -1.19,
+   "excess": -0.5,
    "mfe": 0.0,
    "mae": -2.58,
    "order": 2
@@ -97,14 +102,14 @@
    "status": "持有中",
    "entry_date": "2026-10-16",
    "entry": 234.0,
-   "exit_date": "2026-10-20",
-   "exit": 243.5,
-   "days": 3,
-   "ret": 3.66,
-   "bench": -2.1,
-   "excess": 5.76,
+   "exit_date": "2026-10-21",
+   "exit": 240.5,
+   "days": 4,
+   "ret": 2.38,
+   "bench": -1.19,
+   "excess": 3.57,
    "mfe": 5.98,
-   "mae": 4.06,
+   "mae": 2.78,
    "order": 3
   },
   {
