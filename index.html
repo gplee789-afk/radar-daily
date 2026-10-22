@@ -275,7 +275,7 @@ function board(B) {
         <td class="mute">${esc(pros(c))}</td></tr>`).join("");
     return `<details class="theme"><summary>
         <span class="rk">${t.rank}</span>
-        <span class="tn">${esc(t.name)}<small>${esc(news)}・${t.n} 家</small></span>
+        <span class="tn">${esc(t.name)}<small>${esc(news)}・${t.n} 家${t.ind ? "・有產業報告" : ""}</small></span>
         <span><span class="view ${VIEW[t.view] || ""}">${esc(t.view)}</span></span>
         <span class="num c-num"><span class="lbl">營收／EPS 預估</span>${t.yoy == null ? "—" : sgn(t.yoy) + "%"}／${t.eps == null ? "—" : (t.eps >= 0 ? "上修 " : "下修 ") + Math.abs(t.eps) + "%"}</span>
         <span class="num c-num" title="學界估值中位數 ${t.aca ?? "—"}%（越高越便宜）"><span class="lbl">估值</span>${val(t.aca)}</span>
@@ -285,6 +285,7 @@ function board(B) {
       <div class="detail"><div class="tbl-wrap"><table>
         <thead><tr><th>公司</th><th>觀點</th><th class="r">合成分數</th><th class="r">營收年增</th><th>股價（12 個月）</th><th class="r">指數權重</th><th>強項</th></tr></thead>
         <tbody>${rows}</tbody></table></div>
+        ${t.ind ? `<div class="more ind"><a href="${rep(t.ind.path)}">看產業報告（${esc(t.ind.date.slice(5).replace("-", "/"))}）：${esc(t.ind.sum)} →</a></div>` : ""}
         ${t.path ? `<div class="more"><a href="${rep(t.path)}">看「${esc(t.name)}」題材分析 →</a></div>` : ""}
       </div></details>`;
   }).join(""));
