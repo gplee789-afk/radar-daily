@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>聯茂業務與驅動因素</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&family=Noto+Serif:ital@0;1&family=Noto+Sans+TC:wght@400;500;600&family=Noto+Serif+TC:wght@400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* 配色：diagram-design 設定檔 taiwan-analysis（取自網站 radar/site_library.html） */
+    :root {
+      --paper: #0e0c0a; --node: #191512; --ink: #f2ebe3; --muted: #c2b3a3; --soft: #9c8c7c;
+      --rule: rgba(242,235,227,0.12); --accent: #f0a050; --accent-tint: rgba(240,160,80,0.12);
+      --link: #f7c873;
+      --font-sans: 'Geist', 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', system-ui, sans-serif;
+      --font-serif: 'Instrument Serif', 'Noto Serif', 'Noto Serif TC', serif;
+      --font-mono: 'Geist Mono', ui-monospace, monospace;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --paper: #0e0c0a; --node: #191512; --ink: #f2ebe3; --muted: #c2b3a3; --soft: #9c8c7c;
+        --rule: rgba(242,235,227,0.12); --accent: #f0a050; --accent-tint: rgba(240,160,80,0.12);
+        --link: #f7c873;
+      }
+    }
+    body { font-family: var(--font-sans); background: var(--paper); color: var(--ink); padding: 20px 16px 24px; }
+    .frame { max-width: 1000px; margin: 0 auto; }
+    .diagram-container { width: 100%; overflow-x: auto; }
+    .eyebrow { font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 4px; }
+    h1 { font-family: var(--font-serif); font-size: clamp(1.4rem, 2.2vw + 0.7rem, 1.9rem); font-weight: 400; line-height: 1.2; margin-bottom: 14px; }
+    svg { width: 100%; min-width: 960px; display: block; }
+    .note { font-size: 13px; line-height: 1.75; color: var(--muted); margin-top: 12px; max-width: 900px; }
+    .note b { color: var(--ink); font-weight: 600; }
+
+    svg .bg { fill: var(--paper); }
+    svg .wire { fill: none; stroke: var(--muted); stroke-width: 1; }
+    svg .box { fill: var(--node); stroke: var(--ink); stroke-width: 1; }
+    svg .box.focal { fill: var(--accent-tint); stroke: var(--accent); stroke-width: 1.2; }
+    svg .box.risk { stroke-dasharray: 5,4; }
+    svg .tag { fill: none; stroke: var(--soft); stroke-width: 0.8; }
+    svg .tag.focal { stroke: var(--accent); }
+    svg .t-tag { fill: var(--ink); font: 500 12px var(--font-sans); }
+    svg .t-tag.focal { fill: var(--accent); }
+    svg .t-name { fill: var(--ink); font: 600 13px var(--font-sans); }
+    svg .t-root { fill: var(--ink); font: 600 16px var(--font-sans); }
+    svg .t-sub { fill: var(--muted); font: 400 12px var(--font-sans); }
+    svg .t-co { fill: var(--ink); font: 600 12px var(--font-sans); }
+    svg .t-col { fill: var(--muted); font: 500 12px var(--font-sans); }
+    svg a.node { cursor: pointer; }
+    svg a.node:hover .box, svg a.node:focus-visible .box { stroke-width: 2; }
+    svg a.node:focus-visible { outline: none; }
+    svg .co a tspan { fill: var(--link); text-decoration: underline; text-decoration-color: rgba(247,200,115,0.35); }
+    svg .co a:hover tspan { text-decoration-color: currentColor; }
+    @media (prefers-color-scheme: dark) { svg .co a tspan { text-decoration-color: rgba(247,200,115,0.4); } }
+    @media print { .diagram-container { overflow-x: visible; } svg { min-width: 0; } }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">個股報告・2026-10-26</p>
+    <h1>聯茂：漲價撐現在，升級和擴產撐 2027 以後</h1>
+
+    <div class="diagram-container">
+      <svg viewBox="0 0 960 600" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="iteq-6213-title iteq-6213-desc">
+        <title id="iteq-6213-title">聯茂業務與驅動因素</title>
+        <desc id="iteq-6213-desc">聯茂的中低階銅箔基板漲價、高速材料升級、M9 與 M10 新材料、擴產四個驅動因素，各自的相關台股公司，以及 2027 下半年中低階報價先鬆的風險。</desc>
+
+        <rect class="bg" width="100%" height="100%"/>
+
+        <text class="t-col" x="40" y="56">公司</text>
+        <text class="t-col" x="320" y="56">業務 → 驅動因素</text>
+        <text class="t-col" x="640" y="56">上下游與同業</text>
+
+        <!-- 連線：先畫線再畫框 -->
+        <path class="wire" d="M 240 272 H 280"/>
+        <path class="wire" d="M 320 112 H 288 Q 280 112 280 120 V 464 Q 280 472 288 472 H 320"/>
+        <path class="wire" d="M 280 202 H 320"/>
+        <path class="wire" d="M 280 292 H 320"/>
+        <path class="wire" d="M 280 382 H 320"/>
+
+        <!-- 根節點 -->
+        <a class="node" href="../../?r=library/company/company-2026-10-26-6213-聯茂.md#sec=一、投資摘要" target="_top" aria-label="看投資摘要">
+          <rect class="bg" x="40" y="216" width="200" height="112" rx="6"/>
+          <rect class="box" x="40" y="216" width="200" height="112" rx="6"/>
+          <rect class="tag" x="52" y="228" width="40" height="18" rx="2"/>
+          <text class="t-tag" x="72" y="241" text-anchor="middle">偏多</text>
+          <text class="t-root" x="52" y="272">6213 聯茂</text>
+          <text class="t-sub" x="52" y="296">Q3 營收 156 億，年增 102%</text>
+          <text class="t-sub" x="52" y="314">9 月自結 EPS 3.54 元</text>
+        </a>
+        <text class="t-sub" x="40" y="356">PCB 客戶</text>
+        <text class="t-co co" x="40" y="376"><a href="https://tw.stock.yahoo.com/quote/3715" target="_blank" rel="noopener"><tspan>3715 定穎投控</tspan></a><tspan>・</tspan><a href="https://tw.stock.yahoo.com/quote/5469" target="_blank" rel="noopener"><tspan>5469 瀚宇博</tspan></a></text>
+        <text class="t-co co" x="40" y="396"><a href="https://tw.stock.yahoo.com/quote/8155" target="_blank" rel="noopener"><tspan>8155 博智</tspan></a><tspan>・</tspan><a href="https://tw.stock.yahoo.com/quote/2402" target="_blank" rel="noopener"><tspan>2402 毅嘉</tspan></a></text>
+        <text class="t-sub" x="40" y="424">最大股東</text>
+        <text class="t-co co" x="40" y="444"><a href="https://tw.stock.yahoo.com/quote/3105" target="_blank" rel="noopener"><tspan>3105 穩懋</tspan></a><tspan>（約 18%）</tspan></text>
+
+        <!-- 中低階漲價（焦點：現在的獲利主因） -->
+        <a class="node" href="../../?r=library/company/company-2026-10-26-6213-聯茂.md#sec=論點一" target="_top" aria-label="看論點一：中低階漲價">
+          <rect class="bg" x="320" y="76" width="280" height="72" rx="6"/>
+          <rect class="box focal" x="320" y="76" width="280" height="72" rx="6"/>
+          <rect class="tag focal" x="332" y="88" width="40" height="18" rx="2"/>
+          <text class="t-tag focal" x="352" y="101" text-anchor="middle">主因</text>
+          <text class="t-name" x="384" y="102">中低階 CCL 漲價　約占 70%</text>
+          <text class="t-sub" x="332" y="130">Q2 漲 30%，Q3、Q4 每季再漲 15～20%</text>
+        </a>
+        <text class="t-co co" x="640" y="104"><a href="https://tw.stock.yahoo.com/quote/1815" target="_blank" rel="noopener"><tspan>1815 富喬</tspan></a><tspan>・</tspan><a href="https://tw.stock.yahoo.com/quote/1802" target="_blank" rel="noopener"><tspan>1802 台玻</tspan></a><tspan>・</tspan><a href="https://tw.stock.yahoo.com/quote/1303" target="_blank" rel="noopener"><tspan>1303 南亞</tspan></a><tspan>・建滔</tspan></text>
+        <text class="t-sub" x="640" y="126">玻纖布卡料，稼動率只有 70～75%</text>
+
+        <!-- 高速材料升級 -->
+        <a class="node" href="../../?r=library/company/company-2026-10-26-6213-聯茂.md#sec=論點二" target="_top" aria-label="看論點二：高速材料升級">
+          <rect class="bg" x="320" y="166" width="280" height="72" rx="6"/>
+          <rect class="box focal" x="320" y="166" width="280" height="72" rx="6"/>
+          <rect class="tag focal" x="332" y="178" width="40" height="18" rx="2"/>
+          <text class="t-tag focal" x="352" y="191" text-anchor="middle">升級</text>
+          <text class="t-name" x="384" y="192">高速材料 M6 以上　約占 30%</text>
+          <text class="t-sub" x="332" y="220">PCIe Gen6 伺服器換 M7，2027 年到 35～40%</text>
+        </a>
+        <text class="t-co co" x="640" y="194"><a href="https://tw.stock.yahoo.com/quote/2383" target="_blank" rel="noopener"><tspan>2383 台光電</tspan></a><tspan>・</tspan><a href="https://tw.stock.yahoo.com/quote/6274" target="_blank" rel="noopener"><tspan>6274 台燿</tspan></a><tspan>・</tspan><a href="https://tw.stock.yahoo.com/quote/6672" target="_blank" rel="noopener"><tspan>6672 騰輝電子-KY</tspan></a></text>
+        <text class="t-sub" x="640" y="216">通用伺服器（AMD、Intel 平台）是聯茂強項</text>
+
+        <!-- M9 / M10 -->
+        <a class="node" href="../../?r=library/company/company-2026-10-26-6213-聯茂.md#sec=論點三" target="_top" aria-label="看論點三：M9 與 M10">
+          <rect class="bg" x="320" y="256" width="280" height="72" rx="6"/>
+          <rect class="box focal" x="320" y="256" width="280" height="72" rx="6"/>
+          <rect class="tag focal" x="332" y="268" width="40" height="18" rx="2"/>
+          <text class="t-tag focal" x="352" y="281" text-anchor="middle">題材</text>
+          <text class="t-name" x="384" y="282">M9＋石英布、M10 送樣</text>
+          <text class="t-sub" x="332" y="310">美系 GPU 大廠認證，2027 年上半年放量</text>
+        </a>
+        <text class="t-co co" x="640" y="284"><a href="https://tw.stock.yahoo.com/quote/8358" target="_blank" rel="noopener"><tspan>8358 金居</tspan></a><tspan>（HVLP 銅箔）・日東紡（石英布）</tspan></text>
+        <text class="t-sub" x="640" y="306">份額沒有第三方數字；低軌衛星 2027Q2 起貢獻</text>
+
+        <!-- 擴產 -->
+        <a class="node" href="../../?r=library/company/company-2026-10-26-6213-聯茂.md#sec=二、公司與產業位置" target="_top" aria-label="看公司與產業位置">
+          <rect class="bg" x="320" y="346" width="280" height="72" rx="6"/>
+          <rect class="box" x="320" y="346" width="280" height="72" rx="6"/>
+          <rect class="tag" x="332" y="358" width="40" height="18" rx="2"/>
+          <text class="t-tag" x="352" y="371" text-anchor="middle">擴產</text>
+          <text class="t-name" x="384" y="372">月產能 570 → 915 萬張</text>
+          <text class="t-sub" x="332" y="400">無錫 +285 萬、泰國 +60 萬（2027～2029）</text>
+        </a>
+        <text class="t-co co" x="640" y="374"><a href="https://tw.stock.yahoo.com/quote/6727" target="_blank" rel="noopener"><tspan>6727 亞泰金屬</tspan></a><tspan>・連結機械</tspan></text>
+        <text class="t-sub" x="640" y="396">8～9 月四筆設備採購合計約 52 億元</text>
+
+        <!-- 風險 -->
+        <a class="node" href="../../?r=library/company/company-2026-10-26-6213-聯茂.md#sec=七、風險與反方" target="_top" aria-label="看風險與反方">
+          <rect class="bg" x="320" y="436" width="280" height="72" rx="6"/>
+          <rect class="box risk" x="320" y="436" width="280" height="72" rx="6"/>
+          <rect class="tag" x="332" y="448" width="40" height="18" rx="2"/>
+          <text class="t-tag" x="352" y="461" text-anchor="middle">風險</text>
+          <text class="t-name" x="384" y="462">2027 下半年中低階先鬆</text>
+          <text class="t-sub" x="332" y="490">玻纖布新產能開出，2028 同業產能齊開</text>
+        </a>
+        <text class="t-co co" x="640" y="464"><tspan>生益科技・建滔積層板（價格制定者）</tspan></text>
+        <text class="t-sub" x="640" y="486">9 月淨利率 22%，是第二季的 2 倍</text>
+
+        <!-- 圖例 -->
+        <line x1="40" y1="540" x2="920" y2="540" stroke="var(--rule)" stroke-width="0.8"/>
+        <rect x="40" y="554" width="16" height="12" rx="2" fill="var(--accent-tint)" stroke="var(--accent)" stroke-width="1"/>
+        <text class="t-sub" x="64" y="564">焦點：獲利主因／升級題材</text>
+        <rect x="260" y="554" width="16" height="12" rx="2" fill="var(--node)" stroke="var(--ink)" stroke-width="1" stroke-dasharray="4,3"/>
+        <text class="t-sub" x="284" y="564">虛線框：風險</text>
+        <text class="t-sub" x="420" y="564">點方框看報告段落；連結文字連到個股報價</text>
+      </svg>
+    </div>
+    <p class="note"><b>怎麼讀：</b>2026 年的獲利跳升主要來自中低階 CCL（M4 以下，約占 70%）漲價；M9、M10 和低軌衛星是 2027 年以後的題材，目前沒有營收占比數字（公司 2026 年第二季法說，2026-08）。</p>
+  </div>
+</body>
+</html>
