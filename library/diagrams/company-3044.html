@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>健鼎業務與驅動因素</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&family=Noto+Serif:ital@0;1&family=Noto+Sans+TC:wght@400;500;600&family=Noto+Serif+TC:wght@400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* 配色：diagram-design 設定檔 taiwan-analysis（取自網站 radar/site_library.html） */
+    :root {
+      --paper: #0e0c0a; --node: #191512; --ink: #f2ebe3; --muted: #c2b3a3; --soft: #9c8c7c;
+      --rule: rgba(242,235,227,0.12); --accent: #f0a050; --accent-tint: rgba(240,160,80,0.12);
+      --link: #f7c873;
+      --font-sans: 'Geist', 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', system-ui, sans-serif;
+      --font-serif: 'Instrument Serif', 'Noto Serif', 'Noto Serif TC', serif;
+      --font-mono: 'Geist Mono', ui-monospace, monospace;
+    }
+    body { font-family: var(--font-sans); background: var(--paper); color: var(--ink); padding: 20px 16px 24px; }
+    .frame { max-width: 1000px; margin: 0 auto; }
+    .diagram-container { width: 100%; overflow-x: auto; }
+    .eyebrow { font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 4px; }
+    h1 { font-family: var(--font-serif); font-size: clamp(1.4rem, 2.2vw + 0.7rem, 1.9rem); font-weight: 400; line-height: 1.2; margin-bottom: 14px; }
+    svg { width: 100%; min-width: 960px; display: block; }
+    .note { font-size: 13px; line-height: 1.75; color: var(--muted); margin-top: 12px; max-width: 900px; }
+    .note b { color: var(--ink); font-weight: 600; }
+
+    svg .bg { fill: var(--paper); }
+    svg .wire { fill: none; stroke: var(--muted); stroke-width: 1; }
+    svg .box { fill: var(--node); stroke: var(--ink); stroke-width: 1; }
+    svg .box.focal { fill: var(--accent-tint); stroke: var(--accent); stroke-width: 1.2; }
+    svg .box.risk { stroke-dasharray: 5,4; }
+    svg .tag { fill: none; stroke: var(--soft); stroke-width: 0.8; }
+    svg .tag.focal { stroke: var(--accent); }
+    svg .t-tag { fill: var(--ink); font: 500 12px var(--font-sans); }
+    svg .t-tag.focal { fill: var(--accent); }
+    svg .t-name { fill: var(--ink); font: 600 13px var(--font-sans); }
+    svg .t-root { fill: var(--ink); font: 600 16px var(--font-sans); }
+    svg .t-sub { fill: var(--muted); font: 400 12px var(--font-sans); }
+    svg .t-co { fill: var(--ink); font: 600 12px var(--font-sans); }
+    svg .t-col { fill: var(--muted); font: 500 12px var(--font-sans); }
+    svg a.node { cursor: pointer; }
+    svg a.node:hover .box, svg a.node:focus-visible .box { stroke-width: 2; }
+    svg a.node:focus-visible { outline: none; }
+    svg .co a tspan { fill: var(--link); text-decoration: underline; text-decoration-color: rgba(247,200,115,0.35); }
+    svg .co a:hover tspan { text-decoration-color: currentColor; }
+    @media print { .diagram-container { overflow-x: visible; } svg { min-width: 0; } }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">個股報告・2026-10-28</p>
+    <h1>健鼎：伺服器板與記憶體板撐起這一輪成長</h1>
+
+    <div class="diagram-container">
+      <svg viewBox="0 0 960 620" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="c3044-title c3044-desc">
+        <title id="c3044-title">健鼎業務與驅動因素</title>
+        <desc id="c3044-desc">健鼎的伺服器板、記憶體模組板、其他應用三條營收線，產能擴充，以及材料漲價與存貨這項主要風險，和各自相關的台股公司。</desc>
+
+        <rect class="bg" width="100%" height="100%"/>
+
+        <text class="t-col" x="40" y="56">公司</text>
+        <text class="t-col" x="320" y="56">營收線 → 驅動因素</text>
+        <text class="t-col" x="640" y="56">客戶、同業與供應商</text>
+
+        <path class="wire" d="M 240 312 H 280"/>
+        <path class="wire" d="M 320 112 H 288 Q 280 112 280 120 V 504 Q 280 512 288 512 H 320"/>
+        <path class="wire" d="M 280 212 H 320"/>
+        <path class="wire" d="M 280 312 H 320"/>
+        <path class="wire" d="M 280 412 H 320"/>
+
+        <a class="node" href="../../?r=library/company/company-2026-10-28-3044-健鼎.md#sec=一、投資摘要" target="_top" aria-label="看投資摘要">
+          <rect class="bg" x="40" y="256" width="200" height="112" rx="6"/>
+          <rect class="box" x="40" y="256" width="200" height="112" rx="6"/>
+          <rect class="tag" x="52" y="268" width="40" height="18" rx="2"/>
+          <text class="t-tag" x="72" y="281" text-anchor="middle">偏多</text>
+          <text class="t-root" x="52" y="312">3044 健鼎</text>
+          <text class="t-sub" x="52" y="336">Q3 營收 307 億，年增 58%</text>
+          <text class="t-sub" x="52" y="354">Q2 毛利率 30.1%（首破 30%）</text>
+        </a>
+
+        <a class="node" href="../../?r=library/company/company-2026-10-28-3044-健鼎.md#sec=論點一" target="_top" aria-label="看論點一：伺服器板">
+          <rect class="bg" x="320" y="76" width="280" height="72" rx="6"/>
+          <rect class="box focal" x="320" y="76" width="280" height="72" rx="6"/>
+          <rect class="tag focal" x="332" y="88" width="52" height="18" rx="2"/>
+          <text class="t-tag focal" x="358" y="101" text-anchor="middle">主引擎</text>
+          <text class="t-name" x="396" y="102">伺服器板　占 42%</text>
+          <text class="t-sub" x="332" y="130">PCIe Gen5→Gen6 層數增加，同業讓出通用單</text>
+        </a>
+        <text class="t-co co" x="640" y="104"><a href="https://tw.stock.yahoo.com/quote/2368" target="_blank" rel="noopener"><tspan>2368 金像電</tspan></a><tspan>・</tspan><a href="https://tw.stock.yahoo.com/quote/2313" target="_blank" rel="noopener"><tspan>2313 華通</tspan></a><tspan>・</tspan><a href="https://tw.stock.yahoo.com/quote/4958" target="_blank" rel="noopener"><tspan>4958 臻鼎</tspan></a></text>
+        <text class="t-sub" x="640" y="126">同業；高階 ASIC／GPU 板以金像電為首</text>
+
+        <a class="node" href="../../?r=library/company/company-2026-10-28-3044-健鼎.md#sec=論點二" target="_top" aria-label="看論點二：記憶體模組板">
+          <rect class="bg" x="320" y="176" width="280" height="72" rx="6"/>
+          <rect class="box focal" x="320" y="176" width="280" height="72" rx="6"/>
+          <rect class="tag focal" x="332" y="188" width="52" height="18" rx="2"/>
+          <text class="t-tag focal" x="358" y="201" text-anchor="middle">第二引擎</text>
+          <text class="t-name" x="396" y="202">記憶體模組板　占 23%</text>
+          <text class="t-sub" x="332" y="230">Q2 年增近 100%，DRAM 合約價仍在漲</text>
+        </a>
+        <text class="t-co co" x="640" y="204"><a href="https://tw.stock.yahoo.com/quote/8299" target="_blank" rel="noopener"><tspan>8299 群聯</tspan></a><tspan>・</tspan><a href="https://tw.stock.yahoo.com/quote/6278" target="_blank" rel="noopener"><tspan>6278 台表科</tspan></a></text>
+        <text class="t-sub" x="640" y="226">MoneyDJ 列名客戶；國際記憶體原廠未經公司證實</text>
+
+        <a class="node" href="../../?r=library/company/company-2026-10-28-3044-健鼎.md#sec=二、公司與產業位置" target="_top" aria-label="看營收組合">
+          <rect class="bg" x="320" y="276" width="280" height="72" rx="6"/>
+          <rect class="box" x="320" y="276" width="280" height="72" rx="6"/>
+          <rect class="tag" x="332" y="288" width="40" height="18" rx="2"/>
+          <text class="t-tag" x="352" y="301" text-anchor="middle">其他</text>
+          <text class="t-name" x="384" y="302">車用、手機、筆電、顯示器　約 35%</text>
+          <text class="t-sub" x="332" y="330">產能優先讓給伺服器與記憶體，比重下降</text>
+        </a>
+        <text class="t-sub" x="640" y="304">車用板 2025Q3 占 17.7%，之後庫存去化</text>
+        <text class="t-sub" x="640" y="326">新的分項比重公司沒有公布</text>
+
+        <a class="node" href="../../?r=library/company/company-2026-10-28-3044-健鼎.md#sec=論點三" target="_top" aria-label="看論點三：產能擴充">
+          <rect class="bg" x="320" y="376" width="280" height="72" rx="6"/>
+          <rect class="box" x="320" y="376" width="280" height="72" rx="6"/>
+          <rect class="tag" x="332" y="388" width="40" height="18" rx="2"/>
+          <text class="t-tag" x="352" y="401" text-anchor="middle">擴產</text>
+          <text class="t-name" x="384" y="402">湖北三、四廠＋越南新廠</text>
+          <text class="t-sub" x="332" y="430">上半年設備支出 72 億，全年破 100 億</text>
+        </a>
+        <text class="t-co co" x="640" y="404"><a href="https://tw.stock.yahoo.com/quote/3563" target="_blank" rel="noopener"><tspan>3563 牧德</tspan></a><tspan>・</tspan><a href="https://tw.stock.yahoo.com/quote/6438" target="_blank" rel="noopener"><tspan>6438 迅得</tspan></a><tspan>・</tspan><a href="https://tw.stock.yahoo.com/quote/6234" target="_blank" rel="noopener"><tspan>6234 高僑</tspan></a></text>
+        <text class="t-sub" x="640" y="426">設備供應商（MoneyDJ）；湖北廠務 10.4 億決標</text>
+
+        <a class="node" href="../../?r=library/company/company-2026-10-28-3044-健鼎.md#sec=七、風險與反方" target="_top" aria-label="看風險與反方">
+          <rect class="bg" x="320" y="476" width="280" height="72" rx="6"/>
+          <rect class="box risk" x="320" y="476" width="280" height="72" rx="6"/>
+          <rect class="tag" x="332" y="488" width="40" height="18" rx="2"/>
+          <text class="t-tag" x="352" y="501" text-anchor="middle">風險</text>
+          <text class="t-name" x="384" y="502">材料漲價與存貨 89 天</text>
+          <text class="t-sub" x="332" y="530">銅箔基板、金價續漲；存貨天數一年多 30 天</text>
+        </a>
+        <text class="t-co co" x="640" y="504"><a href="https://tw.stock.yahoo.com/quote/2383" target="_blank" rel="noopener"><tspan>2383 台光電</tspan></a><tspan>・</tspan><a href="https://tw.stock.yahoo.com/quote/6274" target="_blank" rel="noopener"><tspan>6274 台燿</tspan></a><tspan>・</tspan><a href="https://tw.stock.yahoo.com/quote/6213" target="_blank" rel="noopener"><tspan>6213 聯茂</tspan></a></text>
+        <text class="t-sub" x="640" y="526">上游銅箔基板廠（產業鏈位置，非公司列名供應商）</text>
+
+        <line x1="40" y1="580" x2="920" y2="580" stroke="var(--rule)" stroke-width="0.8"/>
+        <rect x="40" y="594" width="16" height="12" rx="2" fill="var(--accent-tint)" stroke="var(--accent)" stroke-width="1"/>
+        <text class="t-sub" x="64" y="604">焦點：現在的成長主因</text>
+        <rect x="260" y="594" width="16" height="12" rx="2" fill="var(--node)" stroke="var(--ink)" stroke-width="1" stroke-dasharray="4,3"/>
+        <text class="t-sub" x="284" y="604">虛線框：風險</text>
+        <text class="t-sub" x="420" y="604">點方框看報告段落；黃字連到個股報價</text>
+      </svg>
+    </div>
+    <p class="note"><b>怎麼讀：</b>伺服器板與記憶體模組板 2026 年第二季合計占營收 65%（法人轉述，公司未公布分項），兩者年增 70%、近 100%，是營收和毛利率上升的主因；擴產在 2026 年底到 2027 年上半年開出，風險在材料成本與存貨。</p>
+  </div>
+</body>
+</html>
