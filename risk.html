@@ -121,12 +121,12 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
 
   <div class="setup">
     <div class="panel">
-      <h3 style="margin:0 0 6px;font-size:15px">持股 <span class="hint" style="font-weight:400">代號＋市值（元），比例自動換算；勾「防守」的部位風控規則不會動它</span></h3>
+      <h3 style="margin:0 0 6px;font-size:15px">持股 <span class="hint" style="font-weight:400">代號＋市值（元），比例自動換算；「防守」＝債券、黃金這類防守資產，風控規則不會減碼它（債券、黃金 ETF 自動勾）</span></h3>
       <table class="hold" id="hold"></table>
       <datalist id="codes"></datalist>
       <div class="row">
         <button id="add">＋ 加一檔</button>
-        <button id="example">範例組合</button>
+        <select id="example" aria-label="範例組合"><option value="">載入範例組合…</option></select>
         <button id="share" title="把持股和參數寫進網址">複製分享連結</button>
       </div>
       <div class="msg" id="holdMsg"></div>
@@ -142,7 +142,7 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
       <div class="params" style="margin-top:10px">
         <label class="field">減碼的錢轉去<select id="dest"></select></label>
         <label class="field" id="destOtherF" hidden>其他代號<input id="destOther" list="codes" placeholder="例如 00720B"></label>
-        <label class="field">固定防守比例 %<input id="defPct" type="number" min="0" max="100" step="5" value="30"></label>
+        <label class="field" title="從股票部位再拿出整個組合的這個比例，放到防守資產">固定防守比例 %<input id="defPct" type="number" min="0" max="100" step="5" value="30"></label>
       </div>
       <details class="adv">
         <summary>進階參數（不填就跟著上限）</summary>
@@ -163,6 +163,10 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
   <h2>十種做法的比較 <span class="n" id="periodN"></span></h2>
   <p class="hint">「守得住」＝整段期間最大回檔沒超過你的上限。報酬／回檔＝年化報酬 ÷ 最大回檔，越高越有效率。</p>
   <div class="tbl" id="cmp"></div>
+
+  <h2>防守資產比較 <span class="n" id="defN"></span></h2>
+  <p class="hint">同一組持股，把「固定防守部位」和「防守部位＋趨勢濾網」的防守資產換成不同的債券、黃金或現金，看哪一種真的擋得住。最後一欄是「只靠股債比、要守住上限，股票最多能放多少」（事後校準）。</p>
+  <div class="tbl" id="defCmp"></div>
 
   <h2>淨值走勢 <span class="n">對數座標，起點 = 1</span></h2>
   <div class="panel"><div class="legend" id="legend"></div><p class="hint" style="margin:0">勾選要畫的做法，兩張圖一起變。</p><div class="chart" id="navChart"></div></div>
@@ -188,6 +192,7 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
     <ul>
       <li>股價：台股上市櫃公司（公司池）和常見 ETF 的還原權值日收盤，每天收盤後更新。</li>
       <li>上市不到回測起點的 ETF，上市前用同類代理補：台股市值型、主動式 → 0050；高股息 → 0056；美股 → 00646；債券 → 現金。持股體檢會標出哪幾檔用了代理。</li>
+      <li>範例組合只是示範不同風格的持股，不是推薦。</li>
       <li>台灣掛牌的債券 ETF 多半是美元長天期債（美債 20 年、投資級公司債），台幣計價含匯率；2022 年升息時它們本身就跌了兩到三成，和股票一起跌。防守資產不一定擋得住每一次，換成現金比較看看。</li>
       <li>你的持股多半是「今天回頭看」選的，過去漲很多的股票會讓絕對報酬看起來很漂亮，請只比較方案之間的差別。</li>
       <li>「靜態減碼」的股票比例是用同一段歷史反推的，換一段行情不一定守得住。</li>
@@ -202,13 +207,35 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
 const $ = s => document.querySelector(s);
 const STORE = "risklab-v1";
 const EXAMPLE = [["0050", 40000], ["0056", 20000], ["00878", 15000], ["2330", 15000], ["00981A", 10000]];
-const DESTS = [["CASH", "現金"], ["00679B", "00679B 元大美債20年"], ["00687B", "00687B 國泰20年美債"], ["00720B", "00720B 元大投資級公司債"],
-  ["00751B", "00751B 元大AAA至A公司債"], ["00772B", "00772B 中信高評級公司債"], ["00713", "00713 元大台灣高息低波"], ["OTHER", "其他代號…"]];
+// 範例組合：[名稱, [[代號, 市值], …]]；只是示範不同風格，不是推薦
+const PRESETS = [
+  ["市值＋高股息＋個股（預設）", EXAMPLE],
+  ["全押台灣 50", [["0050", 100000]]],
+  ["高股息存股", [["0056", 35000], ["00878", 35000], ["00919", 30000]]],
+  ["股六債四（短天期美債）", [["0050", 60000], ["00719B", 40000]]],
+  ["股六債四（20 年美債）", [["0050", 60000], ["00679B", 40000]]],
+  ["股債金（全天候風格）", [["0050", 30000], ["00679B", 25000], ["00697B", 15000], ["00719B", 15000], ["00635U", 15000]]],
+  ["高股息＋公司債", [["0056", 30000], ["00878", 30000], ["00720B", 20000], ["00751B", 20000]]],
+  ["AI 科技重押", [["2330", 30000], ["00891", 20000], ["00981A", 20000], ["2454", 15000], ["6669", 15000]]],
+  ["主動式 ETF 組合", [["00981A", 35000], ["00980A", 35000], ["00982A", 30000]]],
+  ["台美股＋短債", [["0050", 30000], ["00646", 30000], ["00662", 20000], ["00864B", 20000]]],
+];
+// 防守資產：減碼目的地選單和比較表都用
+const DEF_ASSETS = [
+  ["CASH", "現金"],
+  ["00864B", "中信美國公債0-1（超短天期）"], ["00719B", "元大美債1-3（短天期）"], ["00865B", "國泰US短期公債（短天期）"],
+  ["00697B", "元大美債7-10（中天期）"], ["00695B", "富邦美債7-10（中天期）"],
+  ["00679B", "元大美債20年（長天期）"], ["00687B", "國泰20年美債（長天期）"], ["00931B", "統一美債20年（長天期）"],
+  ["00720B", "元大投資級公司債"], ["00751B", "元大AAA至A公司債"], ["00772B", "中信高評級公司債"], ["00740B", "富邦全球投等債"],
+  ["00761B", "國泰A級公司債"], ["00933B", "國泰10Y+金融債"], ["00937B", "群益ESG投等債20+"],
+  ["00635U", "元大S&P黃金"], ["00713", "元大台灣高息低波（股票，對照用）"],
+];
+const DESTS = [...DEF_ASSETS.map(([c, n]) => [c, c === "CASH" ? n : `${c} ${n}`]), ["OTHER", "其他代號…"]];
 const PLANS = [
   { id: "hold", name: "原樣持有", rule: p => "買進後不動，比例隨漲跌漂移。當作對照組。" },
   { id: "rebal", name: "每月再平衡", rule: p => "每月最後一個交易日調回原本的比例。" },
   { id: "invvol", name: "風險平價", rule: p => "股票部位改成「波動越大、比例越小」（近一年波動的倒數），每月調整；股票總比例不變。" },
-  { id: "defense", name: "固定防守部位", rule: p => `把整個組合的 ${pc(p.defPct)} 長期放在 ${p.destName}，其餘照原比例，每月再平衡。` },
+  { id: "defense", name: "固定防守部位", rule: p => `從股票部位拿出整個組合的 ${pc(p.defPct)}，長期放在 ${p.destName}（原本勾防守的部位另外照留），其餘照原比例，每月再平衡。` },
   { id: "static", name: "靜態減碼", rule: p => `股票部位固定打折，其餘放 ${p.destName}，每月再平衡。折數是用這段歷史找出「最大回檔剛好不超過 B」的最高值（事後校準，偏樂觀）。` },
   { id: "voltgt", name: "波動目標", rule: p => `股票部位 = min(1, ${pc(p.vol)} ÷ 近 60 日年化波動)，每週五調整，減下來的放 ${p.destName}。` },
   { id: "ddcut", name: "回檔減碼", rule: p => `整個組合從高點跌 ${pc(p.B / 2)} → 股票減半；跌 ${pc(p.B * 0.75)} → 股票全出（轉去 ${p.destName}）。股票組合站回 60 日線才全部買回，並從那天重算高點。` },
@@ -266,14 +293,14 @@ function refreshHold() {
     const m = IX && IX.tickers[c];
     tr.querySelector(".nm").innerHTML = !c ? "" : m ? esc(m.n) + (m.p ? ` <span class="chip mute" title="上市前用 ${m.p} 代理">代理</span>` : "") : '<span class="chip bad">找不到</span>';
     tr.querySelector(".pct").textContent = tot && a ? (a / tot * 100).toFixed(1) + "%" : "";
-    if (tr.dataset.touched !== "1") tr.querySelector(".def").checked = !!(m && m.k === "bond");   // 債券 ETF 預設當防守
+    if (tr.dataset.touched !== "1") tr.querySelector(".def").checked = !!(m && (m.k === "bond" || m.k === "gold"));   // 債券、黃金 ETF 預設當防守
   }
 }
 $("#hold").addEventListener("input", refreshHold);
 $("#hold").addEventListener("change", e => { if (e.target.classList.contains("def")) e.target.closest("tr").dataset.touched = "1"; });
 $("#hold").addEventListener("click", e => { if (e.target.classList.contains("x")) { e.target.closest("tr").remove(); refreshHold(); } });
 $("#add").onclick = () => { $("#hold").insertAdjacentHTML("beforeend", rowHTML()); $("#hold").querySelector("tr:last-child .code").focus(); };
-$("#example").onclick = () => setHoldings(EXAMPLE);
+$("#example").onchange = () => { const x = PRESETS[+$("#example").value]; if (x) { setHoldings(x[1]); run(); } $("#example").value = ""; };
 $("#share").onclick = async () => {
   const url = location.origin + location.pathname + "#" + encodeState();
   try { await navigator.clipboard.writeText(url); $("#status").textContent = "已複製連結（持股會寫在網址裡）"; }
@@ -322,7 +349,7 @@ function retAt(code, i, cashD) {
   const m = IX.tickers[code], s = PX[code], sc = IX.scale;
   if (i >= m.f) return i <= m.l ? s.r[i - m.f] / sc : 0;
   if (m.p && PX[m.p]) { const pm = IX.tickers[m.p]; return i >= pm.f && i <= pm.l ? PX[m.p].r[i - pm.f] / sc : 0; }
-  return m.k === "bond" ? cashD : 0;
+  return m.k === "bond" || m.k === "gold" ? cashD : 0;
 }
 
 function simulate(R, base, risky, fn, cost, cashD) {
@@ -497,10 +524,43 @@ async function run() {
     const on = ["hold", "rebal", "defense", "static", "trend"].includes(pl.id);     // 圖上預設只畫幾條，其他在圖例勾
     return { ...pl, label, color: color(x), on, ...r, st: stats(r.nav, days, r.turns, r.eq, p.B) };
   });
+  // 防守資產比較：同一組持股，把目的地換成每一種防守資產
+  $("#status").textContent = "比較防守資產…";
+  await Promise.all(DEF_ASSETS.map(([c]) => c).filter(c => IX.tickers[c]).map(series));
+  const defCmp = [];
+  const nb = codes.length + 1;         // 持股＋現金欄
+  const yr22 = [days.findIndex(d => d >= "2022-01-01") - 1, days.findIndex(d => d >= "2023-01-01") - 1];
+  for (const [c, nm] of DEF_ASSETS) {
+    if (c !== "CASH" && !IX.tickers[c]) continue;
+    const dr = days.map((_, t) => c === "CASH" ? cashD : retAt(c, s + t, cashD));
+    const R2 = R.map((row, t) => [...row.slice(0, nb), dr[t]]);
+    const b2 = [...base.slice(0, nb), 0], D2 = nb;
+    const sc2 = kk => { const w = b2.slice(); for (const j of risky) w[j] *= kk; w[D2] += 1 - w.reduce((a, b) => a + b, 0); return w; };
+    const own = new Float64Array(n); { let v = 1; for (let i = 0; i < n; i++) { v *= 1 + dr[i]; own[i] = v; } }
+    const ownSt = stats(own, days, 0, null, p.B);
+    const defR = simulate(R2, b2, risky, monthly(sc2(kDef)), p.cost, cashD);
+    let cur = null;
+    const dtR = simulate(R2, b2, risky, (i, st) => {
+      const kk = kDef * (isNaN(maT[i]) || mixPx[i] > maT[i] ? 1 : p.trendCut);
+      if (kk !== cur || monthEnd(i)) { cur = kk; return sc2(kk); }
+      return null;
+    }, p.cost, cashD);
+    let kNeed = null;
+    for (let kk = 1; kk >= -1e-9; kk -= 0.05) {
+      const r = simulate(R2, b2, risky, monthly(sc2(Math.max(0, kk))), p.cost, cashD);
+      let pk = 0, mdd = 0; for (const v of r.nav) { pk = Math.max(pk, v); mdd = Math.min(mdd, v / pk - 1); }
+      if (mdd >= -p.B) { kNeed = Math.max(0, kk); break; }
+    }
+    const meta = IX.tickers[c];
+    defCmp.push({ c, nm, own: ownSt, y22: yr22[0] >= 0 && yr22[1] > yr22[0] ? own[yr22[1]] / own[yr22[0]] - 1 : null,
+      late: c !== "CASH" && meta.f > s ? IX.days[meta.f] : null,
+      def: stats(defR.nav, days, defR.turns, defR.eq, p.B), dt: stats(dtR.nav, days, dtR.turns, dtR.eq, p.B), kNeed });
+    await new Promise(r => setTimeout(r, 0));
+  }
   // 加權指數當參考
   const tw = new Float64Array(n); { let v = 1; for (let i = 0; i < n; i++) { v *= 1 + retAt("TWII", s + i, 0); tw[i] = v; } }
   const ref = { id: "twii", label: "參考：加權指數", color: color(10), nav: tw, st: stats(tw, days, 0, null, p.B), ref: true };
-  LAST = { out, ref, days, p, codes, agg, defOf, total, s, e, R, base, risky, mix, kStatic };
+  LAST = { out, ref, days, p, codes, agg, defOf, total, s, e, R, base, risky, mix, kStatic, defCmp };
   render(LAST);
   $("#status").textContent = "";
 }
@@ -568,6 +628,15 @@ function render(L) {
   $("#check").innerHTML = `<table class="t"><thead><tr><th class="l">持股</th><th>比例</th><th>年化波動</th><th>對加權指數 beta</th><th>回測期間最大回檔</th><th class="l">備註</th></tr></thead><tbody>${chk}</tbody></table>`;
 
   $("#rulesList").innerHTML = PLANS.map(pl => `<li><b>${pl.name}</b>：${pl.rule(p)}</li>`).join("");
+  $("#defN").textContent = `固定防守 ${pc(p.defPct)}，上限 ${Math.round(p.B * 100)}%`;
+  const okc = x => x >= -p.B ? '<span class="chip ok">守得住</span>' : "";
+  $("#defCmp").innerHTML = `<table class="t"><thead><tr><th class="l">防守資產</th><th>本身最大回檔</th><th>本身 2022 年</th><th>本身年化</th>
+    <th>固定防守：最大回檔</th><th>年化</th><th>＋趨勢濾網：最大回檔</th><th>年化</th><th>守住上限的股票比例</th></tr></thead><tbody>${
+    L.defCmp.map(d => `<tr><td class="l">${d.c === "CASH" ? "" : esc(d.c) + " "}${esc(d.nm)}${d.late ? ` <span class="chip warn">${d.late} 前當現金</span>` : ""}</td>
+      <td>${sgn(d.own.mdd)}</td><td>${sgn(d.y22)}</td><td>${sgn(d.own.cagr)}</td>
+      <td class="dd">${sgn(d.def.mdd)} ${okc(d.def.mdd)}</td><td>${sgn(d.def.cagr)}</td>
+      <td class="dd">${sgn(d.dt.mdd)} ${okc(d.dt.mdd)}</td><td>${sgn(d.dt.cagr)}</td>
+      <td>${d.kNeed == null ? '<span class="chip bad">全出也守不住</span>' : pct(d.kNeed, 0)}</td></tr>`).join("")}</tbody></table>`;
   $("#legend").innerHTML = [...out, ref].map((o, x) => `<label><input type="checkbox" data-i="${x}" ${o.on === false ? "" : "checked"}><span class="sw" style="background:${o.color}"></span>${esc(o.label)}</label>`).join("");
   $("#legend").onchange = ev => { const all = [...L.out, L.ref]; all[+ev.target.dataset.i].on = ev.target.checked; draw(L); };
   draw(L);
@@ -631,6 +700,7 @@ function lineChart(el, days, S, opt) {
   const starts = [...new Set(IX.days.slice(1).map(d => d.slice(0, 4) + (d.slice(5, 7) < "07" ? "-01" : "-07")))]
     .map(h => IX.days.slice(1).find(d => d >= h + "-01")).filter(d => d && d < IX.days[IX.days.length - 260]);
   $("#start").innerHTML = starts.map(d => `<option value="${d}">${d}</option>`).join("");
+  $("#example").innerHTML = '<option value="">載入範例組合…</option>' + PRESETS.map(([nm], i) => `<option value="${i}">${esc(nm)}</option>`).join("");
   $("#dest").innerHTML = DESTS.filter(([v]) => v === "CASH" || v === "OTHER" || IX.tickers[v]).map(([v, t]) => `<option value="${v}">${esc(t)}</option>`).join("");
   $("#dest").onchange = () => { $("#destOtherF").hidden = $("#dest").value !== "OTHER"; };
   const st = loadState();
