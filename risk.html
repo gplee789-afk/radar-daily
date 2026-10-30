@@ -10,12 +10,12 @@
 :root {
   color-scheme: dark;
   --bg: #0e0c0a; --panel: #191512; --line: #2d2620; --ink: #f2ebe3; --ink-2: #c2b3a3; --ink-3: #8c7d6e; --up: #ff7a5c; --up-bg: #33190f; --warn: #e8c37a; --warn-bg: #2b2617; --down: #8fb4cc; --down-bg: #15212a; --accent: #f5b461;
-  --s0: #8c7d6e; --s1: #f5b461; --s2: #c9a2f0; --s3: #8fb4cc; --s4: #e8c37a; --s5: #ff7a5c; --s6: #7cc4b8; --s7: #f08fb4; --s8: #c2b3a3;
+  --s0: #8c7d6e; --s1: #f5b461; --s2: #c9a2f0; --s3: #8fb4cc; --s4: #e8c37a; --s5: #ff7a5c; --s6: #7cc4b8; --s7: #f08fb4; --s8: #a8d07a; --s9: #6fa8ff; --s10: #c2b3a3;
 }
 :root[data-theme="light"] {
   color-scheme: light;
   --bg: #f7f1e8; --panel: #fffaf3; --line: #e6dccd; --ink: #1f1812; --ink-2: #5c4f43; --ink-3: #8a7b6c; --up: #c0392b; --up-bg: #fbe4df; --warn: #8a5a00; --warn-bg: #f6efe0; --down: #2f6f95; --down-bg: #e2edf4; --accent: #b5541c;
-  --s0: #8a7b6c; --s1: #b5541c; --s2: #7a3fb8; --s3: #2f6f95; --s4: #8a5a00; --s5: #c0392b; --s6: #1f7a6b; --s7: #b0306a; --s8: #5c4f43;
+  --s0: #8a7b6c; --s1: #b5541c; --s2: #7a3fb8; --s3: #2f6f95; --s4: #8a5a00; --s5: #c0392b; --s6: #1f7a6b; --s7: #b0306a; --s8: #4d7a1f; --s9: #2456b8; --s10: #5c4f43;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
@@ -36,6 +36,8 @@ h2 .n { font-size: 13px; color: var(--ink-3); font-weight: 400; }
 .panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; }
 .setup { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 12px; }
 @media (max-width: 760px) { .setup { grid-template-columns: 1fr; } }
+.setup > .panel { min-width: 0; }
+@media (max-width: 520px) { .hold .nm { display: none; } .hold .pct { width: 44px; } .hold input { padding: 6px; } .hold td:first-child { width: 36% !important; } }
 .hold { width: 100%; border-collapse: collapse; font-size: 13.5px; }
 .hold td { padding: 3px 4px; border: 0; }
 .hold input.code { width: 100%; }
@@ -43,6 +45,11 @@ h2 .n { font-size: 13px; color: var(--ink-3); font-weight: 400; }
 .hold .nm { color: var(--ink-3); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 170px; }
 .hold .pct { color: var(--ink-2); text-align: right; font-variant-numeric: tabular-nums; width: 56px; }
 .hold button.x { padding: 2px 8px; color: var(--ink-3); }
+.hold .df { display: inline-flex; align-items: center; gap: 3px; font-size: 12px; color: var(--ink-3); cursor: pointer; white-space: nowrap; }
+.hold .df input { padding: 0; margin: 0; accent-color: var(--accent); }
+details.adv { margin-top: 10px; }
+details.adv > summary { cursor: pointer; font-size: 13px; color: var(--ink-2); }
+details.adv .params { margin-top: 8px; }
 .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 8px; }
 .field { display: flex; flex-direction: column; gap: 2px; font-size: 12.5px; color: var(--ink-3); }
 .field input, .field select { width: 120px; }
@@ -110,11 +117,11 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
     </nav>
   </header>
   <nav class="tabs" aria-label="實驗室"><a href="risk.html" aria-current="page">風控回測</a></nav>
-  <p class="sub">輸入持股和能接受的最大回檔，用 2021 年以來的台股日資料回測八種做法，看哪幾套守得住。全部在你的瀏覽器裡算，持股只存在這台電腦，不會上傳。這是歷史回測，不是投資建議。</p>
+  <p class="sub">輸入持股和能接受的最大回檔，用 2021 年以來的台股日資料回測十種做法，看哪幾套守得住。全部在你的瀏覽器裡算，持股只存在這台電腦，不會上傳。這是歷史回測，不是投資建議。</p>
 
   <div class="setup">
     <div class="panel">
-      <h3 style="margin:0 0 6px;font-size:15px">持股 <span class="hint" style="font-weight:400">代號＋市值（元），比例自動換算</span></h3>
+      <h3 style="margin:0 0 6px;font-size:15px">持股 <span class="hint" style="font-weight:400">代號＋市值（元），比例自動換算；勾「防守」的部位風控規則不會動它</span></h3>
       <table class="hold" id="hold"></table>
       <datalist id="codes"></datalist>
       <div class="row">
@@ -132,14 +139,28 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
         <label class="field">交易成本 %（每次換手）<input id="cost" type="number" min="0" max="2" step="0.05" value="0.2"></label>
         <label class="field">現金年利率 %<input id="cash" type="number" min="0" max="10" step="0.1" value="1.2"></label>
       </div>
-      <p class="hint" style="margin:8px 0 0">減碼的部分都轉成現金。名稱有「債」的 ETF 當作避險部位，不跟著減碼。</p>
+      <div class="params" style="margin-top:10px">
+        <label class="field">減碼的錢轉去<select id="dest"></select></label>
+        <label class="field" id="destOtherF" hidden>其他代號<input id="destOther" list="codes" placeholder="例如 00720B"></label>
+        <label class="field">固定防守比例 %<input id="defPct" type="number" min="0" max="100" step="5" value="30"></label>
+      </div>
+      <details class="adv">
+        <summary>進階參數（不填就跟著上限）</summary>
+        <div class="params">
+          <label class="field">趨勢均線<select id="maN"><option value="60">60 日</option><option value="120" selected>120 日</option><option value="200">200 日</option></select></label>
+          <label class="field">跌破均線時股票<select id="trendCut"><option value="0.5" selected>減半</option><option value="0">全出</option></select></label>
+          <label class="field">移動停損 %<input id="trailPct" type="number" min="3" max="60" step="1" placeholder="＝上限"></label>
+          <label class="field">波動目標 %<input id="volPct" type="number" min="3" max="60" step="1" placeholder="＝上限"></label>
+        </div>
+      </details>
+      <p class="hint" style="margin:8px 0 0">「減碼的錢轉去」用在所有會減碼的做法；「固定防守比例」是把整個組合的這個比例長期放在防守資產。</p>
       <div class="row"><button class="primary" id="run">開始回測</button><span class="hint" id="status"></span></div>
     </div>
   </div>
 
   <div class="strip" id="strip"></div>
 
-  <h2>八種做法的比較 <span class="n" id="periodN"></span></h2>
+  <h2>十種做法的比較 <span class="n" id="periodN"></span></h2>
   <p class="hint">「守得住」＝整段期間最大回檔沒超過你的上限。報酬／回檔＝年化報酬 ÷ 最大回檔，越高越有效率。</p>
   <div class="tbl" id="cmp"></div>
 
@@ -159,7 +180,7 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
   <div class="tbl" id="check"></div>
 
   <details class="box" open>
-    <summary>八種做法的規則（B = 你設的最大回檔）</summary>
+    <summary>十種做法的規則（B = 你設的最大回檔）</summary>
     <ul class="rules" id="rulesList"></ul>
   </details>
   <details class="box">
@@ -167,6 +188,7 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
     <ul>
       <li>股價：台股上市櫃公司（公司池）和常見 ETF 的還原權值日收盤，每天收盤後更新。</li>
       <li>上市不到回測起點的 ETF，上市前用同類代理補：台股市值型、主動式 → 0050；高股息 → 0056；美股 → 00646；債券 → 現金。持股體檢會標出哪幾檔用了代理。</li>
+      <li>台灣掛牌的債券 ETF 多半是美元長天期債（美債 20 年、投資級公司債），台幣計價含匯率；2022 年升息時它們本身就跌了兩到三成，和股票一起跌。防守資產不一定擋得住每一次，換成現金比較看看。</li>
       <li>你的持股多半是「今天回頭看」選的，過去漲很多的股票會讓絕對報酬看起來很漂亮，請只比較方案之間的差別。</li>
       <li>「靜態減碼」的股票比例是用同一段歷史反推的，換一段行情不一定守得住。</li>
       <li>資料從 2021 年 6 月開始，沒有包含 2020 年疫情崩跌和 2008 年金融海嘯；碰到那種等級的事件，所有方案的回檔都可能更深。</li>
@@ -180,15 +202,19 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
 const $ = s => document.querySelector(s);
 const STORE = "risklab-v1";
 const EXAMPLE = [["0050", 40000], ["0056", 20000], ["00878", 15000], ["2330", 15000], ["00981A", 10000]];
+const DESTS = [["CASH", "現金"], ["00679B", "00679B 元大美債20年"], ["00687B", "00687B 國泰20年美債"], ["00720B", "00720B 元大投資級公司債"],
+  ["00751B", "00751B 元大AAA至A公司債"], ["00772B", "00772B 中信高評級公司債"], ["00713", "00713 元大台灣高息低波"], ["OTHER", "其他代號…"]];
 const PLANS = [
-  { id: "hold", name: "原樣持有", rule: "買進後不動，比例隨漲跌漂移。當作對照組。" },
-  { id: "rebal", name: "每月再平衡", rule: "每月最後一個交易日調回原本的比例。" },
-  { id: "invvol", name: "風險平價", rule: "股票部位改成「波動越大、比例越小」（近一年波動的倒數），每月調整；股票總比例不變。" },
-  { id: "static", name: "靜態減碼", rule: "股票部位固定打折到某個比例，其餘放現金，每月再平衡。比例是用這段歷史找出「最大回檔剛好不超過 B」的最高值（事後校準，偏樂觀）。" },
-  { id: "voltgt", name: "波動目標", rule: "股票部位 = min(1, B ÷ 近 60 日年化波動)，每週五調整。波動變大就自動減碼。" },
-  { id: "ddcut", name: "回檔減碼", rule: "整個組合從高點跌 B/2 → 股票減半；跌 3B/4 → 股票全出。股票組合站回 60 日線才全部買回，並從那天重算高點。" },
-  { id: "trend", name: "趨勢濾網", rule: "股票組合跌破 120 日線 → 股票減半；站回去 → 恢復。" },
-  { id: "trail", name: "每檔移動停損", rule: "每一檔從持有後的高點跌 B 就賣成現金；站回 60 日線再用原比例買回。" },
+  { id: "hold", name: "原樣持有", rule: p => "買進後不動，比例隨漲跌漂移。當作對照組。" },
+  { id: "rebal", name: "每月再平衡", rule: p => "每月最後一個交易日調回原本的比例。" },
+  { id: "invvol", name: "風險平價", rule: p => "股票部位改成「波動越大、比例越小」（近一年波動的倒數），每月調整；股票總比例不變。" },
+  { id: "defense", name: "固定防守部位", rule: p => `把整個組合的 ${pc(p.defPct)} 長期放在 ${p.destName}，其餘照原比例，每月再平衡。` },
+  { id: "static", name: "靜態減碼", rule: p => `股票部位固定打折，其餘放 ${p.destName}，每月再平衡。折數是用這段歷史找出「最大回檔剛好不超過 B」的最高值（事後校準，偏樂觀）。` },
+  { id: "voltgt", name: "波動目標", rule: p => `股票部位 = min(1, ${pc(p.vol)} ÷ 近 60 日年化波動)，每週五調整，減下來的放 ${p.destName}。` },
+  { id: "ddcut", name: "回檔減碼", rule: p => `整個組合從高點跌 ${pc(p.B / 2)} → 股票減半；跌 ${pc(p.B * 0.75)} → 股票全出（轉去 ${p.destName}）。股票組合站回 60 日線才全部買回，並從那天重算高點。` },
+  { id: "trend", name: "趨勢濾網", rule: p => `股票組合跌破 ${p.maN} 日線 → 股票${p.trendCut ? "減半" : "全出"}（轉去 ${p.destName}）；站回去 → 恢復。` },
+  { id: "trail", name: "每檔移動停損", rule: p => `每一檔從持有後的高點跌 ${pc(p.trail)} 就賣掉轉去 ${p.destName}；站回 60 日線再用原比例買回。` },
+  { id: "deftrend", name: "防守部位＋趨勢濾網", rule: p => `「固定防守部位」再加上趨勢濾網：股票組合跌破 ${p.maN} 日線時，剩下的股票部位再${p.trendCut ? "減半" : "全出"}。` },
 ];
 const STRESS = [
   ["2022 空頭", "2022-01-04", "2022-10-25"], ["2024/7～8 修正", "2024-07-11", "2024-08-05"],
@@ -197,6 +223,7 @@ const STRESS = [
 let IX = null, PX = {}, LAST = null;
 
 const fmt = (x, d = 1) => x == null || !isFinite(x) ? "—" : x.toFixed(d);
+const pc = x => Math.round(x * 1000) / 10 + "%";
 const pct = (x, d = 1) => x == null || !isFinite(x) ? "—" : (x * 100).toFixed(d) + "%";
 const sgn = (x, d = 1) => x == null || !isFinite(x) ? "—" : `<span class="${x < 0 ? "dn" : "up"}">${(x * 100).toFixed(d)}%</span>`;
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -216,17 +243,19 @@ const color = i => `var(--s${i})`;
 })();
 
 // ---------- 持股輸入 ----------
-function rowHTML(code = "", amt = "") {
-  return `<tr><td style="width:34%"><input class="code" list="codes" value="${esc(code)}" placeholder="代號" aria-label="代號"></td>
-    <td style="width:30%"><input class="amt" type="number" min="0" step="1000" value="${esc(amt)}" placeholder="市值" aria-label="市值"></td>
-    <td class="nm"></td><td class="pct"></td><td><button class="x" title="刪除" aria-label="刪除">×</button></td></tr>`;
+function rowHTML(code = "", amt = "", def = null) {
+  return `<tr${def == null ? "" : ' data-touched="1"'}><td style="width:30%"><input class="code" list="codes" value="${esc(code)}" placeholder="代號" aria-label="代號"></td>
+    <td style="width:26%"><input class="amt" type="number" min="0" step="1000" value="${esc(amt)}" placeholder="市值" aria-label="市值"></td>
+    <td class="nm"></td><td class="pct"></td>
+    <td><label class="df" title="當作防守部位：風控規則不減碼它"><input type="checkbox" class="def"${def ? " checked" : ""}>防守</label></td>
+    <td><button class="x" title="刪除" aria-label="刪除">×</button></td></tr>`;
 }
 function setHoldings(list) {
-  $("#hold").innerHTML = list.map(([c, a]) => rowHTML(c, a)).join("");
+  $("#hold").innerHTML = list.map(([c, a, d]) => rowHTML(c, a, d)).join("");
   refreshHold();
 }
 function getHoldings() {
-  return [...$("#hold").querySelectorAll("tr")].map(tr => [tr.querySelector(".code").value.trim().toUpperCase(), +tr.querySelector(".amt").value || 0])
+  return [...$("#hold").querySelectorAll("tr")].map(tr => [tr.querySelector(".code").value.trim().toUpperCase(), +tr.querySelector(".amt").value || 0, tr.querySelector(".def").checked])
     .filter(([c, a]) => c && a > 0);
 }
 function refreshHold() {
@@ -237,9 +266,11 @@ function refreshHold() {
     const m = IX && IX.tickers[c];
     tr.querySelector(".nm").innerHTML = !c ? "" : m ? esc(m.n) + (m.p ? ` <span class="chip mute" title="上市前用 ${m.p} 代理">代理</span>` : "") : '<span class="chip bad">找不到</span>';
     tr.querySelector(".pct").textContent = tot && a ? (a / tot * 100).toFixed(1) + "%" : "";
+    if (tr.dataset.touched !== "1") tr.querySelector(".def").checked = !!(m && m.k === "bond");   // 債券 ETF 預設當防守
   }
 }
 $("#hold").addEventListener("input", refreshHold);
+$("#hold").addEventListener("change", e => { if (e.target.classList.contains("def")) e.target.closest("tr").dataset.touched = "1"; });
 $("#hold").addEventListener("click", e => { if (e.target.classList.contains("x")) { e.target.closest("tr").remove(); refreshHold(); } });
 $("#add").onclick = () => { $("#hold").insertAdjacentHTML("beforeend", rowHTML()); $("#hold").querySelector("tr:last-child .code").focus(); };
 $("#example").onclick = () => setHoldings(EXAMPLE);
@@ -249,19 +280,33 @@ $("#share").onclick = async () => {
   catch (e) { prompt("複製這個連結", url); }
 };
 function params() {
-  return { B: Math.max(0.01, (+$("#budget").value || 15) / 100), start: $("#start").value, cost: (+$("#cost").value || 0) / 100, cash: (+$("#cash").value || 0) / 100 };
+  const B = Math.max(0.01, (+$("#budget").value || 15) / 100);
+  let dest = $("#dest").value;
+  if (dest === "OTHER") dest = $("#destOther").value.trim().toUpperCase() || "CASH";
+  const destName = dest === "CASH" ? "現金" : dest + (IX && IX.tickers[dest] ? " " + IX.tickers[dest].n : "");
+  return { B, start: $("#start").value, cost: (+$("#cost").value || 0) / 100, cash: (+$("#cash").value || 0) / 100,
+    dest, destName, defPct: Math.min(1, Math.max(0, (+$("#defPct").value || 0) / 100)),
+    maN: +$("#maN").value, trendCut: +$("#trendCut").value,
+    trail: $("#trailPct").value ? +$("#trailPct").value / 100 : B, vol: $("#volPct").value ? +$("#volPct").value / 100 : B };
 }
 function encodeState() {
   const p = params();
-  return "h=" + getHoldings().map(([c, a]) => `${c}:${a}`).join(",") + `&b=${Math.round(p.B * 100)}&s=${p.start}&c=${p.cost * 100}&r=${p.cash * 100}`;
+  return "h=" + getHoldings().map(([c, a, d]) => `${c}:${a}:${d ? 1 : 0}`).join(",") + `&b=${Math.round(p.B * 100)}&s=${p.start}&c=${p.cost * 100}&r=${p.cash * 100}`
+    + `&d=${p.dest}&x=${Math.round(p.defPct * 100)}&m=${p.maN}&k=${p.trendCut}` + ($("#trailPct").value ? `&t=${$("#trailPct").value}` : "") + ($("#volPct").value ? `&v=${$("#volPct").value}` : "");
 }
 function saveState() { try { localStorage.setItem(STORE, encodeState()); } catch (e) {} }
 function loadState() {
   let s = location.hash.slice(1);
   if (!s.includes("h=")) { try { s = localStorage.getItem(STORE) || ""; } catch (e) { s = ""; } }
   const q = new URLSearchParams(s);
-  const h = (q.get("h") || "").split(",").map(x => x.split(":")).filter(x => x[0] && +x[1] > 0).map(([c, a]) => [c, +a]);
+  const h = (q.get("h") || "").split(",").map(x => x.split(":")).filter(x => x[0] && +x[1] > 0).map(([c, a, d]) => [c, +a, d == null ? null : d === "1"]);
   if (q.get("b")) $("#budget").value = q.get("b");
+  if (q.get("d")) { const d = q.get("d"); if (DESTS.some(([v]) => v === d)) $("#dest").value = d; else { $("#dest").value = "OTHER"; $("#destOther").value = d; $("#destOtherF").hidden = false; } }
+  if (q.get("x")) $("#defPct").value = q.get("x");
+  if (q.get("m")) $("#maN").value = q.get("m");
+  if (q.get("k")) $("#trendCut").value = q.get("k");
+  if (q.get("t")) $("#trailPct").value = q.get("t");
+  if (q.get("v")) $("#volPct").value = q.get("v");
   if (q.get("c")) $("#cost").value = q.get("c");
   if (q.get("r")) $("#cash").value = q.get("r");
   return { h: h.length ? h : EXAMPLE, s: q.get("s") };
@@ -279,7 +324,6 @@ function retAt(code, i, cashD) {
   if (m.p && PX[m.p]) { const pm = IX.tickers[m.p]; return i >= pm.f && i <= pm.l ? PX[m.p].r[i - pm.f] / sc : 0; }
   return m.k === "bond" ? cashD : 0;
 }
-const isSafe = code => IX.tickers[code].k === "bond";
 
 function simulate(R, base, risky, fn, cost, cashD) {
   // R：每天每檔的報酬（陣列的陣列，最後一欄是現金）；base：起始權重；fn(i, st) 回傳新權重或 null
@@ -333,35 +377,40 @@ async function run() {
   const bad = H.filter(([c]) => !IX.tickers[c]).map(([c]) => c);
   if (bad.length) { $("#holdMsg").textContent = `找不到：${bad.join("、")}（目前收錄公司池個股和常見 ETF）`; return; }
   if (!H.length) { $("#holdMsg").textContent = "先輸入至少一檔"; return; }
-  // 同代號合併
-  const agg = {};
-  for (const [c, a] of H) agg[c] = (agg[c] || 0) + a;
+  if (p.dest !== "CASH" && !IX.tickers[p.dest]) { $("#holdMsg").textContent = `「減碼的錢轉去」找不到 ${p.dest}`; return; }
+  // 同代號合併；任一列勾防守就當防守
+  const agg = {}, defOf = {};
+  for (const [c, a, d] of H) { agg[c] = (agg[c] || 0) + a; defOf[c] = defOf[c] || d; }
   const codes = Object.keys(agg), total = codes.reduce((s, c) => s + agg[c], 0);
   $("#status").textContent = "載入股價…";
   const need = new Set(["TWII", ...codes]);
-  for (const c of codes) if (IX.tickers[c].p) need.add(IX.tickers[c].p);
+  if (p.dest !== "CASH") need.add(p.dest);
+  for (const c of [...need]) if (IX.tickers[c] && IX.tickers[c].p) need.add(IX.tickers[c].p);
   await Promise.all([...need].filter(c => IX.tickers[c]).map(series));
   saveState();
   history.replaceState(null, "", "#" + encodeState());
 
   const D = IX.days;
   let s = Math.max(1, D.findIndex(d => d >= p.start));
-  let e = Math.min(...codes.map(c => IX.tickers[c].l));
+  let e = Math.min(...codes.map(c => IX.tickers[c].l), p.dest !== "CASH" ? IX.tickers[p.dest].l : Infinity);
   const days = D.slice(s, e + 1), n = days.length;
   if (n < 260) { $("#holdMsg").textContent = "回測期間太短（不到一年），把起點往前調"; $("#status").textContent = ""; return; }
   const cashD = p.cash / 252;
-  const k = codes.length + 1, CASH = codes.length;
-  const R = days.map((_, t) => { const row = codes.map(c => retAt(c, s + t, cashD)); row.push(cashD); return row; });
-  const base = codes.map(c => agg[c] / total); base.push(0);
-  const risky = codes.map((c, j) => j).filter(j => !isSafe(codes[j]));
+  // 欄位：持股…、現金、（減碼目的地，不是現金時）
+  const CASH = codes.length, DEST = p.dest === "CASH" ? CASH : codes.length + 1;
+  const R = days.map((_, t) => { const row = codes.map(c => retAt(c, s + t, cashD)); row.push(cashD); if (DEST !== CASH) row.push(retAt(p.dest, s + t, cashD)); return row; });
+  const base = codes.map(c => agg[c] / total); base.push(0); if (DEST !== CASH) base.push(0);
+  const risky = codes.map((c, j) => j).filter(j => !defOf[codes[j]]);
   const riskySum = risky.reduce((a, j) => a + base[j], 0);
-  if (!risky.length) { $("#holdMsg").textContent = "全部是債券 ETF，沒有股票部位可以做風控"; $("#status").textContent = ""; return; }
+  if (!risky.length) { $("#holdMsg").textContent = "全部都勾了防守，沒有股票部位可以做風控"; $("#status").textContent = ""; return; }
   // 股票部位（固定比例）的每日報酬、價格指數
   const mix = R.map(row => risky.reduce((a, j) => a + row[j] * base[j], 0) / riskySum);
   const mixPx = new Float64Array(n); { let v = 1; for (let i = 0; i < n; i++) { v *= 1 + mix[i]; mixPx[i] = v; } }
-  const ma60 = rollMean(mixPx, 60), ma120 = rollMean(mixPx, 120), vol60 = rollStd(mix, 60).map(x => x * Math.sqrt(252));
+  const ma60 = rollMean(mixPx, 60), maT = rollMean(mixPx, p.maN), vol60 = rollStd(mix, 60).map(x => x * Math.sqrt(252));
   const monthEnd = i => i === n - 1 || days[i + 1].slice(0, 7) !== days[i].slice(0, 7);
-  const scaled = kk => { const w = base.slice(); for (const j of risky) w[j] *= kk; w[CASH] = 1 - w.reduce((a, b, j) => j === CASH ? a : a + b, 0); return w; };
+  // 股票部位乘上 kk，減下來的放到目的地（現金或防守資產）
+  const scaled = kk => { const w = base.slice(); for (const j of risky) w[j] *= kk; w[DEST] += 1 - w.reduce((a, b) => a + b, 0); return w; };
+  const kDef = Math.max(0, (riskySum - p.defPct) / riskySum);     // 固定防守：整個組合的 defPct 移到目的地
   const monthly = tgt => (i, st) => monthEnd(i) ? tgt : null;
 
   const fns = {
@@ -381,7 +430,7 @@ async function run() {
     voltgt: (i, st) => {
       const dow = new Date(days[i] + "T00:00:00Z").getUTCDay();
       if (dow !== 5 || isNaN(vol60[i])) return null;
-      return scaled(Math.min(1, p.B / vol60[i]));
+      return scaled(Math.min(1, p.vol / vol60[i]));
     },
     ddcut: (() => {
       let lvl = 1;
@@ -398,9 +447,18 @@ async function run() {
     trend: (() => {
       let cur = null;
       return (i, st) => {
-        if (isNaN(ma120[i])) return null;
-        const kk = mixPx[i] > ma120[i] ? 1 : 0.5;
+        if (isNaN(maT[i])) return null;
+        const kk = mixPx[i] > maT[i] ? 1 : p.trendCut;
         if (kk !== cur) { cur = kk; return scaled(kk); }
+        return null;
+      };
+    })(),
+    defense: monthly(scaled(kDef)),
+    deftrend: (() => {
+      let cur = null;
+      return (i, st) => {
+        const kk = kDef * (isNaN(maT[i]) || mixPx[i] > maT[i] ? 1 : p.trendCut);
+        if (kk !== cur || monthEnd(i)) { cur = kk; return scaled(kk); }
         return null;
       };
     })(),
@@ -412,13 +470,13 @@ async function run() {
         let changed = false;
         risky.forEach((j, x) => {
           const v = px[x][i];
-          if (on[x]) { pk[x] = Math.max(pk[x], v); if (v < pk[x] * (1 - p.B)) { on[x] = false; changed = true; } }
+          if (on[x]) { pk[x] = Math.max(pk[x], v); if (v < pk[x] * (1 - p.trail)) { on[x] = false; changed = true; } }
           else if (!isNaN(ma[x][i]) && v > ma[x][i]) { on[x] = true; pk[x] = v; changed = true; }
         });
         if (!changed) return null;
         const w = st.w.slice();
-        risky.forEach((j, x) => { if (!on[x] && w[j] > 0) { w[CASH] += w[j]; w[j] = 0; } });
-        risky.forEach((j, x) => { if (on[x] && w[j] === 0) { const add = Math.min(base[j], w[CASH]); w[j] = add; w[CASH] -= add; } });
+        risky.forEach((j, x) => { if (!on[x] && w[j] > 0) { w[DEST] += w[j]; w[j] = 0; } });
+        risky.forEach((j, x) => { if (on[x] && w[j] === 0) { const add = Math.min(base[j], w[DEST]); w[j] = add; w[DEST] -= add; } });
         return w;
       };
     })(),
@@ -426,23 +484,23 @@ async function run() {
   $("#status").textContent = "回測中…";
   await new Promise(r => setTimeout(r, 0));
   // 靜態減碼：找最大回檔不超過 B 的最高股票比例
-  let kStatic = 0.1;
-  for (let kk = 1; kk >= 0.1 - 1e-9; kk -= 0.05) {
-    const r = simulate(R, base, risky, monthly(scaled(kk)), p.cost, cashD);
+  let kStatic = 0, found = false;
+  for (let kk = 1; kk >= -1e-9; kk -= 0.05) {
+    const r = simulate(R, base, risky, monthly(scaled(Math.max(0, kk))), p.cost, cashD);
     let pk = 0, mdd = 0; for (const v of r.nav) { pk = Math.max(pk, v); mdd = Math.min(mdd, v / pk - 1); }
-    if (mdd >= -p.B) { kStatic = kk; break; }
+    if (mdd >= -p.B) { kStatic = Math.max(0, kk); found = true; break; }
   }
   fns.static = monthly(scaled(kStatic));
   const out = PLANS.map((pl, x) => {
     const r = simulate(R, base, risky, fns[pl.id], p.cost, cashD);
-    const label = pl.id === "static" ? `${pl.name}（股票 ${Math.round(kStatic * 100)}%）` : pl.name;
-    const on = ["hold", "rebal", "static", "trend"].includes(pl.id);     // 圖上預設只畫幾條，其他在圖例勾
+    const label = pl.id === "static" ? `${pl.name}（${found ? `股票 ${Math.round(kStatic * 100)}%` : "股票全出也守不住"}）` : pl.id === "defense" ? `${pl.name} ${pc(p.defPct)}` : pl.name;
+    const on = ["hold", "rebal", "defense", "static", "trend"].includes(pl.id);     // 圖上預設只畫幾條，其他在圖例勾
     return { ...pl, label, color: color(x), on, ...r, st: stats(r.nav, days, r.turns, r.eq, p.B) };
   });
   // 加權指數當參考
   const tw = new Float64Array(n); { let v = 1; for (let i = 0; i < n; i++) { v *= 1 + retAt("TWII", s + i, 0); tw[i] = v; } }
-  const ref = { id: "twii", label: "參考：加權指數", color: color(8), nav: tw, st: stats(tw, days, 0, null, p.B), ref: true };
-  LAST = { out, ref, days, p, codes, agg, total, s, e, R, base, risky, mix, kStatic };
+  const ref = { id: "twii", label: "參考：加權指數", color: color(10), nav: tw, st: stats(tw, days, 0, null, p.B), ref: true };
+  LAST = { out, ref, days, p, codes, agg, defOf, total, s, e, R, base, risky, mix, kStatic };
   render(LAST);
   $("#status").textContent = "";
 }
@@ -505,11 +563,11 @@ function render(L) {
     for (const x of L.R.map(row => row[j])) { v *= 1 + x; pk = Math.max(pk, v); mdd = Math.min(mdd, v / pk - 1); }
     const meta = IX.tickers[c];
     const proxy = meta.f > L.s && meta.p ? `<span class="chip warn">${IX.days[meta.f]} 前用 ${meta.p}</span>` : meta.f > L.s ? `<span class="chip warn">${IX.days[meta.f]} 前當現金</span>` : "";
-    return `<tr><td class="l">${esc(c)} ${esc(meta.n)}</td><td>${pct(L.agg[c] / L.total)}</td><td>${pct(Math.sqrt(vr / (r.length - 1) * 252))}</td><td>${fmt(cov / vm, 2)}</td><td>${sgn(mdd)}</td><td class="l">${isSafe(c) ? '<span class="chip mute">避險部位</span> ' : ""}${proxy}</td></tr>`;
+    return `<tr><td class="l">${esc(c)} ${esc(meta.n)}</td><td>${pct(L.agg[c] / L.total)}</td><td>${pct(Math.sqrt(vr / (r.length - 1) * 252))}</td><td>${fmt(cov / vm, 2)}</td><td>${sgn(mdd)}</td><td class="l">${L.defOf[c] ? '<span class="chip mute">防守部位</span> ' : ""}${proxy}</td></tr>`;
   }).join("");
   $("#check").innerHTML = `<table class="t"><thead><tr><th class="l">持股</th><th>比例</th><th>年化波動</th><th>對加權指數 beta</th><th>回測期間最大回檔</th><th class="l">備註</th></tr></thead><tbody>${chk}</tbody></table>`;
 
-  $("#rulesList").innerHTML = PLANS.map(pl => `<li><b>${pl.name}</b>：${pl.rule}</li>`).join("");
+  $("#rulesList").innerHTML = PLANS.map(pl => `<li><b>${pl.name}</b>：${pl.rule(p)}</li>`).join("");
   $("#legend").innerHTML = [...out, ref].map((o, x) => `<label><input type="checkbox" data-i="${x}" ${o.on === false ? "" : "checked"}><span class="sw" style="background:${o.color}"></span>${esc(o.label)}</label>`).join("");
   $("#legend").onchange = ev => { const all = [...L.out, L.ref]; all[+ev.target.dataset.i].on = ev.target.checked; draw(L); };
   draw(L);
@@ -573,6 +631,8 @@ function lineChart(el, days, S, opt) {
   const starts = [...new Set(IX.days.slice(1).map(d => d.slice(0, 4) + (d.slice(5, 7) < "07" ? "-01" : "-07")))]
     .map(h => IX.days.slice(1).find(d => d >= h + "-01")).filter(d => d && d < IX.days[IX.days.length - 260]);
   $("#start").innerHTML = starts.map(d => `<option value="${d}">${d}</option>`).join("");
+  $("#dest").innerHTML = DESTS.filter(([v]) => v === "CASH" || v === "OTHER" || IX.tickers[v]).map(([v, t]) => `<option value="${v}">${esc(t)}</option>`).join("");
+  $("#dest").onchange = () => { $("#destOtherF").hidden = $("#dest").value !== "OTHER"; };
   const st = loadState();
   $("#start").value = st.s && starts.includes(st.s) ? st.s : (starts.find(d => d >= "2021-07-01") || starts[0]);
   setHoldings(st.h);
