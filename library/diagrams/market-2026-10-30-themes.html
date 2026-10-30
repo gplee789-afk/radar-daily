@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>題材評價與跌幅</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&family=Noto+Serif:ital@0;1&family=Noto+Sans+TC:wght@400;500;600&family=Noto+Serif+TC:wght@400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* 配色：diagram-design 設定檔 taiwan-analysis（取自網站 radar/site_library.html） */
+    :root {
+      --paper: #0e0c0a; --node: #191512; --ink: #f2ebe3; --muted: #c2b3a3; --soft: #9c8c7c;
+      --rule: rgba(242,235,227,0.12); --accent: #f0a050; --accent-tint: rgba(240,160,80,0.12);
+      --soft-tint: rgba(194,179,163,0.20); --link: #f7c873;
+      --font-sans: 'Geist', 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', system-ui, sans-serif;
+      --font-serif: 'Instrument Serif', 'Noto Serif', 'Noto Serif TC', serif;
+      --font-mono: 'Geist Mono', ui-monospace, monospace;
+    }
+    body { font-family: var(--font-sans); background: var(--paper); color: var(--ink); padding: 20px 16px 24px; }
+    .frame { max-width: 1000px; margin: 0 auto; }
+    .diagram-container { width: 100%; overflow-x: auto; }
+    .eyebrow { font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 4px; }
+    h1 { font-family: var(--font-serif); font-size: clamp(1.4rem, 2.2vw + 0.7rem, 1.9rem); font-weight: 400; line-height: 1.2; margin-bottom: 14px; }
+    svg { width: 100%; min-width: 960px; display: block; }
+    .note { font-size: 13px; line-height: 1.75; color: var(--muted); margin-top: 12px; max-width: 900px; }
+    .note b { color: var(--ink); font-weight: 600; }
+    svg .bg { fill: var(--paper); }
+    svg .grid { stroke: var(--ink); stroke-opacity: 0.08; stroke-width: 0.8; }
+    svg .axis { stroke: var(--ink); stroke-opacity: 0.20; stroke-width: 1; }
+    svg .ref { stroke: var(--link); stroke-width: 1; stroke-dasharray: 4,3; }
+    svg .pt { fill: var(--soft-tint); stroke: var(--muted); stroke-width: 1; }
+    svg .pt.focal { fill: var(--accent-tint); stroke: var(--accent); stroke-width: 1.2; }
+    svg .t-tick { fill: var(--muted); font: 400 11px var(--font-mono); }
+    svg .t-axis { fill: var(--muted); font: 500 12px var(--font-sans); }
+    svg .t-ref { fill: var(--link); font: 500 11px var(--font-sans); }
+    svg .t-lab { fill: var(--ink); font: 500 11px var(--font-sans); }
+    svg .t-sub { fill: var(--muted); font: 400 12px var(--font-sans); }
+    svg a.node { cursor: pointer; }
+    svg a.node:hover .pt, svg a.node:focus-visible .pt { stroke-width: 2; }
+    svg a.node:hover .t-lab { fill: var(--link); text-decoration: underline; }
+    @media print { .diagram-container { overflow-x: visible; } svg { min-width: 0; } }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">盤勢與總經・2026-10-30</p>
+    <h1>越貴的題材跌越深</h1>
+    <div class="diagram-container">
+      <svg viewBox="0 0 960 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="mkt-themes-20261030-title mkt-themes-20261030-desc">
+        <title id="mkt-themes-20261030-title">題材評價位階與 10/30 跌幅</title>
+        <desc id="mkt-themes-20261030-desc">13 個題材的本益比 5 年分位與 2026-10-30 成分股漲跌幅中位數：本益比分位在 90% 以上的 7 個題材跌幅中位數 -5.1%，其餘 6 個 -3.3%。</desc>
+        <rect class="bg" width="100%" height="100%"/>
+        <line class="grid" x1="80" y1="40.0" x2="920" y2="40.0"/>
+        <text class="t-tick" x="72" y="43.0" text-anchor="end">0%</text>
+        <line class="grid" x1="80" y1="148.6" x2="920" y2="148.6"/>
+        <text class="t-tick" x="72" y="151.6" text-anchor="end">-2%</text>
+        <line class="grid" x1="80" y1="257.1" x2="920" y2="257.1"/>
+        <text class="t-tick" x="72" y="260.1" text-anchor="end">-4%</text>
+        <line class="grid" x1="80" y1="365.7" x2="920" y2="365.7"/>
+        <text class="t-tick" x="72" y="368.7" text-anchor="end">-6%</text>
+        <line class="grid" x1="80.0" y1="40" x2="80.0" y2="420"/>
+        <text class="t-tick" x="80.0" y="436" text-anchor="middle">40%</text>
+        <line class="grid" x1="360.0" y1="40" x2="360.0" y2="420"/>
+        <text class="t-tick" x="360.0" y="436" text-anchor="middle">60%</text>
+        <line class="grid" x1="640.0" y1="40" x2="640.0" y2="420"/>
+        <text class="t-tick" x="640.0" y="436" text-anchor="middle">80%</text>
+        <line class="grid" x1="920.0" y1="40" x2="920.0" y2="420"/>
+        <text class="t-tick" x="920.0" y="436" text-anchor="middle">100%</text>
+        <line class="axis" x1="80" y1="40" x2="80" y2="420"/>
+        <line class="axis" x1="80" y1="420" x2="920" y2="420"/>
+        <line class="ref" x1="80" y1="175.2" x2="920" y2="175.2"/>
+        <rect x="84" y="155.2" width="118" height="16" fill="var(--paper)"/>
+        <text class="t-ref" x="88" y="167.2">加權指數 -2.49%</text>
+        <text class="t-axis" x="500" y="456" text-anchor="middle">本益比 5 年分位（越右越貴）</text>
+        <text class="t-axis" x="24" y="230" text-anchor="middle" transform="rotate(-90 24 230)">10/30 成分股漲跌中位數</text>
+        <a class="node" href="../../?r=library/industry/2026-10-22_變壓器產業報告.md" target="_top" aria-label="看設施電力產業報告">
+          <circle cx="206.0" cy="178.4" r="5" fill="var(--paper)"/>
+          <circle class="pt" data-name="設施電力" data-x="49" data-y="-2.55" cx="206.0" cy="178.4" r="5"/>
+          <rect x="216.0" y="169.4" width="87" height="16" fill="var(--paper)"/>
+          <text class="t-lab" x="218.0" y="182.4" text-anchor="start">設施電力 -2.5%</text>
+        </a>
+        <a class="node" href="../../?r=library/industry/2026-10-22_伺服器組裝產業報告.md" target="_top" aria-label="看伺服器組裝產業報告">
+          <circle cx="164.0" cy="195.8" r="5" fill="var(--paper)"/>
+          <circle class="pt" data-name="伺服器組裝" data-x="46" data-y="-2.87" cx="164.0" cy="195.8" r="5"/>
+          <rect x="174.0" y="186.8" width="98" height="16" fill="var(--paper)"/>
+          <text class="t-lab" x="176.0" y="199.8" text-anchor="start">伺服器組裝 -2.9%</text>
+        </a>
+        <a class="node" href="../../?r=library/industry/2026-10-26_PCB載板CCL產業報告.md" target="_top" aria-label="看PCB／載板產業報告">
+          <circle cx="822.0" cy="395.0" r="6" fill="var(--paper)"/>
+          <circle class="pt focal" data-name="PCB／載板" data-x="93" data-y="-6.54" cx="822.0" cy="395.0" r="6"/>
+          <rect x="832.0" y="386.0" width="96" height="16" fill="var(--paper)"/>
+          <text class="t-lab" x="834.0" y="399.0" text-anchor="start">PCB／載板 -6.5%</text>
+        </a>
+        <a class="node" href="../../?r=library/industry/2026-10-22_矽中介層產業報告.md" target="_top" aria-label="看矽中介層產業報告">
+          <circle cx="850.0" cy="266.4" r="5" fill="var(--paper)"/>
+          <circle class="pt" data-name="矽中介層" data-x="95" data-y="-4.17" cx="850.0" cy="266.4" r="5"/>
+          <rect x="860.0" y="257.4" width="87" height="16" fill="var(--paper)"/>
+          <text class="t-lab" x="862.0" y="270.4" text-anchor="start">矽中介層 -4.2%</text>
+        </a>
+        <a class="node" href="../../?r=library/industry/2026-10-26_先進封裝產業報告.md" target="_top" aria-label="看先進封裝產業報告">
+          <circle cx="808.0" cy="336.9" r="5" fill="var(--paper)"/>
+          <circle class="pt" data-name="先進封裝" data-x="92" data-y="-5.47" cx="808.0" cy="336.9" r="5"/>
+          <rect x="711.0" y="327.9" width="87" height="16" fill="var(--paper)"/>
+          <text class="t-lab" x="796.0" y="340.9" text-anchor="end">先進封裝 -5.5%</text>
+        </a>
+        <a class="node" href="../../?r=library/industry/2026-10-22_半導體測試產業報告.md" target="_top" aria-label="看半導體測試產業報告">
+          <circle cx="822.0" cy="384.7" r="5" fill="var(--paper)"/>
+          <circle class="pt" data-name="半導體測試" data-x="93" data-y="-6.35" cx="822.0" cy="384.7" r="5"/>
+          <rect x="714.0" y="375.7" width="98" height="16" fill="var(--paper)"/>
+          <text class="t-lab" x="810.0" y="388.7" text-anchor="end">半導體測試 -6.3%</text>
+        </a>
+        <a class="node" href="../../?r=library/industry/2026-10-22_人形機器人產業報告.md" target="_top" aria-label="看人形機器人產業報告">
+          <circle cx="584.0" cy="238.7" r="5" fill="var(--paper)"/>
+          <circle class="pt" data-name="人形機器人" data-x="76" data-y="-3.66" cx="584.0" cy="238.7" r="5"/>
+          <rect x="594.0" y="229.7" width="98" height="16" fill="var(--paper)"/>
+          <text class="t-lab" x="596.0" y="242.7" text-anchor="start">人形機器人 -3.7%</text>
+        </a>
+        <a class="node" href="../../?r=library/industry/2026-10-22_記憶體產業報告.md" target="_top" aria-label="看記憶體產業報告">
+          <circle cx="500.0" cy="266.4" r="5" fill="var(--paper)"/>
+          <circle class="pt" data-name="記憶體" data-x="70" data-y="-4.17" cx="500.0" cy="266.4" r="5"/>
+          <rect x="510.0" y="257.4" width="76" height="16" fill="var(--paper)"/>
+          <text class="t-lab" x="512.0" y="270.4" text-anchor="start">記憶體 -4.2%</text>
+        </a>
+        <a class="node" href="../../?r=library/industry/2026-10-22_ASIC矽智財產業報告.md" target="_top" aria-label="看ASIC／矽智財產業報告">
+          <circle cx="822.0" cy="288.6" r="5" fill="var(--paper)"/>
+          <circle class="pt" data-name="ASIC／矽智財" data-x="93" data-y="-4.58" cx="822.0" cy="288.6" r="5"/>
+          <rect x="699.0" y="279.6" width="113" height="16" fill="var(--paper)"/>
+          <text class="t-lab" x="810.0" y="292.6" text-anchor="end">ASIC／矽智財 -4.6%</text>
+        </a>
+        <a class="node" href="../../?r=library/industry/2026-10-22_光通訊CPO產業報告.md" target="_top" aria-label="看光通訊／CPO產業報告">
+          <circle cx="556.0" cy="366.8" r="5" fill="var(--paper)"/>
+          <circle class="pt" data-name="光通訊／CPO" data-x="74" data-y="-6.02" cx="556.0" cy="366.8" r="5"/>
+          <rect x="566.0" y="357.8" width="106" height="16" fill="var(--paper)"/>
+          <text class="t-lab" x="568.0" y="370.8" text-anchor="start">光通訊／CPO -6.0%</text>
+        </a>
+        <a class="node" href="../../?r=library/industry/2026-10-22_散熱液冷產業報告.md" target="_top" aria-label="看散熱／液冷產業報告">
+          <circle cx="780.0" cy="193.1" r="5" fill="var(--paper)"/>
+          <circle class="pt" data-name="散熱／液冷" data-x="90" data-y="-2.82" cx="780.0" cy="193.1" r="5"/>
+          <rect x="672.0" y="184.1" width="98" height="16" fill="var(--paper)"/>
+          <text class="t-lab" x="768.0" y="197.1" text-anchor="end">散熱／液冷 -2.8%</text>
+        </a>
+        <a class="node" href="../../?r=library/industry/2026-10-22_高速傳輸連接器產業報告.md" target="_top" aria-label="看連接器產業報告">
+          <circle cx="458.0" cy="173.0" r="5" fill="var(--paper)"/>
+          <circle class="pt" data-name="連接器" data-x="67" data-y="-2.45" cx="458.0" cy="173.0" r="5"/>
+          <rect x="468.0" y="164.0" width="76" height="16" fill="var(--paper)"/>
+          <text class="t-lab" x="470.0" y="177.0" text-anchor="start">連接器 -2.5%</text>
+        </a>
+        <a class="node" href="../../?r=library/industry/2026-10-22_電源電力產業報告.md" target="_top" aria-label="看電源／電力產業報告">
+          <circle cx="850.0" cy="318.5" r="5" fill="var(--paper)"/>
+          <circle class="pt" data-name="電源／電力" data-x="95" data-y="-5.13" cx="850.0" cy="318.5" r="5"/>
+          <rect x="860.0" y="309.5" width="98" height="16" fill="var(--paper)"/>
+          <text class="t-lab" x="862.0" y="322.5" text-anchor="start">電源／電力 -5.1%</text>
+        </a>
+        <line x1="40" y1="472" x2="920" y2="472" stroke="var(--rule)" stroke-width="0.8"/>
+        <circle cx="48" cy="492" r="5" fill="var(--soft-tint)" stroke="var(--muted)" stroke-width="1"/>
+        <text class="t-sub" x="60" y="496">題材（點了看產業報告）</text>
+        <circle cx="236" cy="492" r="6" fill="var(--accent-tint)" stroke="var(--accent)" stroke-width="1.2"/>
+        <text class="t-sub" x="248" y="496">焦點：跌最深的 PCB／載板</text>
+        <line x1="440" y1="492" x2="464" y2="492" stroke="var(--link)" stroke-width="1" stroke-dasharray="4,3"/>
+        <text class="t-sub" x="472" y="496">加權指數當日跌幅</text>
+        <text class="t-sub" x="920" y="496" text-anchor="end">y 軸 0 ～ -7%，x 軸 40% ～ 100%</text>
+      </svg>
+    </div>
+    <p class="note"><b>怎麼讀：</b>每個點是一個題材，x 是題材本益比在自己 5 年歷史的分位（產業追蹤日報 2026-10-30），y 是 10/30 成分股收盤漲跌幅的中位數（data/market.db）。13 個題材的相關係數 -0.63；本益比分位 90% 以上的 7 個題材跌幅中位數 -5.1%，其餘 6 個 -3.3%。只有一天、13 個點，是描述不是規律。點題材名稱可看產業報告。</p>
+  </div>
+</body>
+</html>
