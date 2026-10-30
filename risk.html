@@ -95,6 +95,10 @@ details.box > summary { cursor: pointer; font-weight: 700; padding: 10px 16px; }
 details.box ul { margin: 0; padding: 4px 16px 12px 34px; }
 details.box li { font-size: 13.5px; color: var(--ink-2); line-height: 1.8; }
 footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
+table.scn input[type="number"] { width: 72px; padding: 4px 6px; text-align: right; font-variant-numeric: tabular-nums; }
+table.scn input[type="checkbox"] { padding: 0; accent-color: var(--accent); }
+table.scn td.desc { white-space: normal; min-width: 220px; max-width: 360px; color: var(--ink-2); font-size: 12.5px; text-align: left; }
+.jump { font-size: 13px; }
 .owner { display: flex; flex-direction: column; gap: 1px; margin: 0 0 8px; font-size: 13px; line-height: 1.5; }
 .owner a { color: var(--ink-2); text-decoration: none; width: fit-content; }
 .owner a:hover { color: var(--ink); text-decoration: underline; }
@@ -117,7 +121,8 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
     </nav>
   </header>
   <nav class="tabs" aria-label="實驗室"><a href="risk.html" aria-current="page">風控回測</a></nav>
-  <p class="sub">輸入持股和能接受的最大回檔，用 2021 年以來的台股日資料回測十種做法，看哪幾套守得住。全部在你的瀏覽器裡算，持股只存在這台電腦，不會上傳。這是歷史回測，不是投資建議。</p>
+  <p class="sub">輸入持股和能接受的最大回檔，用 2021 年以來的台股日資料回測十種做法，看哪幾套守得住。全部在你的瀏覽器裡算，持股只存在這台電腦，不會上傳。這是歷史回測，不是投資建議。
+    <a class="jump" href="#scenario">↓ 跳到未來情境推估</a></p>
 
   <div class="setup">
     <div class="panel">
@@ -168,6 +173,14 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
   <p class="hint">同一組持股，把「固定防守部位」和「防守部位＋趨勢濾網」的防守資產換成不同的債券、黃金或現金，看哪一種真的擋得住。最後一欄是「只靠股債比、要守住上限，股票最多能放多少」（事後校準）。</p>
   <div class="tbl" id="defCmp"></div>
 
+  <h2 id="scenario">未來情境推估 <span class="n">未來 12 個月，可以改情境、機率和假設</span></h2>
+  <p class="hint">回測看的是過去；這裡把持股套進幾種未來的總經劇本。每檔持股對加權、費半、美債殖利率、匯率、黃金的敏感度用 2021 年以來的週資料估計，乘上你設的情境變動。預設的六種情境和機率來自<a href="reports.html?r=library%2Fmarket%2F2026-10-31_%E7%B8%BD%E7%B6%93%E6%83%85%E5%A2%83%E6%8E%A8%E4%BC%B0.md">總經情境推估（2026-10-31）</a>，是作者的主觀判斷，請改成你自己的看法。</p>
+  <div class="tbl"><table class="t scn" id="scnIn"></table></div>
+  <div class="row"><button class="primary" id="scnRun">重新推估</button><button id="scnAdd">＋ 自訂情境</button><button id="scnReset">還原預設</button><span class="hint" id="scnMsg"></span></div>
+  <div class="strip" id="scnStrip"></div>
+  <div class="tbl" id="scnOut" style="margin-top:10px"></div>
+  <details class="box"><summary>各持股在各情境的推估</summary><div class="tbl" id="scnHold" style="border:0"></div></details>
+
   <h2>淨值走勢 <span class="n">對數座標，起點 = 1</span></h2>
   <div class="panel"><div class="legend" id="legend"></div><p class="hint" style="margin:0">勾選要畫的做法，兩張圖一起變。</p><div class="chart" id="navChart"></div></div>
 
@@ -193,6 +206,7 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
       <li>股價：台股上市櫃公司（公司池）和常見 ETF 的還原權值日收盤，每天收盤後更新。</li>
       <li>上市不到回測起點的 ETF，上市前用同類代理補：台股市值型、主動式 → 0050；高股息 → 0056；美股 → 00646；債券 → 現金。持股體檢會標出哪幾檔用了代理。</li>
       <li>範例組合只是示範不同風格的持股，不是推薦。</li>
+      <li>未來情境推估是線性外推：敏感度 × 情境變動，債券另加一年約 4% 的票息；極端情境下可能失準。股票只用加權、費半、匯率三個因子，債券只用殖利率和匯率，黃金 ETF 用「美元金價 × 美元兌台幣」；和大盤關係很弱的個股（解釋力 R² 低於 0.15）只留打 75 折的加權敏感度。上市不滿一年的 ETF 用同類代理的敏感度。</li>
       <li>台灣掛牌的債券 ETF 多半是美元長天期債（美債 20 年、投資級公司債），台幣計價含匯率；2022 年升息時它們本身就跌了兩到三成，和股票一起跌。防守資產不一定擋得住每一次，換成現金比較看看。</li>
       <li>你的持股多半是「今天回頭看」選的，過去漲很多的股票會讓絕對報酬看起來很漂亮，請只比較方案之間的差別。</li>
       <li>「靜態減碼」的股票比例是用同一段歷史反推的，換一段行情不一定守得住。</li>
@@ -220,6 +234,18 @@ const PRESETS = [
   ["主動式 ETF 組合", [["00981A", 35000], ["00980A", 35000], ["00982A", 30000]]],
   ["台美股＋短債", [["0050", 30000], ["00646", 30000], ["00662", 20000], ["00864B", 20000]]],
 ];
+// 未來情境（12 個月）：[名稱, 機率%, 加權%, 費半%, 美10年殖利率變動(百分點), 美元兌台幣%, 黃金%, 劇本]
+const SCN_DEFAULT = [
+  ["A 軟著陸＋AI 續航", 25, 15, 25, -0.5, -3, 0, "美伊停火、油價回 80 美元、Fed 停止升息；2027 年資本支出上修，外資回補、台幣升"],
+  ["B 高利率盤整", 30, 0, -5, 0.2, 1, 5, "現況延續：Fed 升一碼後按兵不動，油價 100～120，AI 評價卡住但獲利撐住"],
+  ["C AI 評價修正", 20, -20, -35, -0.6, 4, 10, "2027 年資本支出持平或下修，自由現金流疑慮擴散，外資續賣"],
+  ["D 油價衝擊、停滯性通膨", 12, -18, -20, 0.6, 3, 20, "美伊擴大、布蘭特 150 美元；通膨 4～5%，Fed 連續升息，股債一起跌"],
+  ["E 美國衰退、急降息", 8, -25, -30, -1.5, 1, 15, "就業轉弱、衰退，Fed 降息 1.5 個百分點以上，長債大漲"],
+  ["F 台海或制裁尾部", 5, -40, -25, -0.5, 12, 25, "封鎖、制裁或嚴重出口管制；台股重挫、台幣大貶"],
+];
+const SCN_STORE = "risklab-scn-v1";
+const BOND_CARRY = 0.04;
+let SCN = null;
 // 防守資產：減碼目的地選單和比較表都用
 const DEF_ASSETS = [
   ["CASH", "現金"],
@@ -562,7 +588,99 @@ async function run() {
   const ref = { id: "twii", label: "參考：加權指數", color: color(10), nav: tw, st: stats(tw, days, 0, null, p.B), ref: true };
   LAST = { out, ref, days, p, codes, agg, defOf, total, s, e, R, base, risky, mix, kStatic, defCmp };
   render(LAST);
+  scenarioRender(LAST);
   $("#status").textContent = "";
+}
+
+// ---------- 未來情境 ----------
+function loadScn() {
+  try { const x = JSON.parse(localStorage.getItem(SCN_STORE) || "null"); if (Array.isArray(x) && x.length) return x; } catch (e) {}
+  return SCN_DEFAULT.map(r => [true, ...r]);
+}
+function saveScn() { try { localStorage.setItem(SCN_STORE, JSON.stringify(SCN)); } catch (e) {} }
+function drawScnInputs() {
+  const num = (i, j, step) => `<input type="number" step="${step}" data-i="${i}" data-j="${j}" value="${SCN[i][j]}">`;
+  $("#scnIn").innerHTML = `<thead><tr><th class="l">用</th><th class="l">情境</th><th>機率 %</th><th>加權 %</th><th>費半 %（美元）</th><th>美 10 年殖利率（點）</th><th>美元兌台幣 %</th><th>黃金 %（美元）</th><th class="l">劇本</th></tr></thead><tbody>${
+    SCN.map((r, i) => `<tr><td class="l"><input type="checkbox" data-i="${i}" data-j="0"${r[0] ? " checked" : ""} aria-label="使用這個情境"></td>
+      <td class="l"><input data-i="${i}" data-j="1" value="${esc(r[1])}" style="width:150px" aria-label="情境名稱"></td>
+      <td>${num(i, 2, 1)}</td><td>${num(i, 3, 1)}</td><td>${num(i, 4, 1)}</td><td>${num(i, 5, 0.1)}</td><td>${num(i, 6, 0.5)}</td><td>${num(i, 7, 1)}</td>
+      <td class="desc"><input data-i="${i}" data-j="8" value="${esc(r[8])}" style="width:100%" aria-label="劇本說明"></td></tr>`).join("")}</tbody>`;
+}
+$("#scnIn").addEventListener("change", e => {
+  const t = e.target, i = +t.dataset.i, j = +t.dataset.j;
+  if (isNaN(i)) return;
+  SCN[i][j] = j === 0 ? t.checked : (j === 1 || j === 8) ? t.value : (+t.value || 0);
+  saveScn();
+  if (LAST) scenarioRender(LAST);
+});
+$("#scnRun").onclick = () => { if (LAST) scenarioRender(LAST); };
+$("#scnAdd").onclick = () => { SCN.push([true, "自訂情境", 10, 0, 0, 0, 0, 0, "自己寫劇本"]); saveScn(); drawScnInputs(); if (LAST) scenarioRender(LAST); };
+$("#scnReset").onclick = () => { SCN = SCN_DEFAULT.map(r => [true, ...r]); saveScn(); drawScnInputs(); if (LAST) scenarioRender(LAST); };
+
+function betaOf(code) {
+  const m = IX.tickers[code];
+  if (!m) return { b: [1, 0, 0, 0, 0], e: 0.2, note: "沒有資料，當作和加權一樣" };
+  if (m.b) return { b: m.b, e: m.e || 0 };
+  const pm = m.p && IX.tickers[m.p];
+  if (pm && pm.b) return { b: pm.b, e: (pm.e || 0) * 1.5, note: `上市不滿一年，用 ${m.p} 的敏感度` };
+  return { b: [1, 0, 0, 0, 0], e: 0.3, note: "歷史太短，當作和加權一樣" };
+}
+function assetScn(code, f, cash) {
+  if (code === "CASH") return cash;
+  const { b } = betaOf(code), m = IX.tickers[code];
+  const soxx = f.sox - (IX.fac && IX.fac.soxOnTw || 1.15) * f.tw;
+  return b[0] * f.tw + b[1] * soxx + b[2] * f.dtnx / 100 + b[3] * f.fx + b[4] * f.gold + (m && m.k === "bond" ? BOND_CARRY : 0);
+}
+const randn = (() => { let sp = null; return () => { if (sp != null) { const v = sp; sp = null; return v; } let u = 0, v = 0; while (!u) u = Math.random(); v = Math.random(); const r = Math.sqrt(-2 * Math.log(u)); sp = r * Math.sin(2 * Math.PI * v); return r * Math.cos(2 * Math.PI * v); }; })();
+
+function scenarioRender(L) {
+  const { codes, agg, total, defOf, p } = L;
+  const rows = SCN.filter(r => r[0]);
+  if (!rows.length) { $("#scnMsg").textContent = "至少勾一個情境"; return; }
+  $("#scnMsg").textContent = "";
+  const fOf = r => ({ tw: r[3] / 100, sox: r[4] / 100, dtnx: r[5], fx: r[6] / 100, gold: r[7] / 100 });
+  // 兩種配置：原持股、加上「固定防守部位」（股票部位拿出整個組合 defPct 放到減碼目的地）
+  const w0 = codes.map(c => agg[c] / total);
+  const riskyIdx = codes.map((c, j) => j).filter(j => !defOf[codes[j]]);
+  const riskySum = riskyIdx.reduce((a, j) => a + w0[j], 0);
+  const kDef = riskySum > 0 ? Math.max(0, (riskySum - p.defPct) / riskySum) : 1;
+  const w1 = w0.map((w, j) => riskyIdx.includes(j) ? w * kDef : w);
+  const destW = 1 - w1.reduce((a, b) => a + b, 0);
+  const port = (w, f, withDest) => w.reduce((a, x, j) => a + x * assetScn(codes[j], f, p.cash), 0) + (withDest ? destW * assetScn(p.dest, f, p.cash) : 0);
+  const idio = w => Math.sqrt(w.reduce((a, x, j) => a + (x * betaOf(codes[j]).e) ** 2, 0));
+  const sd0 = idio(w0);
+  const per = rows.map(r => { const f = fOf(r); return { r, f, a: port(w0, f, false), d: port(w1, f, true), each: codes.map(c => assetScn(c, f, p.cash)) }; });
+  // 蒙地卡羅：依機率抽情境，因子加不確定性，再加每檔自身波動
+  const probs = rows.map(r => Math.max(0, +r[2] || 0)), ps = probs.reduce((a, b) => a + b, 0) || 1;
+  const N = 6000, xa = new Float64Array(N), xd = new Float64Array(N);
+  const es = codes.map(c => betaOf(c).e);
+  for (let n = 0; n < N; n++) {
+    let u = Math.random() * ps, k = 0; while (k < rows.length - 1 && u > probs[k]) { u -= probs[k]; k++; }
+    const f0 = per[k].f;
+    const f = { tw: f0.tw + 0.08 * randn(), sox: f0.sox + 0.12 * randn(), dtnx: f0.dtnx + 0.3 * randn(), fx: f0.fx + 0.02 * randn(), gold: f0.gold + 0.08 * randn() };
+    let a = 0, d = 0;
+    codes.forEach((c, j) => { const r = assetScn(c, f, p.cash) + es[j] * randn(); a += w0[j] * r; d += w1[j] * r; });
+    d += destW * assetScn(p.dest, f, p.cash);
+    xa[n] = a; xd[n] = d;
+  }
+  const q = (x, pp) => { const s = Float64Array.from(x).sort(); return s[Math.floor(pp * (s.length - 1))]; };
+  const lossP = x => x.filter(v => v < -p.B).length / x.length;
+  const mean = x => x.reduce((a, b) => a + b, 0) / x.length;
+  const dn = p.defPct > 0 ? `加 ${pc(p.defPct)} ${esc(p.destName)}` : "加防守（固定防守比例是 0）";
+  $("#scnStrip").innerHTML = [
+    ["機率加權中位數", `${sgn(q(xa, 0.5))} → ${sgn(q(xd, 0.5))}`],
+    ["5% 最差情況", `${sgn(q(xa, 0.05))} → ${sgn(q(xd, 0.05))}`],
+    ["95% 最好情況", `${sgn(q(xa, 0.95))} → ${sgn(q(xd, 0.95))}`],
+    [`一年虧超過上限 ${Math.round(p.B * 100)}% 的機率`, `${pct(lossP(xa), 0)} → ${pct(lossP(xd), 0)}`],
+    ["期望值", `${sgn(mean(xa))} → ${sgn(mean(xd))}`],
+  ].map(([k, v]) => `<div><span class="k">${k}</span><span class="v">${v}</span></div>`).join("") +
+    `<div><span class="k">箭頭</span><span class="v" style="font-weight:400">原持股 → ${dn}</span></div>`;
+  $("#scnOut").innerHTML = `<table class="t"><thead><tr><th class="l">情境</th><th>機率</th><th>原持股</th><th>範圍（±個股自身波動）</th><th>${dn}</th><th class="l">劇本</th></tr></thead><tbody>${
+    per.map(x => `<tr><td class="l">${esc(x.r[1])}</td><td>${pct((+x.r[2] || 0) / ps, 0)}</td><td class="dd"><b>${sgn(x.a)}</b></td>
+      <td>${sgn(x.a - sd0)}～${sgn(x.a + sd0)}</td><td>${sgn(x.d)}</td><td class="l" style="white-space:normal;color:var(--ink-2);font-size:12.5px">${esc(x.r[8])}</td></tr>`).join("")}</tbody></table>
+    <div class="hint" style="padding:6px 12px">機率會自動換算成合計 100%。減碼目的地和固定防守比例用上面「風險預算與參數」的設定。</div>`;
+  $("#scnHold").innerHTML = `<table class="t"><thead><tr><th class="l">持股</th><th>比例</th>${per.map(x => `<th>${esc(x.r[1].split(" ")[0])}</th>`).join("")}<th class="l">備註</th></tr></thead><tbody>${
+    codes.map((c, j) => { const bo = betaOf(c); return `<tr><td class="l">${esc(c)} ${esc(IX.tickers[c] ? IX.tickers[c].n : "")}</td><td>${pct(w0[j])}</td>${per.map(x => `<td>${sgn(x.each[j])}</td>`).join("")}<td class="l">${bo.note ? `<span class="chip warn">${esc(bo.note)}</span>` : ""}</td></tr>`; }).join("")}</tbody></table>`;
 }
 
 // ---------- 畫面 ----------
@@ -707,6 +825,8 @@ function lineChart(el, days, S, opt) {
   $("#start").value = st.s && starts.includes(st.s) ? st.s : (starts.find(d => d >= "2021-07-01") || starts[0]);
   setHoldings(st.h);
   $("#run").onclick = run;
+  SCN = loadScn();
+  drawScnInputs();
   await run();
 })();
 </script>
