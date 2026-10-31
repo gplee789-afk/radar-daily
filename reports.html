@@ -58,6 +58,29 @@ button { cursor: pointer; }
 .track .tr .d { color: var(--ink-3); }
 .track .ok { color: var(--accent); } .track .ng { color: var(--ink-3); }
 .track .acc { color: var(--ink-3); font-size: 12px; margin-top: 8px; }
+/* 下檔風險（radar/downside.py）：今日大盤下面 */
+.risk .rbody { display: grid; grid-template-columns: 200px 1fr 300px; gap: 18px 32px; align-items: start; }
+@media (max-width: 900px) { .risk .rbody { grid-template-columns: 1fr 1fr; } .risk .rin { grid-column: 1 / -1; } }
+@media (max-width: 560px) { .risk .rbody { grid-template-columns: 1fr; } }
+.risk .rbody > div { min-width: 0; }
+.risk .tw { overflow-x: auto; }
+.risk .big { font-size: 44px; font-weight: 800; line-height: 1.05; font-variant-numeric: tabular-nums; letter-spacing: -1px; }
+.risk table { border-collapse: collapse; width: 100%; font-size: 13px; font-variant-numeric: tabular-nums; }
+.risk th, .risk td { padding: 5px 6px; border-bottom: 1px dashed var(--line); text-align: right; white-space: nowrap; }
+.risk th { color: var(--ink-3); font-weight: 600; font-size: 12px; }
+.risk th:first-child, .risk td:first-child { text-align: left; }
+.risk td .u { color: var(--ink-3); font-size: 11.5px; display: block; }
+.risk .badge { display: inline-block; font-size: 11.5px; padding: 0 7px; border-radius: 99px; font-weight: 600; }
+.risk .badge.hi { background: color-mix(in srgb, var(--down) 22%, var(--panel)); color: var(--down); }
+.risk .badge.mid { background: var(--bg); color: var(--ink-2); border: 1px solid var(--line); }
+.risk .badge.lo { background: color-mix(in srgb, var(--up) 18%, var(--panel)); color: var(--up); }
+.risk .rin .kv { margin-bottom: 8px; }
+.risk .zone { font-size: 13px; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); line-height: 1.6; }
+.risk .zone b { color: var(--down); }
+.risk .chart { margin-top: 14px; }
+.risk .chart svg { display: block; width: 100%; height: auto; }
+.risk .chart svg text { font-size: 11px; fill: var(--ink-3); }
+.risk .foot { color: var(--ink-3); font-size: 12px; margin-top: 8px; }
 
 /* 搜尋＋區塊捷徑：捲動時固定在上方 */
 .toolbar { position: sticky; top: 0; z-index: 5; background: var(--bg); display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px;
@@ -223,6 +246,7 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
   </header>
 
   <section class="hero hide" id="hero" aria-labelledby="heroTitle"></section>
+  <section class="hero risk hide" id="risk" aria-labelledby="riskTitle"></section>
 
   <div class="toolbar">
     <input id="q" type="search" placeholder="搜尋報告標題，例如：記憶體、玻璃基板、估值" aria-label="搜尋報告">
@@ -273,7 +297,7 @@ const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const TAG = { "每天自動": "auto", "每月自動": "auto", "每週更新": "auto", "不定期更新": "ask", "每天自動＋深挖": "ask" };
 const SHOW = 4;
-let CATS = [], ALL = [], GROUPS = [], HERO = null;
+let CATS = [], ALL = [], GROUPS = [], HERO = null, RISK = null;
 
 (function theme() {
   let t = null;
@@ -336,6 +360,62 @@ function hero(h) {
   $("#hero").classList.remove("hide");
 }
 
+// 下檔風險：分位數迴歸的讀數（未來 3、6、12 個月報酬的 5%、10%、中位數、90% 分位）
+const lvl = pct => pct >= 70 ? ["hi", "偏大"] : pct <= 30 ? ["lo", "偏小"] : ["mid", "正常"];
+const pp = x => (x > 0 ? "+" : x < 0 ? "−" : "") + Math.abs(x).toFixed(0) + "%";
+function riskBox(R) {
+  if (!R || !R.h || !R.h["12"]) return;
+  const h12 = R.h["12"], [cls12, word12] = lvl(h12.pct);
+  const md = d => d.slice(5).replace("-", "/");
+  const rows = ["3", "6", "12"].filter(k => R.h[k]).map(k => {
+    const q = R.h[k], [c, w] = lvl(q.pct);
+    return `<tr><td>${k} 個月</td>
+      <td>${pp(q.q05)}<span class="u">一般 ${pp(q.u05)}</span></td><td>${pp(q.q10)}<span class="u">一般 ${pp(q.u10)}</span></td>
+      <td>${pp(q.q50)}<span class="u">一般 ${pp(q.u50)}</span></td><td>${pp(q.q90)}<span class="u">一般 ${pp(q.u90)}</span></td>
+      <td><span class="badge ${c}" title="目前 5% 分位比歷史 ${q.pct}% 的月份更差">${w}</span></td></tr>`;
+  }).join("");
+  const nfWord = R.nfci_pct >= 70 ? "偏緊" : R.nfci_pct <= 30 ? "偏鬆" : "中性";
+  const z = R.redzone;
+  const zone = z ? (z.in
+    ? `<b>在紅區</b>${z.since ? `（${z.since.replace("-", "/")} 起）` : ""}：融資餘額 12 個月 ${pp(z.margin12)}（歷史第 ${z.margin_pct} 百分位），加權 12 個月漲幅第 ${z.idx_pct} 百分位。歷史上紅區之後，12 個月內跌逾 15% 的機率約加倍，但也有之後繼續上漲的時候。`
+    : `不在紅區：融資餘額 12 個月 ${pp(z.margin12)}（第 ${z.margin_pct} 百分位），加權 12 個月漲幅第 ${z.idx_pct} 百分位。`) : "";
+  // 歷史：12 個月 5% 分位的即時預測
+  const H = h12.hist || [];
+  let chart = "";
+  if (H.length > 12) {
+    const W = 900, Ht = 150, ml = 40, mr = 8, mt = 8, mb = 20;
+    const vals = H.flatMap(x => [x[1], x[2]]).concat([h12.q05]);
+    // 金融海嘯時金融情勢超出過去範圍，線性分位數迴歸外推到 −90% 以下；圖只畫到 −60%，超出的貼在底線
+    const FLOOR = -60, cut = H.filter(x => x[1] < FLOOR).map(x => x[0]);
+    let lo = Math.max(Math.min(...vals), FLOOR), hi = Math.max(...vals); const pad = (hi - lo) * 0.08; lo -= pad; hi += pad;
+    const X = i => ml + (W - ml - mr) * i / H.length, Y = v => mt + (Ht - mt - mb) * (hi - Math.max(v, FLOOR)) / (hi - lo);
+    const path = j => H.map((x, i) => (i ? "L" : "M") + X(i).toFixed(1) + " " + Y(x[j]).toFixed(1)).join("");
+    let g = "";
+    for (let v = Math.ceil(lo / 10) * 10; v <= hi; v += 10) g += `<line x1="${ml}" x2="${W - mr}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)"/><text x="${ml - 5}" y="${Y(v) + 4}" text-anchor="end">${v}%</text>`;
+    H.forEach((x, i) => { if (x[0].endsWith("-01") && +x[0].slice(0, 4) % 4 === 2) g += `<text x="${X(i)}" y="${Ht - 4}" text-anchor="middle">${x[0].slice(0, 4)}</text>`; });
+    g += `<path d="${path(2)}" fill="none" stroke="var(--ink-3)" stroke-dasharray="4 4" stroke-width="1.2"/>`;
+    g += `<path d="${path(1)}" fill="none" stroke="var(--down)" stroke-width="1.8"/>`;
+    g += `<circle cx="${X(H.length)}" cy="${Y(h12.q05)}" r="4" fill="var(--accent)"/>`;
+    chart = `<div class="chart"><div class="lbl">未來 12 個月最壞 5% 情況的即時預測（2006 年起，只用當時已知資料）：<span style="color:var(--down)">— 模型</span>　<span>- - 一般時期</span>　<span style="color:var(--accent)">● 今天</span></div>
+      <svg viewBox="0 0 ${W} ${Ht}" role="img" aria-label="未來 12 個月 5% 分位報酬的歷史即時預測">${g}</svg>
+      ${cut.length ? `<div class="foot" style="margin-top:2px">${cut[0].replace("-", "/")}～${cut[cut.length - 1].replace("-", "/")} 金融海嘯期間，金融情勢超出過去的範圍，線性模型外推出低於 ${FLOOR}% 的讀數（圖上貼在底線）；這種極端時期的數字只能當「風險極高」看，不能照字面解讀。</div>` : ""}</div>`;
+  }
+  const link = R.report ? `<a href="#" data-path="${esc(R.report)}">方法與回測 →</a>` : "";
+  $("#risk").innerHTML = `<div class="hhd"><h2 id="riskTitle">下檔風險</h2>
+      <span class="when">加權指數到 ${md(R.asof)}・美國金融情勢到 ${md(R.nfci_date)}・每天更新</span>${link}</div>
+    <div class="rbody">
+      <div><div class="lbl">未來 12 個月，有 10% 機率跌超過</div><div class="big ${cls12 === "hi" ? "down" : ""}">${pp(R.h["12"].q10)}</div>
+        <div class="verdict ${cls12 === "hi" ? "down" : ""}">12 個月下檔風險${word12}</div>
+        <div class="lbl" style="margin-top:4px">一般時期是 ${pp(R.h["12"].u10)}</div></div>
+      <div class="tw"><table><thead><tr><th>期間</th><th>最壞 5%</th><th>最壞 10%</th><th>中位數</th><th>最好 10%</th><th>下檔</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <div class="rin"><div class="kv"><span>美國金融情勢</span><span><b>${R.nfci.toFixed(2)}</b>（歷史第 ${R.nfci_pct} 百分位，${nfWord}）</span>
+        <span>加權 12 個月</span><span><b>${pp(R.mom12)}</b>（歷史第 ${R.mom_pct} 百分位）</span></div>
+        ${zone ? `<div class="zone">${zone}</div>` : ""}</div>
+    </div>${chart}
+    <div class="foot">分位數迴歸（Adrian、Boyarchenko &amp; Giannone 2019）：用美國金融情勢和台股 12 個月漲幅，估計未來報酬分布的左尾。它告訴你風險有多大，不是預測漲跌；樣本外比「用歷史分布」好，但歷史上大跌次數少。研究輔助，不是投資建議。</div>`;
+  $("#risk").classList.remove("hide");
+}
+
 function render() {
   YEAR = ALL.map(r => r.date || "").sort().pop().slice(0, 4);
   const newest = CATS.filter(c => c.items.length && c.key !== "premarket").map(c => ({ ...c.items[0], cat: c.name }));
@@ -378,6 +458,7 @@ $("#q").addEventListener("input", () => {
   const q = $("#q").value.trim().toLowerCase();
   $("#latestSec").classList.toggle("hide", !!q);
   $("#hero").classList.toggle("hide", !!q || !HERO);
+  $("#risk").classList.toggle("hide", !!q || !RISK);
   document.querySelectorAll(".cat").forEach(c => {
     let hit = 0;
     c.querySelectorAll("li").forEach(x => {
@@ -469,7 +550,7 @@ function setView(v) {
   const g = v === "graph";
   $("#graphSec").classList.toggle("hide", !g);
   $("#gnav").classList.toggle("hide", g);
-  if (g) { ["#groups", "#latestSec", "#hero"].forEach(s => $(s).classList.add("hide")); openGraph(); }
+  if (g) { ["#groups", "#latestSec", "#hero", "#risk"].forEach(s => $(s).classList.add("hide")); openGraph(); }
   else { $("#groups").classList.remove("hide"); $("#q").dispatchEvent(new Event("input")); }
   history.replaceState(null, "", location.pathname + location.search + (g ? "#graph" : ""));
 }
@@ -653,7 +734,8 @@ function buildGraph(G) {
   GROUPS = L.groups || [{ key: "all", name: "報告類別", desc: "", cats: CATS }];
   ALL = CATS.flatMap(c => c.items.map(r => ({ ...r, cat: c.name })));
   HERO = L.hero || null;
-  render(); hero(HERO);
+  RISK = L.downside || null;
+  render(); hero(HERO); riskBox(RISK);
   if (location.hash === "#graph") setView("graph");
   const want = new URLSearchParams(location.search).get("r");
   if (want) openDoc(want);
