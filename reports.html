@@ -362,7 +362,7 @@ function hero(h) {
 
 // 下檔風險：分位數迴歸的讀數（未來 3、6、12 個月報酬的 5%、10%、中位數、90% 分位）
 const lvl = pct => pct >= 70 ? ["hi", "偏大"] : pct <= 30 ? ["lo", "偏小"] : ["mid", "正常"];
-const pp = x => (x > 0 ? "+" : x < 0 ? "−" : "") + Math.abs(x).toFixed(0) + "%";
+const pp = x => Math.abs(x) < 0.5 ? "0%" : (x > 0 ? "+" : "−") + Math.abs(x).toFixed(0) + "%";
 function riskBox(R) {
   if (!R || !R.h || !R.h["12"]) return;
   const h12 = R.h["12"], [cls12, word12] = lvl(h12.pct);
@@ -375,10 +375,11 @@ function riskBox(R) {
       <td><span class="badge ${c}" title="目前 5% 分位比歷史 ${q.pct}% 的月份更差">${w}</span></td></tr>`;
   }).join("");
   const nfWord = R.nfci_pct >= 70 ? "偏緊" : R.nfci_pct <= 30 ? "偏鬆" : "中性";
-  const z = R.redzone;
-  const zone = z ? (z.in
-    ? `<b>在紅區</b>${z.since ? `（${z.since.replace("-", "/")} 起）` : ""}：融資餘額 12 個月 ${pp(z.margin12)}（歷史第 ${z.margin_pct} 百分位），加權 12 個月漲幅第 ${z.idx_pct} 百分位。歷史上紅區之後，12 個月內跌逾 15% 的機率約加倍，但也有之後繼續上漲的時候。`
-    : `不在紅區：融資餘額 12 個月 ${pp(z.margin12)}（第 ${z.margin_pct} 百分位），加權 12 個月漲幅第 ${z.idx_pct} 百分位。`) : "";
+  // 槓桿型大跌警示：融資 24 個月成長的 logit 機率，和 24 個月紅區
+  const z = R.lev;
+  const zone = z ? `<div style="font-weight:700;margin-bottom:2px">槓桿型大跌警示：12 個月內跌逾 15% 的機率 <b>${z.prob}%</b>（平常 ${z.base}%）</div>
+    融資餘額 24 個月 ${pp(z.margin24)}（歷史第 ${z.margin_pct} 百分位），加權 24 個月 ${pp(z.mom24)}（第 ${z.mom_pct} 百分位）${z.zone ? "，<b>在紅區</b>" : "，不在紅區"}。
+    <span style="color:var(--ink-3)">融資快速擴張之後比較容易大跌（2011、2022 都抓到），但外部衝擊抓不到（2008、2020），2018、2024 也誤報過。</span>` : "";
   // 歷史：12 個月 5% 分位的即時預測
   const H = h12.hist || [];
   let chart = "";
@@ -398,7 +399,7 @@ function riskBox(R) {
     g += `<circle cx="${X(H.length)}" cy="${Y(h12.q05)}" r="4" fill="var(--accent)"/>`;
     chart = `<div class="chart"><div class="lbl">未來 12 個月最壞 5% 情況的即時預測（2006 年起，只用當時已知資料）：<span style="color:var(--down)">— 模型</span>　<span>- - 一般時期</span>　<span style="color:var(--accent)">● 今天</span></div>
       <svg viewBox="0 0 ${W} ${Ht}" role="img" aria-label="未來 12 個月 5% 分位報酬的歷史即時預測">${g}</svg>
-      ${cut.length ? `<div class="foot" style="margin-top:2px">${cut[0].replace("-", "/")}～${cut[cut.length - 1].replace("-", "/")} 金融海嘯期間，金融情勢超出過去的範圍，線性模型外推出低於 ${FLOOR}% 的讀數（圖上貼在底線）；這種極端時期的數字只能當「風險極高」看，不能照字面解讀。</div>` : ""}</div>`;
+      ${cut.length ? `<div class="foot" style="margin-top:2px">${cut[0].replace("-", "/")}～${cut[cut.length - 1].replace("-", "/")} 有讀數低於 ${FLOOR}%（圖上貼在底線）：金融情勢超出過去範圍時模型會外推出極端值，只能當「風險極高」看。</div>` : ""}</div>`;
   }
   const link = R.report ? `<a href="#" data-path="${esc(R.report)}">方法與回測 →</a>` : "";
   $("#risk").innerHTML = `<div class="hhd"><h2 id="riskTitle">下檔風險</h2>
@@ -409,10 +410,11 @@ function riskBox(R) {
         <div class="lbl" style="margin-top:4px">一般時期是 ${pp(R.h["12"].u10)}</div></div>
       <div class="tw"><table><thead><tr><th>期間</th><th>最壞 5%</th><th>最壞 10%</th><th>中位數</th><th>最好 10%</th><th>下檔</th></tr></thead><tbody>${rows}</tbody></table></div>
       <div class="rin"><div class="kv"><span>美國金融情勢</span><span><b>${R.nfci.toFixed(2)}</b>（歷史第 ${R.nfci_pct} 百分位，${nfWord}）</span>
-        <span>加權 12 個月</span><span><b>${pp(R.mom12)}</b>（歷史第 ${R.mom_pct} 百分位）</span></div>
+        <span>加權 12 個月</span><span><b>${pp(R.mom12)}</b>（歷史第 ${R.mom_pct} 百分位）</span>
+        ${R.range3 != null ? `<span>近 3 個月波動</span><span><b>${R.range3.toFixed(1)}%</b> 月內高低差（歷史第 ${R.range_pct} 百分位）</span>` : ""}</div>
         ${zone ? `<div class="zone">${zone}</div>` : ""}</div>
     </div>${chart}
-    <div class="foot">分位數迴歸（Adrian、Boyarchenko &amp; Giannone 2019）：用美國金融情勢和台股 12 個月漲幅，估計未來報酬分布的左尾。它告訴你風險有多大，不是預測漲跌；樣本外比「用歷史分布」好，但歷史上大跌次數少。研究輔助，不是投資建議。</div>`;
+    <div class="foot">用美國金融情勢、台股 12 個月漲幅和近 3 個月波動，估計未來報酬分布的左尾：分位數迴歸（Adrian、Boyarchenko &amp; Giannone 2019）和梯度提升的平均，訓練資料從 ${esc(R.train_from || "1988")} 起。1998～2026 年樣本外三段都比「用歷史分布」準。它告訴你風險有多大，不是預測漲跌；歷史上大跌次數少。研究輔助，不是投資建議。</div>`;
   $("#risk").classList.remove("hide");
 }
 
