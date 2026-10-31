@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>實驗室｜風控回測</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22 color=%22%23f5b461%22%3E%3Cpath d=%22M256 28 452 100V236Q452 392 256 484 60 392 60 236V100Z%22 fill=%22none%22 stroke=%22currentColor%22 stroke-width=%2242%22 stroke-linejoin=%22round%22/%3E%3Cpath d=%22M150 300 222 230 276 282 362 190%22 fill=%22none%22 stroke=%22currentColor%22 stroke-width=%2242%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E">
-<meta name="description" content="輸入自己的持股，用 2021 年以來的台股日資料回測幾套風控規則：每月再平衡、風險平價、靜態減碼、波動目標、回檔減碼、趨勢濾網、移動停損，看哪一套守得住你設的最大回檔。全部在瀏覽器裡算，持股不會上傳。">
+<meta name="description" content="輸入自己的持股，用 2021 年以來的台股日資料回測幾套風控規則：固定防守部位、靜態減碼、趨勢濾網、月底均線（Faber）、時間序列動能，看哪一套守得住你設的最大回檔。全部在瀏覽器裡算，持股不會上傳。">
 <style>
 :root {
   color-scheme: dark;
@@ -69,6 +69,21 @@ table.t .l { text-align: left; }
 table.t tr.pass td.dd { font-weight: 700; }
 table.t tr.ref td { color: var(--ink-3); }
 .sw { display: inline-block; width: 12px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+.sw.dash { background: none; height: 0; border-top: 2px dashed var(--up); border-radius: 0; }
+/* 比較表：點一列展開做法、回檔、股票部位 */
+#cmp { container-type: inline-size; }
+table.t tr.pl { cursor: pointer; }
+table.t tr.pl:hover td, table.t tr.pl.open td { background: color-mix(in srgb, var(--ink) 5%, transparent); }
+button.exp { all: unset; cursor: pointer; display: inline-flex; align-items: center; }
+button.exp:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.car { display: inline-block; width: 14px; color: var(--ink-3); font-size: 10px; transition: transform .15s; }
+tr.pl.open .car { transform: rotate(90deg); color: var(--accent); }
+table.t tr.det > td { white-space: normal; text-align: left; padding: 6px 0 14px; }
+.det-in { position: sticky; left: 0; width: 100cqw; padding: 0 14px; }
+.det-in p { margin: 4px 0; font-size: 13.5px; color: var(--ink-2); line-height: 1.7; }
+.det-in p b { color: var(--ink); }
+.mini-h { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; font-size: 12.5px; color: var(--ink-3); margin: 12px 0 2px; }
+.mini-h b { color: var(--ink); font-size: 13px; }
 .chip { display: inline-block; font-size: 11.5px; padding: 0 7px; border-radius: 99px; white-space: nowrap; }
 .chip.ok { background: var(--up-bg); color: var(--up); }
 .chip.warn { background: var(--warn-bg); color: var(--warn); }
@@ -121,7 +136,7 @@ table.scn td.desc { white-space: normal; min-width: 220px; max-width: 360px; col
     </nav>
   </header>
   <nav class="tabs" aria-label="實驗室"><a href="risk.html" aria-current="page">風控回測</a></nav>
-  <p class="sub">輸入持股和能接受的最大回檔，用 2021 年以來的台股日資料回測十種做法，看哪幾套守得住。全部在你的瀏覽器裡算，持股只存在這台電腦，不會上傳。這是歷史回測，不是投資建議。
+  <p class="sub">輸入持股和能接受的最大回檔，用 2021 年以來的台股日資料回測八種做法，看哪幾套守得住。全部在你的瀏覽器裡算，持股只存在這台電腦，不會上傳。這是歷史回測，不是投資建議。
     <a class="jump" href="#scenario">↓ 跳到未來情境推估</a></p>
 
   <div class="setup">
@@ -150,12 +165,10 @@ table.scn td.desc { white-space: normal; min-width: 220px; max-width: 360px; col
         <label class="field" title="從股票部位再拿出整個組合的這個比例，放到防守資產">固定防守比例 %<input id="defPct" type="number" min="0" max="100" step="5" value="30"></label>
       </div>
       <details class="adv">
-        <summary>進階參數（不填就跟著上限）</summary>
+        <summary>進階參數（趨勢濾網）</summary>
         <div class="params">
           <label class="field">趨勢均線<select id="maN"><option value="60">60 日</option><option value="120" selected>120 日</option><option value="200">200 日</option></select></label>
           <label class="field">跌破均線時股票<select id="trendCut"><option value="0.5" selected>減半</option><option value="0">全出</option></select></label>
-          <label class="field">移動停損 %<input id="trailPct" type="number" min="3" max="60" step="1" placeholder="＝上限"></label>
-          <label class="field">波動目標 %<input id="volPct" type="number" min="3" max="60" step="1" placeholder="＝上限"></label>
         </div>
       </details>
       <p class="hint" style="margin:8px 0 0">「減碼的錢轉去」用在所有會減碼的做法；「固定防守比例」是把整個組合的這個比例長期放在防守資產。</p>
@@ -165,9 +178,13 @@ table.scn td.desc { white-space: normal; min-width: 220px; max-width: 360px; col
 
   <div class="strip" id="strip"></div>
 
-  <h2>十種做法的比較 <span class="n" id="periodN"></span></h2>
-  <p class="hint">「守得住」＝整段期間最大回檔沒超過你的上限。報酬／回檔＝年化報酬 ÷ 最大回檔，越高越有效率。</p>
+  <h2>八種做法的比較 <span class="n" id="periodN"></span></h2>
+  <p class="hint">「守得住」＝整段期間最大回檔沒超過你的上限。報酬／回檔＝年化報酬 ÷ 最大回檔，越高越有效率。<b style="color:var(--ink-2)">點任一列</b>展開這個做法的規則、從高點的回檔和股票部位。</p>
   <div class="tbl" id="cmp"></div>
+  <details class="box" id="ddBox">
+    <summary>所有做法的從高點回檔 <span class="hint" style="font-weight:400">虛線是你的上限</span></summary>
+    <div style="padding:0 16px 12px"><div class="legend" id="legend2"></div><div class="chart" id="ddChart"></div></div>
+  </details>
 
   <h2>防守資產比較 <span class="n" id="defN"></span></h2>
   <p class="hint">同一組持股，把「固定防守部位」和「防守部位＋趨勢濾網」的防守資產換成不同的債券、黃金或現金，看哪一種真的擋得住。最後一欄是「只靠股債比、要守住上限，股票最多能放多少」（事後校準）。</p>
@@ -182,10 +199,7 @@ table.scn td.desc { white-space: normal; min-width: 220px; max-width: 360px; col
   <details class="box"><summary>各持股在各情境的推估</summary><div class="tbl" id="scnHold" style="border:0"></div></details>
 
   <h2>淨值走勢 <span class="n">對數座標，起點 = 1</span></h2>
-  <div class="panel"><div class="legend" id="legend"></div><p class="hint" style="margin:0">勾選要畫的做法，兩張圖一起變。</p><div class="chart" id="navChart"></div></div>
-
-  <h2>從高點的回檔 <span class="n">虛線是你的上限</span></h2>
-  <div class="panel"><div class="chart" id="ddChart"></div></div>
+  <div class="panel"><div class="legend" id="legend"></div><p class="hint" style="margin:0">勾選要畫的做法，和比較表下面「所有做法的從高點回檔」一起變。</p><div class="chart" id="navChart"></div></div>
 
   <h2>壓力期間 <span class="n">期間內從起點算的最深跌幅</span></h2>
   <div class="tbl" id="stress"></div>
@@ -197,7 +211,7 @@ table.scn td.desc { white-space: normal; min-width: 220px; max-width: 360px; col
   <div class="tbl" id="check"></div>
 
   <details class="box" open>
-    <summary>十種做法的規則（B = 你設的最大回檔）</summary>
+    <summary>八種做法的規則（B = 你設的最大回檔）</summary>
     <ul class="rules" id="rulesList"></ul>
   </details>
   <details class="box">
@@ -210,6 +224,8 @@ table.scn td.desc { white-space: normal; min-width: 220px; max-width: 360px; col
       <li>台灣掛牌的債券 ETF 多半是美元長天期債（美債 20 年、投資級公司債），台幣計價含匯率；2022 年升息時它們本身就跌了兩到三成，和股票一起跌。防守資產不一定擋得住每一次，換成現金比較看看。</li>
       <li>你的持股多半是「今天回頭看」選的，過去漲很多的股票會讓絕對報酬看起來很漂亮，請只比較方案之間的差別。</li>
       <li>「靜態減碼」的股票比例是用同一段歷史反推的，換一段行情不一定守得住。</li>
+      <li>資料從 2021 年 6 月開始，時間序列動能要 6 個月、月底均線要 10 個月才算得出訊號（從 2021-07 起算，分別約在 2022 年 1 月、5 月），之前一律當作股票全拿，所以 2022 年空頭的前段月底均線沒躲到。</li>
+      <li>拿掉的做法：每月再平衡、風險平價、波動目標、回檔減碼、每檔移動停損。用十組範例持股、上限 10／15／20% 共 30 次回測，它們的「報酬／回檔」多半不如原樣持有，守得住的次數也沒比較多。試過沒放的：條件式波動目標（Bongaerts 等，2020）30 次都輸原樣持有；Grossman–Zhou（1993）回檔控制守得住，但跌近底線後股票部位回不來，年化報酬少一大截。</li>
       <li>資料從 2021 年 6 月開始，沒有包含 2020 年疫情崩跌和 2008 年金融海嘯；碰到那種等級的事件，所有方案的回檔都可能更深。</li>
       <li>沒有計算股利稅、融資、跳空滑價；訊號當天收盤算、當天收盤成交，實際做會晚一點。</li>
     </ul>
@@ -259,21 +275,20 @@ const DEF_ASSETS = [
 const DESTS = [...DEF_ASSETS.map(([c, n]) => [c, c === "CASH" ? n : `${c} ${n}`]), ["OTHER", "其他代號…"]];
 const PLANS = [
   { id: "hold", name: "原樣持有", rule: p => "買進後不動，比例隨漲跌漂移。當作對照組。" },
-  { id: "rebal", name: "每月再平衡", rule: p => "每月最後一個交易日調回原本的比例。" },
-  { id: "invvol", name: "風險平價", rule: p => "股票部位改成「波動越大、比例越小」（近一年波動的倒數），每月調整；股票總比例不變。" },
   { id: "defense", name: "固定防守部位", rule: p => `從股票部位拿出整個組合的 ${pc(p.defPct)}，長期放在 ${p.destName}（原本勾防守的部位另外照留），其餘照原比例，每月再平衡。` },
   { id: "static", name: "靜態減碼", rule: p => `股票部位固定打折，其餘放 ${p.destName}，每月再平衡。折數是用這段歷史找出「最大回檔剛好不超過 B」的最高值（事後校準，偏樂觀）。` },
-  { id: "voltgt", name: "波動目標", rule: p => `股票部位 = min(1, ${pc(p.vol)} ÷ 近 60 日年化波動)，每週五調整，減下來的放 ${p.destName}。` },
-  { id: "ddcut", name: "回檔減碼", rule: p => `整個組合從高點跌 ${pc(p.B / 2)} → 股票減半；跌 ${pc(p.B * 0.75)} → 股票全出（轉去 ${p.destName}）。股票組合站回 60 日線才全部買回，並從那天重算高點。` },
-  { id: "trend", name: "趨勢濾網", rule: p => `股票組合跌破 ${p.maN} 日線 → 股票${p.trendCut ? "減半" : "全出"}（轉去 ${p.destName}）；站回去 → 恢復。` },
-  { id: "trail", name: "每檔移動停損", rule: p => `每一檔從持有後的高點跌 ${pc(p.trail)} 就賣掉轉去 ${p.destName}；站回 60 日線再用原比例買回。` },
+  { id: "trend", name: "趨勢濾網", rule: p => `股票組合跌破 ${p.maN} 日線 → 股票${p.trendCut ? "減半" : "全出"}（轉去 ${p.destName}）；站回去 → 恢復。每天看。` },
+  { id: "faber", name: "月底均線", rule: p => `Faber（2007）的做法：每月最後一個交易日看股票組合在不在 10 個月（210 日）均線之上；在上面就股票全拿，跌破就股票全出（轉去 ${p.destName}），下個月底再看。一個月只看一次，比每天看的趨勢濾網少來回洗。` },
+  { id: "tsmom", name: "時間序列動能", rule: p => `Moskowitz、Ooi、Pedersen（2012）的時間序列動能：每月最後一個交易日看股票組合過去 6 個月的報酬，贏過同期現金利息就股票全拿，輸了就股票全出（轉去 ${p.destName}）。` },
   { id: "deftrend", name: "防守部位＋趨勢濾網", rule: p => `「固定防守部位」再加上趨勢濾網：股票組合跌破 ${p.maN} 日線時，剩下的股票部位再${p.trendCut ? "減半" : "全出"}。` },
+  { id: "deffaber", name: "防守部位＋月底均線", rule: p => `「固定防守部位」再加上月底均線：月底股票組合跌破 10 個月均線時，剩下的股票部位全出；站回去就恢復。每月再平衡。` },
 ];
 const STRESS = [
   ["2022 空頭", "2022-01-04", "2022-10-25"], ["2024/7～8 修正", "2024-07-11", "2024-08-05"],
   ["2025/4 關稅", "2025-03-26", "2025-04-09"], ["2026/6", "2026-06-01", "2026-06-30"],
 ];
 let IX = null, PX = {}, LAST = null;
+const OPEN = new Set();   // 比較表展開中的做法，重新回測後照樣展開
 
 const fmt = (x, d = 1) => x == null || !isFinite(x) ? "—" : x.toFixed(d);
 const pc = x => Math.round(x * 1000) / 10 + "%";
@@ -339,13 +354,12 @@ function params() {
   const destName = dest === "CASH" ? "現金" : dest + (IX && IX.tickers[dest] ? " " + IX.tickers[dest].n : "");
   return { B, start: $("#start").value, cost: (+$("#cost").value || 0) / 100, cash: (+$("#cash").value || 0) / 100,
     dest, destName, defPct: Math.min(1, Math.max(0, (+$("#defPct").value || 0) / 100)),
-    maN: +$("#maN").value, trendCut: +$("#trendCut").value,
-    trail: $("#trailPct").value ? +$("#trailPct").value / 100 : B, vol: $("#volPct").value ? +$("#volPct").value / 100 : B };
+    maN: +$("#maN").value, trendCut: +$("#trendCut").value };
 }
 function encodeState() {
   const p = params();
   return "h=" + getHoldings().map(([c, a, d]) => `${c}:${a}:${d ? 1 : 0}`).join(",") + `&b=${Math.round(p.B * 100)}&s=${p.start}&c=${p.cost * 100}&r=${p.cash * 100}`
-    + `&d=${p.dest}&x=${Math.round(p.defPct * 100)}&m=${p.maN}&k=${p.trendCut}` + ($("#trailPct").value ? `&t=${$("#trailPct").value}` : "") + ($("#volPct").value ? `&v=${$("#volPct").value}` : "");
+    + `&d=${p.dest}&x=${Math.round(p.defPct * 100)}&m=${p.maN}&k=${p.trendCut}`;
 }
 function saveState() { try { localStorage.setItem(STORE, encodeState()); } catch (e) {} }
 function loadState() {
@@ -358,8 +372,6 @@ function loadState() {
   if (q.get("x")) $("#defPct").value = q.get("x");
   if (q.get("m")) $("#maN").value = q.get("m");
   if (q.get("k")) $("#trendCut").value = q.get("k");
-  if (q.get("t")) $("#trailPct").value = q.get("t");
-  if (q.get("v")) $("#volPct").value = q.get("v");
   if (q.get("c")) $("#cost").value = q.get("c");
   if (q.get("r")) $("#cash").value = q.get("r");
   return { h: h.length ? h : EXAMPLE, s: q.get("s") };
@@ -459,44 +471,27 @@ async function run() {
   // 股票部位（固定比例）的每日報酬、價格指數
   const mix = R.map(row => risky.reduce((a, j) => a + row[j] * base[j], 0) / riskySum);
   const mixPx = new Float64Array(n); { let v = 1; for (let i = 0; i < n; i++) { v *= 1 + mix[i]; mixPx[i] = v; } }
-  const ma60 = rollMean(mixPx, 60), maT = rollMean(mixPx, p.maN), vol60 = rollStd(mix, 60).map(x => x * Math.sqrt(252));
+  const maT = rollMean(mixPx, p.maN), ma210 = rollMean(mixPx, 210);
   const monthEnd = i => i === n - 1 || days[i + 1].slice(0, 7) !== days[i].slice(0, 7);
   // 股票部位乘上 kk，減下來的放到目的地（現金或防守資產）
   const scaled = kk => { const w = base.slice(); for (const j of risky) w[j] *= kk; w[DEST] += 1 - w.reduce((a, b) => a + b, 0); return w; };
   const kDef = Math.max(0, (riskySum - p.defPct) / riskySum);     // 固定防守：整個組合的 defPct 移到目的地
   const monthly = tgt => (i, st) => monthEnd(i) ? tgt : null;
+  // 月底才看的訊號：up(i) 為真股票全拿、否則全出；k0 是固定防守之後的股票比例（有防守就每月再平衡）
+  const atMonthEnd = (up, k0) => {
+    let cur = null;
+    return (i, st) => {
+      if (i > 0 && !monthEnd(i)) return null;
+      const kk = k0 * (up(i) ? 1 : 0);
+      if (kk !== cur || k0 < 1) { cur = kk; return scaled(kk); }
+      return null;
+    };
+  };
+  const above210 = i => isNaN(ma210[i]) || mixPx[i] > ma210[i];                                    // 10 個月均線還沒算出來時當在線上
+  const mom126 = i => i < 126 || mixPx[i] / mixPx[i - 126] - 1 > Math.pow(1 + p.cash, 0.5) - 1;   // 6 個月報酬贏過現金
 
   const fns = {
     hold: () => null,
-    rebal: monthly(base),
-    invvol: (() => {
-      const each = risky.map(j => rollStd(R.map(r => r[j]), 250));
-      return (i, st) => {
-        if (!monthEnd(i)) return null;
-        const iv = risky.map((j, x) => isNaN(each[x][i]) || each[x][i] <= 0 ? null : 1 / each[x][i]);
-        if (iv.some(v => v == null)) return base;
-        const sum = iv.reduce((a, b) => a + b, 0), w = base.slice();
-        risky.forEach((j, x) => { w[j] = riskySum * iv[x] / sum; });
-        return w;
-      };
-    })(),
-    voltgt: (i, st) => {
-      const dow = new Date(days[i] + "T00:00:00Z").getUTCDay();
-      if (dow !== 5 || isNaN(vol60[i])) return null;
-      return scaled(Math.min(1, p.vol / vol60[i]));
-    },
-    ddcut: (() => {
-      let lvl = 1;
-      return (i, st) => {
-        const dd = st.nav[i] / st.peak - 1;
-        let nw = lvl;
-        if (lvl < 1 && mixPx[i] > ma60[i]) { nw = 1; st.peak = st.nav[i]; }
-        else if (dd <= -0.75 * p.B) nw = 0;
-        else if (dd <= -0.5 * p.B) nw = Math.min(lvl, 0.5);
-        if (nw !== lvl) { lvl = nw; return scaled(nw); }
-        return null;
-      };
-    })(),
     trend: (() => {
       let cur = null;
       return (i, st) => {
@@ -506,6 +501,8 @@ async function run() {
         return null;
       };
     })(),
+    faber: atMonthEnd(above210, 1),
+    tsmom: atMonthEnd(mom126, 1),
     defense: monthly(scaled(kDef)),
     deftrend: (() => {
       let cur = null;
@@ -515,24 +512,7 @@ async function run() {
         return null;
       };
     })(),
-    trail: (() => {
-      const px = risky.map(j => { const a = new Float64Array(n); let v = 1; for (let i = 0; i < n; i++) { v *= 1 + R[i][j]; a[i] = v; } return a; });
-      const ma = px.map(a => rollMean(a, 60));
-      const on = risky.map(() => true), pk = px.map(a => a[0]);
-      return (i, st) => {
-        let changed = false;
-        risky.forEach((j, x) => {
-          const v = px[x][i];
-          if (on[x]) { pk[x] = Math.max(pk[x], v); if (v < pk[x] * (1 - p.trail)) { on[x] = false; changed = true; } }
-          else if (!isNaN(ma[x][i]) && v > ma[x][i]) { on[x] = true; pk[x] = v; changed = true; }
-        });
-        if (!changed) return null;
-        const w = st.w.slice();
-        risky.forEach((j, x) => { if (!on[x] && w[j] > 0) { w[DEST] += w[j]; w[j] = 0; } });
-        risky.forEach((j, x) => { if (on[x] && w[j] === 0) { const add = Math.min(base[j], w[DEST]); w[j] = add; w[DEST] -= add; } });
-        return w;
-      };
-    })(),
+    deffaber: atMonthEnd(above210, kDef),
   };
   $("#status").textContent = "回測中…";
   await new Promise(r => setTimeout(r, 0));
@@ -547,7 +527,7 @@ async function run() {
   const out = PLANS.map((pl, x) => {
     const r = simulate(R, base, risky, fns[pl.id], p.cost, cashD);
     const label = pl.id === "static" ? `${pl.name}（${found ? `股票 ${Math.round(kStatic * 100)}%` : "股票全出也守不住"}）` : pl.id === "defense" ? `${pl.name} ${pc(p.defPct)}` : pl.name;
-    const on = ["hold", "rebal", "defense", "static", "trend"].includes(pl.id);     // 圖上預設只畫幾條，其他在圖例勾
+    const on = ["hold", "defense", "static", "trend", "faber"].includes(pl.id);     // 圖上預設只畫幾條，其他在圖例勾
     return { ...pl, label, color: color(x), on, ...r, st: stats(r.nav, days, r.turns, r.eq, p.B) };
   });
   // 防守資產比較：同一組持股，把目的地換成每一種防守資產
@@ -698,14 +678,28 @@ function render(L) {
     ["加權指數最大回檔", sgn(ref.st.mdd)],
   ].map(([k, v]) => `<div><span class="k">${k}</span><span class="v">${v}</span></div>`).join("");
 
+  // 每個做法一列，點了展開下面那列（規則、回檔圖、股票部位圖）；參考列不展開
   const rows = [...out, ref].map(o => {
-    const ok = o.st.mdd >= -p.B;
-    return `<tr class="${o.ref ? "ref" : ok ? "pass" : ""}"><td class="l"><span class="sw" style="background:${o.color}"></span>${esc(o.label)}</td>
+    const ok = o.st.mdd >= -p.B, op = !o.ref && OPEN.has(o.id);
+    const name = `<span class="car">${o.ref ? "" : "▶"}</span><span class="sw" style="background:${o.color}"></span>${esc(o.label)}`;
+    return `<tr class="${o.ref ? "ref" : (ok ? "pass " : "") + "pl" + (op ? " open" : "")}"${o.ref ? "" : ` data-id="${o.id}"`}>
+      <td class="l">${o.ref ? name : `<button class="exp" aria-expanded="${op}">${name}</button>`}</td>
       <td>${o.ref ? "" : ok ? '<span class="chip ok">守得住</span>' : '<span class="chip bad">超過</span>'}</td>
       <td class="dd">${sgn(o.st.mdd)}</td><td>${pct(o.st.vol)}</td><td>${sgn(o.st.cagr)}</td><td>${fmt(o.st.ratio, 2)}</td>
-      <td>${sgn(o.st.worstM)}</td><td>${o.ref ? "—" : pct(o.st.avgEq, 0)}</td><td>${o.ref ? "—" : fmt(o.st.turn, 1)}</td><td>${o.st.over}</td></tr>`;
+      <td>${sgn(o.st.worstM)}</td><td>${o.ref ? "—" : pct(o.st.avgEq, 0)}</td><td>${o.ref ? "—" : fmt(o.st.turn, 1)}</td><td>${o.st.over}</td></tr>`
+      + (o.ref ? "" : `<tr class="det"${op ? "" : " hidden"}><td colspan="10"></td></tr>`);
   }).join("");
   $("#cmp").innerHTML = `<table class="t"><thead><tr><th class="l">做法</th><th>上限</th><th>最大回檔</th><th>年化波動</th><th>年化報酬</th><th>報酬／回檔</th><th>最差單月</th><th>平均股票部位</th><th>年換手</th><th>超過上限天數</th></tr></thead><tbody>${rows}</tbody></table>`;
+  $("#cmp").onclick = ev => {
+    const tr = ev.target.closest("tr.pl");
+    if (!tr) return;
+    const open = !tr.classList.contains("open"), id = tr.dataset.id;
+    tr.classList.toggle("open", open);
+    tr.querySelector(".exp").setAttribute("aria-expanded", open);
+    tr.nextElementSibling.hidden = !open;
+    if (open) { OPEN.add(id); planDetail(L, id, tr.nextElementSibling.firstElementChild); } else OPEN.delete(id);
+  };
+  for (const id of OPEN) { const tr = $("#cmp").querySelector(`tr.pl[data-id="${id}"]`); if (tr) planDetail(L, id, tr.nextElementSibling.firstElementChild); }
 
   // 壓力期間（從期間起點算的最深跌幅）＋ 最近 10 個交易日
   const per = STRESS.filter(([, b, e]) => b >= days[0] && b <= days[days.length - 1]);
@@ -755,9 +749,43 @@ function render(L) {
       <td class="dd">${sgn(d.def.mdd)} ${okc(d.def.mdd)}</td><td>${sgn(d.def.cagr)}</td>
       <td class="dd">${sgn(d.dt.mdd)} ${okc(d.dt.mdd)}</td><td>${sgn(d.dt.cagr)}</td>
       <td>${d.kNeed == null ? '<span class="chip bad">全出也守不住</span>' : pct(d.kNeed, 0)}</td></tr>`).join("")}</tbody></table>`;
-  $("#legend").innerHTML = [...out, ref].map((o, x) => `<label><input type="checkbox" data-i="${x}" ${o.on === false ? "" : "checked"}><span class="sw" style="background:${o.color}"></span>${esc(o.label)}</label>`).join("");
-  $("#legend").onchange = ev => { const all = [...L.out, L.ref]; all[+ev.target.dataset.i].on = ev.target.checked; draw(L); };
+  // 淨值圖和「所有做法的回檔」各有一組圖例，勾選互相同步
+  const legendHTML = [...out, ref].map((o, x) => `<label><input type="checkbox" data-i="${x}" ${o.on === false ? "" : "checked"}><span class="sw" style="background:${o.color}"></span>${esc(o.label)}</label>`).join("");
+  for (const el of [$("#legend"), $("#legend2")]) {
+    el.innerHTML = legendHTML;
+    el.onchange = ev => {
+      const x = ev.target.dataset.i, on = ev.target.checked;
+      [...L.out, L.ref][+x].on = on;
+      document.querySelectorAll(`.legend input[data-i="${x}"]`).forEach(c => { c.checked = on; });
+      draw(L);
+    };
+  }
   draw(L);
+}
+
+// 比較表展開的那一列：規則、最深一次回檔的經過、這個做法 vs 對照的回檔圖、股票部位圖
+function planDetail(L, id, td) {
+  const { p, days } = L;
+  const o = L.out.find(x => x.id === id), base = id === "hold" ? L.ref : L.out[0];
+  const dd = o.st.dd, n = dd.length;
+  let lo = 0; for (let i = 1; i < n; i++) if (dd[i] < dd[lo]) lo = i;
+  let pk = lo; while (pk > 0 && dd[pk] < 0) pk--;
+  let rc = lo; while (rc < n && dd[rc] < 0) rc++;
+  const deep = o.st.mdd < 0
+    ? `最深一次 ${sgn(o.st.mdd)}：${days[pk]} 高點 → ${days[lo]} 低點（${lo - pk} 個交易日），${rc < n ? `${days[rc]} 回到高點（再 ${rc - lo} 個交易日）` : "到現在還沒回到高點"}。`
+    : "整段期間沒有回檔。";
+  const over = o.st.over ? `跌破上限 ${pct(-p.B, 0)} 的日子共 ${o.st.over} 天。` : `沒有一天跌破上限 ${pct(-p.B, 0)}。`;
+  const key = s => `<span><span class="sw" style="background:${s.color}"></span>${esc(s.label)}</span>`;
+  td.innerHTML = `<div class="det-in">
+    <p><b>做法</b>　${esc(o.rule(p))}</p>
+    <p><b>回檔</b>　${deep}${over}</p>
+    <div class="mini-h"><b>從高點的回檔</b>${key(o)}${key(base)}<span><span class="sw dash"></span>你的上限</span></div><div class="chart"></div>
+    <div class="mini-h"><b>股票部位</b><span>占整個組合；往下掉就是規則在減碼</span>${key(o)}${base.eq ? key(base) : ""}</div><div class="chart"></div>
+  </div>`;
+  const [c1, c2] = td.querySelectorAll(".chart");
+  const ser = (s, arr, op) => ({ c: s.color, y: Array.from(arr), lab: s.label, raw: arr, op });
+  lineChart(c1, days, [ser(base, base.st.dd, 0.5), ser(o, o.st.dd)], { dd: true, budget: -p.B, h: 200 });
+  lineChart(c2, days, [...(base.eq ? [ser(base, base.eq, 0.5)] : []), ser(o, o.eq)], { eq: true, h: 120 });
 }
 
 function draw(L) {
@@ -767,11 +795,13 @@ function draw(L) {
 }
 
 function lineChart(el, days, S, opt) {
-  const W = 1000, H = opt.dd ? 240 : 320, ml = 52, mr = 10, mt = 10, mb = 24;
+  // opt：log 對數淨值、dd 回檔（budget 畫上限虛線）、eq 股票部位 0～100%、h 圖高；s.op 線的透明度
+  const W = 1000, H = opt.h || (opt.dd ? 240 : 320), ml = 52, mr = 10, mt = 10, mb = 24;
   const n = days.length, step = Math.max(1, Math.floor(n / 600));
   let lo = Infinity, hi = -Infinity;
   for (const s of S) for (const v of s.y) { if (v < lo) lo = v; if (v > hi) hi = v; }
   if (opt.dd) { hi = 0; lo = Math.min(lo, opt.budget * 1.15); }
+  if (opt.eq) { lo = 0; hi = 1; }
   if (!isFinite(lo)) { el.innerHTML = ""; return; }
   const pad = (hi - lo) * 0.05 || 0.01; lo -= pad; if (!opt.dd) hi += pad;
   const X = i => ml + (W - ml - mr) * i / (n - 1), Y = v => mt + (H - mt - mb) * (hi - v) / (hi - lo);
@@ -779,6 +809,7 @@ function lineChart(el, days, S, opt) {
   // y 軸
   const ticks = [];
   if (opt.log) { for (const m of [0.5, 0.75, 1, 1.5, 2, 3, 4, 6, 8, 12, 16]) { const v = Math.log(m); if (v >= lo && v <= hi) ticks.push([v, m + "×"]); } }
+  else if (opt.eq) { for (const v of [0, 0.5, 1]) ticks.push([v, v * 100 + "%"]); }
   else { for (let v = 0; v >= lo; v -= 0.05) ticks.push([v, Math.round(v * 100) + "%"]); }
   for (const [v, t] of ticks) g += `<line x1="${ml}" x2="${W - mr}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)"/><text x="${ml - 6}" y="${Y(v) + 4}" text-anchor="end">${t}</text>`;
   // x 軸：每年 1 月
@@ -788,16 +819,16 @@ function lineChart(el, days, S, opt) {
     let d = "";
     for (let i = 0; i < n; i += step) d += (d ? "L" : "M") + X(i).toFixed(1) + " " + Y(s.y[i]).toFixed(1);
     d += "L" + X(n - 1).toFixed(1) + " " + Y(s.y[n - 1]).toFixed(1);
-    g += `<path d="${d}" fill="none" stroke="${s.c}" stroke-width="1.6" stroke-linejoin="round"/>`;
+    g += `<path d="${d}" fill="none" stroke="${s.c}" stroke-width="1.6" stroke-linejoin="round"${s.op ? ` stroke-opacity="${s.op}"` : ""}/>`;
   }
   g += `<line class="cur" x1="0" x2="0" y1="${mt}" y2="${H - mb}" stroke="var(--ink-3)" visibility="hidden"/>`;
-  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${opt.dd ? "回檔走勢" : "淨值走勢"}">${g}</svg><div class="tip"></div>`;
+  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${opt.dd ? "回檔走勢" : opt.eq ? "股票部位" : "淨值走勢"}">${g}</svg><div class="tip"></div>`;
   const svg = el.querySelector("svg"), tip = el.querySelector(".tip"), cur = el.querySelector(".cur");
   const move = ev => {
     const r = svg.getBoundingClientRect(), x = (ev.clientX - r.left) / r.width * W;
     const i = Math.max(0, Math.min(n - 1, Math.round((x - ml) / (W - ml - mr) * (n - 1))));
     cur.setAttribute("x1", X(i)); cur.setAttribute("x2", X(i)); cur.setAttribute("visibility", "visible");
-    tip.innerHTML = `<b>${days[i]}</b>` + S.map(s => `<div class="r"><span><span class="sw" style="background:${s.c}"></span>${esc(s.lab)}</span><span>${opt.dd ? (s.raw[i] * 100).toFixed(1) + "%" : s.raw[i].toFixed(2) + "×"}</span></div>`).join("");
+    tip.innerHTML = `<b>${days[i]}</b>` + S.map(s => `<div class="r"><span><span class="sw" style="background:${s.c}"></span>${esc(s.lab)}</span><span>${opt.dd || opt.eq ? (s.raw[i] * 100).toFixed(opt.eq ? 0 : 1) + "%" : s.raw[i].toFixed(2) + "×"}</span></div>`).join("");
     tip.style.display = "block";
     const px = (X(i) / W) * r.width;
     tip.style.left = (px > r.width / 2 ? px - tip.offsetWidth - 12 : px + 12) + "px";
