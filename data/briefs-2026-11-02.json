@@ -1,7 +1,7 @@
 {
  "date": "2026-11-02",
  "n_themes": 13,
- "method": "權重用 TEJ 2014 年起每年只用過去資料擬合的結果：事實四項合計 0.30、學界估值 0.45、券商共識 0.10、同業營收加速 0.10、動能 0.05；新聞、外資、賣鏟子沒有長期歷史可驗，不計分，只當證據。",
+ "method": "權重（2026-11-02 起）：營收驚喜 0.5、52 週高點 0.5；事實四項、學界估值、同業、券商共識、動能都不計分，只當證據；高基期的公司不給偏多。新聞、外資、賣鏟子沒有長期歷史可驗，不計分。",
  "synthesis": {
   "id": "synth",
   "name": "合成報告",
@@ -14,7 +14,7 @@
    "name": "營收加速",
    "short": "營收加速",
    "evidence": "穩健",
-   "weight": 0.075,
+   "weight": 0.0,
    "metric": "中位數 +4pp",
    "file": "briefs/2026-11-02/el-rev_accel.md"
   },
@@ -23,7 +23,7 @@
    "name": "營收創新高",
    "short": "創新高",
    "evidence": "穩健",
-   "weight": 0.075,
+   "weight": 0.0,
    "metric": "創高 21%",
    "file": "briefs/2026-11-02/el-rev_high12.md"
   },
@@ -32,7 +32,7 @@
    "name": "毛利率改善",
    "short": "毛利率",
    "evidence": "穩健",
-   "weight": 0.075,
+   "weight": 0.0,
    "metric": "中位數 +0.6pp",
    "file": "briefs/2026-11-02/el-gm_chg.md"
   },
@@ -41,16 +41,34 @@
    "name": "存貨去化",
    "short": "存貨",
    "evidence": "穩健",
-   "weight": 0.075,
+   "weight": 0.0,
    "metric": "中位數 +0.5pp",
    "file": "briefs/2026-11-02/el-inv_chg.md"
+  },
+  {
+   "id": "el-sus",
+   "name": "營收驚喜（標準化）",
+   "short": "營收驚喜",
+   "evidence": "穩健",
+   "weight": 0.5,
+   "metric": "中位數 +0.5",
+   "file": "briefs/2026-11-02/el-sus.md"
+  },
+  {
+   "id": "el-hi52",
+   "name": "接近一年高點（52 週）",
+   "short": "52 週高點",
+   "evidence": "穩健",
+   "weight": 0.5,
+   "metric": "中位數 82%",
+   "file": "briefs/2026-11-02/el-hi52.md"
   },
   {
    "id": "el-academic",
    "name": "學界估值（ML／V/P／GLS）",
    "short": "學界估值",
    "evidence": "穩健",
-   "weight": 0.45,
+   "weight": 0.0,
    "metric": "中位數 51",
    "file": "briefs/2026-11-02/el-academic.md"
   },
@@ -59,7 +77,7 @@
    "name": "題材熱度（同業營收加速）",
    "short": "同業熱度",
    "evidence": "穩健",
-   "weight": 0.1,
+   "weight": 0.0,
    "metric": "中位數 +5pp",
    "file": "briefs/2026-11-02/el-peer_accel.md"
   },
@@ -68,7 +86,7 @@
    "name": "券商共識修正",
    "short": "共識修正",
    "evidence": "只在多頭",
-   "weight": 0.1,
+   "weight": 0.0,
    "metric": "查不到資料",
    "file": "briefs/2026-11-02/el-consensus.md"
   },
@@ -77,7 +95,7 @@
    "name": "股價動能（12−1 個月）",
    "short": "動能",
    "evidence": "線索",
-   "weight": 0.05,
+   "weight": 0.0,
    "metric": "中位數 +94%",
    "file": "briefs/2026-11-02/el-px_mom.md"
   },
@@ -96,7 +114,7 @@
    "short": "外資",
    "evidence": "參考",
    "weight": 0.0,
-   "metric": "中位數 -0.54%",
+   "metric": "中位數 -0.58%",
    "file": "briefs/2026-11-02/el-ff.md"
   },
   {
@@ -141,13 +159,13 @@
    "id": "theme-server_system",
    "rank": 1,
    "name": "伺服器組裝／機櫃／機構",
-   "score": 63.3,
+   "score": 71.4,
    "delta": null,
    "view": "偏多",
    "companies": [
-    "鴻海",
-    "川湖",
-    "緯創"
+    "技嘉",
+    "神達",
+    "營邦"
    ],
    "file": "briefs/2026-11-02/theme-server_system.md"
   },
@@ -155,55 +173,55 @@
    "id": "theme-pcb_substrate",
    "rank": 2,
    "name": "PCB／載板／銅箔基板",
-   "score": 56.5,
+   "score": 65.5,
    "delta": null,
-   "view": "中性",
+   "view": "偏多",
    "companies": [
     "聯茂",
-    "台光電",
-    "台燿"
+    "富喬",
+    "景碩"
    ],
    "file": "briefs/2026-11-02/theme-pcb_substrate.md"
   },
   {
-   "id": "theme-interposer",
+   "id": "theme-testing",
    "rank": 3,
-   "name": "矽中介層",
-   "score": 52.1,
+   "name": "半導體測試",
+   "score": 60.6,
    "delta": null,
    "view": "中性",
    "companies": [
-    "力積電",
-    "聯電",
-    "世界"
+    "欣銓",
+    "矽格",
+    "旺矽"
    ],
-   "file": "briefs/2026-11-02/theme-interposer.md"
+   "file": "briefs/2026-11-02/theme-testing.md"
   },
   {
-   "id": "theme-adv_packaging",
+   "id": "theme-asic_ip",
    "rank": 4,
-   "name": "先進封裝",
-   "score": 50.3,
+   "name": "ASIC／矽智財",
+   "score": 59.7,
    "delta": null,
-   "view": "中性",
+   "view": "偏多",
    "companies": [
-    "台積電",
-    "萬潤",
-    "中砂"
+    "創意",
+    "智原",
+    "信驊"
    ],
-   "file": "briefs/2026-11-02/theme-adv_packaging.md"
+   "file": "briefs/2026-11-02/theme-asic_ip.md"
   },
   {
    "id": "theme-memory",
    "rank": 5,
    "name": "記憶體／儲存",
-   "score": 49.0,
+   "score": 58.4,
    "delta": null,
    "view": "中性",
    "companies": [
-    "華邦電",
-    "力積電",
-    "旺宏"
+    "晶豪科",
+    "十銓",
+    "漢科"
    ],
    "file": "briefs/2026-11-02/theme-memory.md"
   }
@@ -212,93 +230,93 @@
   {
    "id": "server_system",
    "name": "伺服器組裝／機櫃／機構",
-   "score": 63.3,
+   "score": 71.4,
    "rank": 1,
    "fact_rank": 8
   },
   {
    "id": "pcb_substrate",
    "name": "PCB／載板／銅箔基板",
-   "score": 56.5,
+   "score": 65.5,
    "rank": 2,
    "fact_rank": 1
   },
   {
+   "id": "testing",
+   "name": "半導體測試",
+   "score": 60.6,
+   "rank": 3,
+   "fact_rank": 7
+  },
+  {
+   "id": "asic_ip",
+   "name": "ASIC／矽智財",
+   "score": 59.7,
+   "rank": 4,
+   "fact_rank": 10
+  },
+  {
+   "id": "memory",
+   "name": "記憶體／儲存",
+   "score": 58.4,
+   "rank": 5,
+   "fact_rank": 4
+  },
+  {
+   "id": "humanoid",
+   "name": "人形機器人",
+   "score": 56.9,
+   "rank": 6,
+   "fact_rank": 3
+  },
+  {
    "id": "interposer",
    "name": "矽中介層",
-   "score": 52.1,
-   "rank": 3,
+   "score": 54.4,
+   "rank": 7,
    "fact_rank": 2
   },
   {
    "id": "adv_packaging",
    "name": "先進封裝",
-   "score": 50.3,
-   "rank": 4,
+   "score": 50.0,
+   "rank": 8,
    "fact_rank": 5
-  },
-  {
-   "id": "memory",
-   "name": "記憶體／儲存",
-   "score": 49.0,
-   "rank": 5,
-   "fact_rank": 4
-  },
-  {
-   "id": "testing",
-   "name": "半導體測試",
-   "score": 49.0,
-   "rank": 6,
-   "fact_rank": 7
-  },
-  {
-   "id": "humanoid",
-   "name": "人形機器人",
-   "score": 48.8,
-   "rank": 7,
-   "fact_rank": 3
   },
   {
    "id": "optical",
    "name": "光通訊／CPO",
-   "score": 46.1,
-   "rank": 8,
-   "fact_rank": 11
-  },
-  {
-   "id": "asic_ip",
-   "name": "ASIC／矽智財",
-   "score": 43.3,
+   "score": 49.0,
    "rank": 9,
-   "fact_rank": 10
-  },
-  {
-   "id": "interconnect",
-   "name": "高速傳輸／連接器",
-   "score": 42.7,
-   "rank": 10,
-   "fact_rank": 13
+   "fact_rank": 11
   },
   {
    "id": "cooling",
    "name": "散熱／液冷",
-   "score": 42.3,
-   "rank": 11,
+   "score": 47.3,
+   "rank": 10,
    "fact_rank": 6
-  },
-  {
-   "id": "power",
-   "name": "電源／電力",
-   "score": 41.1,
-   "rank": 12,
-   "fact_rank": 9
   },
   {
    "id": "facility_power",
    "name": "設施電力",
    "score": 39.7,
-   "rank": 13,
+   "rank": 11,
    "fact_rank": 12
+  },
+  {
+   "id": "power",
+   "name": "電源／電力",
+   "score": 38.1,
+   "rank": 12,
+   "fact_rank": 9
+  },
+  {
+   "id": "interconnect",
+   "name": "高速傳輸／連接器",
+   "score": 33.6,
+   "rank": 13,
+   "fact_rank": 13
   }
  ]
 }
