@@ -97,7 +97,7 @@ h2 { font-size: 18px; margin: 0; }
 .chips { display: flex; flex-wrap: wrap; gap: 4px; }
 .chip { font-size: 12.5px; padding: 1px 8px; border-radius: 6px; background: var(--chip); color: var(--ink-2); white-space: nowrap; }
 .chip.b { background: var(--up-bg); color: var(--up); font-weight: 600; }
-.chip.hot { text-decoration: line-through; text-decoration-thickness: 1.5px; }
+.chip.hot { text-decoration: underline dotted; text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
 .lbl { display: none; color: var(--ink-3); font-size: 12px; margin-right: 4px; }
 .detail { padding: 4px 16px 16px 58px; }
 .detail table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -143,7 +143,7 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 30px; }
   </section>
 
   <section class="sec hide" id="picksSec">
-    <div class="sec-hd"><h2>先看這幾家</h2><p>偏多、而且股價還沒大漲的公司</p></div>
+    <div class="sec-hd"><h2>先看這幾家</h2><p>觀點偏多（合成分數全市場前 20%）的公司</p></div>
     <div class="picks" id="picks"></div>
     <div id="bigSec" class="hide"><div class="subhd">權值股<small>加權指數前 30 大，股價多半跟著大盤走，題材的影響比較小</small></div>
     <div class="picks" id="bigPicks"></div></div>
@@ -154,7 +154,7 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 30px; }
     <div class="board" id="board">
       <div class="cols"><span>#</span><span>題材</span><span>觀點</span><span>營收／EPS 預估</span><span>估值</span><span>已大漲</span><span>候選股（點題材看全部）</span></div>
     </div>
-    <p class="legend">候選股依合成分數排序：<span class="up">紅色＝偏多</span>，加刪除線＝股價已大漲。「已大漲」看 12 個月漲幅是自身年波動的幾倍（1.25 倍以上）：權值股波動小，漲 90% 就算大漲；小型股波動大，要漲更多才算。估值看學界模型，越便宜分數越高。</p>
+    <p class="legend">候選股依合成分數排序：<span class="up">紅色＝偏多</span>，虛線底線＝股價已大漲（只是提示：兩年漲很多的股票平均報酬不比較差，但大跌機率較高）。「已大漲」看 12 個月漲幅是自身年波動的幾倍（1.25 倍以上）：權值股波動小，漲 90% 就算大漲；小型股波動大，要漲更多才算。估值看學界模型，越便宜分數越高。</p>
   </section>
 
   <section class="sec hide" id="leadsSec">
@@ -244,8 +244,9 @@ addEventListener("resize", () => { clearTimeout(chart.t); chart.t = setTimeout(c
 
 function picks(B) {
   const seen = new Set(), out = [];
+  // 2026-11-02 起不再排除「股價已大幅反映」：新分數下排除會扣分（research/2026-11-02_民間投資做法的交叉檢驗.md）
   for (const t of B.themes) for (const c of t.companies)
-    if (c.view === "偏多" && !hot(c) && !seen.has(c.code)) { seen.add(c.code); out.push({ ...c, theme: t.name }); }
+    if (c.view === "偏多" && !seen.has(c.code)) { seen.add(c.code); out.push({ ...c, theme: t.name }); }
   out.sort((a, b) => b.pct - a.pct);
   if (!out.length) return;
   // 加權指數前 30 大的權值股另外放：漲跌多半跟大盤、外資進出，不是題材挖出來的

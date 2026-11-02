@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>風控的保費與理賠</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&family=Noto+Serif:ital@0;1&family=Noto+Sans+TC:wght@400;500;600&family=Noto+Serif+TC:wght@400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* 配色：diagram-design 設定檔 taiwan-analysis（取自網站 radar/site_library.html） */
+    :root {
+      --paper: #0e0c0a; --node: #191512; --ink: #f2ebe3; --muted: #c2b3a3; --soft: #9c8c7c;
+      --rule: rgba(242,235,227,0.12); --accent: #f0a050; --accent-tint: rgba(240,160,80,0.12);
+      --soft-tint: rgba(194,179,163,0.20); --link: #f7c873;
+      --font-sans: 'Geist', 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', system-ui, sans-serif;
+      --font-serif: 'Instrument Serif', 'Noto Serif', 'Noto Serif TC', serif;
+      --font-mono: 'Geist Mono', ui-monospace, monospace;
+    }
+    body { font-family: var(--font-sans); background: var(--paper); color: var(--ink); padding: 20px 16px 24px; }
+    .frame { max-width: 1000px; margin: 0 auto; }
+    .diagram-container { width: 100%; overflow-x: auto; }
+    .eyebrow { font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 4px; }
+    h1 { font-family: var(--font-serif); font-size: clamp(1.4rem, 2.2vw + 0.7rem, 1.9rem); font-weight: 400; line-height: 1.2; margin-bottom: 14px; }
+    svg { width: 100%; min-width: 960px; display: block; }
+    .note { font-size: 13px; line-height: 1.75; color: var(--muted); margin-top: 12px; max-width: 900px; }
+    .note b { color: var(--ink); font-weight: 600; }
+    svg .grid { stroke: var(--ink); stroke-opacity: 0.08; stroke-width: 0.8; }
+    svg .axis { stroke: var(--ink); stroke-opacity: 0.20; stroke-width: 1; }
+    svg .ref { stroke: var(--link); stroke-width: 1; stroke-dasharray: 4,3; }
+    svg .pt { fill: var(--soft-tint); stroke: var(--muted); stroke-width: 1; }
+    svg .pt.focal { fill: var(--accent-tint); stroke: var(--accent); stroke-width: 1.4; }
+    svg .t-tick { fill: var(--muted); font: 400 11px var(--font-mono); }
+    svg .t-axis { fill: var(--muted); font: 500 12px var(--font-sans); }
+    svg .t-ref { fill: var(--link); font: 500 11px var(--font-sans); }
+    svg .t-lab { fill: var(--ink); font: 500 11px var(--font-sans); }
+    svg a.node { cursor: pointer; }
+    svg a.node:hover .pt, svg a.node:focus-visible .pt { stroke-width: 2; }
+    svg a.node:hover .t-lab { fill: var(--link); text-decoration: underline; }
+    @media print { .diagram-container { overflow-x: visible; } svg { min-width: 0; } }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">研究・2026-11-02</p>
+    <h1>固定格數是最便宜的長空頭保險</h1>
+    <div class="diagram-container">
+      <svg viewBox="0 0 960 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="ins-t ins-d">
+        <title id="ins-t">風控方法的保費與理賠</title>
+        <desc id="ins-d">以營收驚喜＋52 週高點選股（C10，排除高基期）為底，比較各種風控方法在 2010 年後每年少賺的幅度與 2008 年少虧的幅度；虛線是單純減少股票比例的對照。</desc>
+        <line class="grid" x1="90.0" y1="30" x2="90.0" y2="400"/><text class="t-tick" x="90.0" y="418" text-anchor="middle">0</text>
+        <line class="grid" x1="182.2" y1="30" x2="182.2" y2="400"/><text class="t-tick" x="182.2" y="418" text-anchor="middle">2</text>
+        <line class="grid" x1="274.4" y1="30" x2="274.4" y2="400"/><text class="t-tick" x="274.4" y="418" text-anchor="middle">4</text>
+        <line class="grid" x1="366.7" y1="30" x2="366.7" y2="400"/><text class="t-tick" x="366.7" y="418" text-anchor="middle">6</text>
+        <line class="grid" x1="458.9" y1="30" x2="458.9" y2="400"/><text class="t-tick" x="458.9" y="418" text-anchor="middle">8</text>
+        <line class="grid" x1="551.1" y1="30" x2="551.1" y2="400"/><text class="t-tick" x="551.1" y="418" text-anchor="middle">10</text>
+        <line class="grid" x1="643.3" y1="30" x2="643.3" y2="400"/><text class="t-tick" x="643.3" y="418" text-anchor="middle">12</text>
+        <line class="grid" x1="735.6" y1="30" x2="735.6" y2="400"/><text class="t-tick" x="735.6" y="418" text-anchor="middle">14</text>
+        <line class="grid" x1="827.8" y1="30" x2="827.8" y2="400"/><text class="t-tick" x="827.8" y="418" text-anchor="middle">16</text>
+        <line class="grid" x1="920.0" y1="30" x2="920.0" y2="400"/><text class="t-tick" x="920.0" y="418" text-anchor="middle">18</text>
+        <line class="grid" x1="90" y1="400.0" x2="920" y2="400.0"/><text class="t-tick" x="80" y="404.0" text-anchor="end">0</text>
+        <line class="grid" x1="90" y1="326.0" x2="920" y2="326.0"/><text class="t-tick" x="80" y="330.0" text-anchor="end">10</text>
+        <line class="grid" x1="90" y1="252.0" x2="920" y2="252.0"/><text class="t-tick" x="80" y="256.0" text-anchor="end">20</text>
+        <line class="grid" x1="90" y1="178.0" x2="920" y2="178.0"/><text class="t-tick" x="80" y="182.0" text-anchor="end">30</text>
+        <line class="grid" x1="90" y1="104.0" x2="920" y2="104.0"/><text class="t-tick" x="80" y="108.0" text-anchor="end">40</text>
+        <line class="grid" x1="90" y1="30.0" x2="920" y2="30.0"/><text class="t-tick" x="80" y="34.0" text-anchor="end">50</text>
+        <line class="axis" x1="90" y1="400" x2="920" y2="400"/><line class="axis" x1="90" y1="30" x2="90" y2="400"/>
+        <text class="t-axis" x="505.0" y="446" text-anchor="middle">保費：2010～2026 年每年少賺幾個百分點（越左越便宜）</text>
+        <text class="t-axis" transform="translate(28,215.0) rotate(-90)" text-anchor="middle">理賠：2008 年少虧幾個百分點（越高越好）</text>
+        <path class="ref" d="M90.0,400.0 L143.7,386.1 L197.4,371.8 L251.1,357.3 L304.8,342.5 L358.6,327.5 L412.3,312.1 L466.0,296.5 L519.7,280.6 L573.4,264.4 L627.0,248.0 L680.6,231.2 L734.1,214.2 L787.5,197.0 L840.9,179.4" fill="none"/>
+        <text class="t-ref" x="834.9" y="171.4" text-anchor="end">單純少放股票（30% 股票）</text>
+        <text class="t-ref" x="257.1" y="373.3">對照線：股票 100%→30%，其餘現金</text>
+        <g><circle class="pt focal" cx="134.6" cy="183.2" r="7"/><text class="t-lab" x="144.6" y="175.2" text-anchor="start">固定格數（離高點 ≥85%）（1.0／29）</text></g>
+        <g><circle class="pt" cx="274.0" cy="132.4" r="7"/><text class="t-lab" x="284.0" y="124.4" text-anchor="start">固定格數＋大盤 10 個月線減半（4.0／36）</text></g>
+        <g><circle class="pt" cx="153.2" cy="137.6" r="7"/><text class="t-lab" x="163.2" y="151.6" text-anchor="start">市場廣度 <20% 才出場（1.4／35）</text></g>
+        <a class="node" href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=962461" target="_blank" rel="noopener"><circle class="pt" cx="409.0" cy="90.9" r="7"/><text class="t-lab" x="399.0" y="80.9" text-anchor="end">大盤 10 個月線全出（6.9／42）</text></a>
+        <a class="node" href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=962461" target="_blank" rel="noopener"><circle class="pt" cx="246.1" cy="256.4" r="7"/><text class="t-lab" x="256.1" y="260.4" text-anchor="start">大盤 10 個月線減半（3.4／19）</text></a>
+        <a class="node" href="https://docs.cmtassociation.org/dow-award/2016-gayed-bilello.pdf" target="_blank" rel="noopener"><circle class="pt" cx="323.9" cy="90.9" r="7"/><text class="t-lab" x="333.9" y="104.9" text-anchor="start">大盤 200 日線全出（5.1／42）</text></a>
+      </svg>
+    </div>
+    <p class="note">底：C10（營收驚喜＋52 週高點前 10%、排除高基期），原樣 2008 年 <b>-44%</b>、2010～2026 年化 <b>+24.2%</b>。括號內是（保費／理賠），單位百分點。虛線上方的方法，在同樣保費下比「單純少放股票」少虧更多。資料：TEJ 2005～2026 含下市股、證交所加權報酬指數。研究輔助，不是投資建議。</p>
+  </div>
+</body>
+</html>
