@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>實驗室｜交易明細</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22 color=%22%23f5b461%22%3E%3Cpath d=%22M256 28 452 100V236Q452 392 256 484 60 392 60 236V100Z%22 fill=%22none%22 stroke=%22currentColor%22 stroke-width=%2242%22 stroke-linejoin=%22round%22/%3E%3Cpath d=%22M150 300 222 230 276 282 362 190%22 fill=%22none%22 stroke=%22currentColor%22 stroke-width=%2242%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E">
+<meta name="description" content="策略回測的逐筆交易明細：每筆持股的買進賣出、成交紀錄、每次換股、大盤進出、每月淨值，附對帳，可以切換百分比或金額。">
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #0e0c0a; --panel: #191512; --line: #2d2620; --ink: #f2ebe3; --ink-2: #c2b3a3; --ink-3: #8c7d6e; --up: #ff7a5c; --up-bg: #33190f; --warn: #e8c37a; --warn-bg: #2b2617; --down: #8fb4cc; --down-bg: #15212a; --accent: #f5b461;
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f7f1e8; --panel: #fffaf3; --line: #e6dccd; --ink: #1f1812; --ink-2: #5c4f43; --ink-3: #8a7b6c; --up: #c0392b; --up-bg: #fbe4df; --warn: #8a5a00; --warn-bg: #f6efe0; --down: #2f6f95; --down-bg: #e2edf4; --accent: #b5541c;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.6 system-ui, -apple-system, "Segoe UI", "Noto Sans TC", "Microsoft JhengHei", sans-serif; }
+a { color: var(--accent); }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 18px 16px 60px; }
+header { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; margin-bottom: 6px; }
+h1 { font-size: 24px; margin: 0; }
+nav { margin-left: auto; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; font-size: 14px; }
+button, select, input { font: inherit; font-size: 14px; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; }
+button { cursor: pointer; }
+.sub { color: var(--ink-2); font-size: 13.5px; margin: 0 0 14px; }
+h2 { font-size: 18px; margin: 26px 0 6px; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+h2 .n { font-size: 13px; color: var(--ink-3); font-weight: 400; }
+.hint { color: var(--ink-3); font-size: 12.5px; margin: 6px 0 8px; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; }
+.ctrl { display: flex; flex-wrap: wrap; gap: 12px 22px; align-items: flex-end; }
+.ctrl label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--ink-3); }
+.ctrl select { min-width: 250px; max-width: 100%; }
+.ctrl input[type=text] { width: 140px; }
+.strip { display: flex; flex-wrap: wrap; gap: 8px 22px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px 16px; margin: 12px 0 0; font-size: 13.5px; }
+.strip > div { display: flex; flex-direction: column; }
+.strip .k { font-size: 12px; color: var(--ink-3); }
+.strip .v { font-weight: 700; font-variant-numeric: tabular-nums; }
+.up { color: var(--up); } .dn { color: var(--down); }
+.tbl { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; overflow-x: auto; }
+table.t { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+table.t th, table.t td { padding: 6px 10px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+table.t th { color: var(--ink-2); font-weight: 600; font-size: 12.5px; background: var(--bg); position: sticky; top: 0; }
+table.t th.s { cursor: pointer; user-select: none; }
+table.t th.s:hover { color: var(--ink); }
+table.t th .ar { color: var(--accent); margin-left: 2px; }
+table.t tr:last-child td { border-bottom: 0; }
+table.t .l { text-align: left; }
+table.t tr.hl td { font-weight: 700; }
+table.t tr.ref td { color: var(--ink-3); }
+table.t td a { text-decoration: none; }
+table.t td a:hover { text-decoration: underline; }
+.code { color: var(--ink-3); font-size: 12px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 99px; overflow: hidden; }
+.seg button { border: 0; border-radius: 0; background: var(--panel); color: var(--ink-2); padding: 5px 14px; font-weight: 600; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--bg); }
+.tag { display: inline-block; font-size: 12px; font-weight: 700; padding: 0 8px; border-radius: 99px; }
+.tag.out { background: var(--down-bg); color: var(--down); }
+.tag.in { background: var(--up-bg); color: var(--up); }
+.tag.neu { background: var(--warn-bg); color: var(--warn); }
+.pager { display: flex; gap: 10px; align-items: center; margin: 8px 0; font-size: 13px; color: var(--ink-3); flex-wrap: wrap; }
+.recon td:first-child { text-align: left; color: var(--ink-2); }
+.recon tr.sum td { font-weight: 700; color: var(--ink); border-top: 2px solid var(--line); }
+.tabs { display: flex; gap: 6px; margin: 8px 0 12px; flex-wrap: wrap; }
+.tabs a { text-decoration: none; color: var(--ink-2); background: var(--panel); border: 1px solid var(--line); border-radius: 99px; padding: 5px 14px; font-size: 14px; font-weight: 600; }
+.tabs a:hover { border-color: var(--ink-3); color: var(--ink); }
+.tabs a[aria-current="page"] { color: var(--bg); background: var(--accent); border-color: var(--accent); }
+.grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 12px; }
+@media (max-width: 860px) { .grid2 { grid-template-columns: 1fr; } }
+footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
+.owner { display: flex; flex-direction: column; gap: 1px; margin: 0 0 8px; font-size: 13px; line-height: 1.5; }
+.owner a { color: var(--ink-2); text-decoration: none; width: fit-content; }
+.owner a:hover { color: var(--ink); text-decoration: underline; }
+.owner .gh { display: inline-flex; align-items: center; gap: 5px; font-weight: 600; }
+.owner .mail { color: var(--ink-3); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="owner">
+    <a class="gh" href="https://github.com/gplee789-afk" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.290 6.530 5.470 7.590.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.010.37-2.530-.49-2.690-.94-.09-.23-.48-.94-.82-1.130-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>gplee789-afk</a>
+    <a class="mail" href="mailto:gplee789@gmail.com">聯繫我：gplee789@gmail.com</a>
+  </div>
+  <header>
+    <h1><span style="color:var(--accent)"><svg viewBox="0 0 512 512" width="1em" height="1em" aria-hidden="true" style="vertical-align:-.12em"><path d="M256 28 452 100V236Q452 392 256 484 60 392 60 236V100Z" fill="none" stroke="currentColor" stroke-width="42" stroke-linejoin="round"/><path d="M150 300 222 230 276 282 362 190" fill="none" stroke="currentColor" stroke-width="42" stroke-linecap="round" stroke-linejoin="round"/></svg></span> 實驗室</h1>
+    <nav>
+      <a href="index.html">題材看板</a>
+      <a href="reports.html">全部報告</a>
+      <button id="themeBtn" title="切換深色／淺色" aria-label="切換深色／淺色">◐</button>
+    </nav>
+  </header>
+  <nav class="tabs" aria-label="實驗室"><a href="risk.html">風控回測</a><a href="strategy.html">策略回測</a><a href="trades.html" aria-current="page">交易明細</a></nav>
+  <p class="sub">「策略回測」每一種做法的逐筆交易：哪天買、哪天賣、價格、報酬、金額、成本，和最後的對帳。數字和策略回測頁的年化、回檔是同一次回測算出來的。歷史回測，不是投資建議。</p>
+
+  <div class="panel ctrl">
+    <label>做法<select id="plan"></select></label>
+    <label>起點<span class="seg" id="per"></span></label>
+    <label>顯示<span class="seg" id="mode"><button data-m="pct">％</button><button data-m="amt">金額</button><button data-m="both">都顯示</button></span></label>
+    <label>期初資金（元）<input type="text" id="cap" inputmode="numeric" value="1,000,000"></label>
+  </div>
+  <div class="strip" id="strip"></div>
+
+  <h2>對帳 <span class="n">期初＋賣出−買進−成本＋利息＋期末持股＝期末淨值</span></h2>
+  <div class="grid2">
+    <div class="tbl"><table class="t recon" id="recon"></table></div>
+    <div class="panel"><ul class="hint" style="margin:0;padding-left:18px;line-height:1.8" id="notes"></ul></div>
+  </div>
+
+  <h2>明細</h2>
+  <div class="ctrl" style="margin-bottom:6px">
+    <span class="seg" id="view"><button data-v="trips">每筆持股</button><button data-v="events">成交明細</button><button data-v="rebal">每次換股</button><button data-v="market">大盤進出</button><button data-v="monthly">每月淨值</button></span>
+    <label>年份<select id="year" style="min-width:90px"></select></label>
+    <label>代號／名稱<input type="text" id="q" placeholder="例如 2330"></label>
+    <label id="resWrap">結果<select id="res" style="min-width:110px"><option value="">全部</option><option value="win">賺錢</option><option value="loss">賠錢</option><option value="open">持有中</option><option value="stop">停損</option><option value="late">跌停延後賣</option><option value="mkt">大盤出場</option></select></label>
+    <button id="csv">下載 CSV</button>
+  </div>
+  <p class="hint" id="viewHint"></p>
+  <div class="pager" id="pagerTop"></div>
+  <div class="tbl"><table class="t" id="tbl"></table></div>
+  <div class="pager" id="pagerBot"></div>
+
+  <footer>交易明細由 radar/tradelog.py 從 radar/btengine.py 的回測紀錄產生。價格是還原收盤價（含息、除權調整），和當時實際成交價不同；沒有日股價的公司（多半之後下市）用 TEJ 月報酬攤到每天，價格空白。</footer>
+</div>
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const quote = c => `https://tw.stock.yahoo.com/quote/${encodeURIComponent(c)}`;
+const PAGE = 200;
+let IDX = null, DATA = null, CACHE = {}, sortK = null, sortD = 1, page = 0;
+const S = { plan: "dual", per: "p2008", mode: "both", view: "trips", cap: 1e6 };
+
+(function theme() {
+  let t = null;
+  try { t = localStorage.getItem("theme-warm"); } catch (e) {}
+  if (t) document.documentElement.dataset.theme = t;
+  $("#themeBtn").onclick = () => {
+    const n = document.documentElement.dataset.theme !== "light" ? "light" : "dark";
+    document.documentElement.dataset.theme = n;
+    try { localStorage.setItem("theme-warm", n); } catch (e) {}
+  };
+})();
+
+const fmtAmt = x => x == null || !isFinite(x) ? "—" : Math.round(x * S.cap).toLocaleString("zh-TW");
+const signAmt = x => x == null || !isFinite(x) ? "—" : `<span class="${x < 0 ? "dn" : x > 0 ? "up" : ""}">${x > 0 ? "+" : ""}${Math.round(x * S.cap).toLocaleString("zh-TW")}</span>`;
+const pct = (x, d = 2) => x == null || !isFinite(x) ? "—" : (x * 100).toFixed(d) + "%";
+const sgn = (x, d = 2) => x == null || !isFinite(x) ? "—" : `<span class="${x < 0 ? "dn" : x > 0 ? "up" : ""}">${x > 0 ? "+" : ""}${(x * 100).toFixed(d)}%</span>`;
+const px = x => x == null ? "—" : x >= 100 ? x.toFixed(1) : x.toFixed(2);
+const stock = (c, n) => `<a href="${quote(c)}" target="_blank" rel="noopener">${esc(n)}</a> <span class="code">${esc(c)}</span>`;
+const showP = () => S.mode !== "amt", showA = () => S.mode !== "pct";
+
+// 欄位：[標題, 取值, 顯示, 類型 p=百分比 a=金額 c=共同, 排序值, CSV 值]
+const COLS = {
+  trips: [
+    ["代號", r => r[0], r => stock(r[0], r[1]), "c", r => r[0], r => r[0]],
+    ["名稱", null, null, "csv", null, r => r[1]],
+    ["買進日", r => r[2], r => r[2], "c", r => r[2], r => r[2]],
+    ["買進價", r => r[3], r => px(r[3]), "c", r => r[3] ?? -1, r => r[3] ?? ""],
+    ["賣出日", r => r[4], r => r[4] || '<span class="tag neu">持有中</span>', "c", r => r[4] || "9999", r => r[4] || "持有中"],
+    ["賣出價", r => r[5], r => px(r[5]), "c", r => r[5] ?? -1, r => r[5] ?? ""],
+    ["持有天數", r => r[6], r => r[6], "c", r => r[6], r => r[6]],
+    ["報酬率", r => r[7], r => sgn(r[7]), "p", r => r[7], r => r[7]],
+    ["進場占比", r => r[13], r => pct(r[13], 1), "p", r => r[13], r => r[13]],
+    ["投入金額", r => r[8], r => fmtAmt(r[8]), "a", r => r[8], r => Math.round(r[8] * S.cap)],
+    ["賣出／市值", r => r[9] + (r[14] || 0), r => fmtAmt(r[9] + (r[14] || 0)), "a", r => r[9] + (r[14] || 0), r => Math.round((r[9] + (r[14] || 0)) * S.cap)],
+    ["成本", r => r[10], r => fmtAmt(r[10]), "a", r => r[10], r => Math.round(r[10] * S.cap)],
+    ["損益", r => r[11], r => signAmt(r[11]), "a", r => r[11], r => Math.round(r[11] * S.cap)],
+    ["出場原因", r => r[12], r => r[12] === "持有中" ? "—" : esc(r[12]), "c", r => r[12], r => r[12]],
+  ],
+  events: [
+    ["日期", r => r[0], r => r[0], "c", r => r[0], r => r[0]],
+    ["動作", r => r[1], r => `<span class="tag ${/賣/.test(r[1]) ? "out" : "in"}">${esc(r[1])}</span>`, "c", r => r[1], r => r[1]],
+    ["代號", r => r[2], r => stock(r[2], r[3]), "c", r => r[2], r => r[2]],
+    ["名稱", null, null, "csv", null, r => r[3]],
+    ["還原價", r => r[4], r => px(r[4]), "c", r => r[4] ?? -1, r => r[4] ?? ""],
+    ["占淨值", r => r[6], r => pct(r[6], 2), "p", r => r[6], r => r[6]],
+    ["金額", r => r[5], r => fmtAmt(r[5]), "a", r => r[5], r => Math.round(r[5] * S.cap)],
+    ["成本", r => r[7], r => fmtAmt(r[7]), "a", r => r[7], r => Math.round(r[7] * S.cap)],
+  ],
+  rebal: [
+    ["換股日", r => r[0], r => r[0], "c", r => r[0], r => r[0]],
+    ["在場", r => r[8], r => r[8] ? "是" : '<span class="tag out">空手</span>', "c", r => +r[8], r => r[8] ? "是" : "空手"],
+    ["持股數", r => r[3], r => r[3], "c", r => r[3], r => r[3]],
+    ["新買進", r => r[4], r => r[4], "c", r => r[4], r => r[4]],
+    ["剔除", r => r[5], r => r[5], "c", r => r[5], r => r[5]],
+    ["和上次換股比", r => r[2], r => sgn(r[2]), "p", r => r[2] ?? -9, r => r[2] ?? ""],
+    ["累積報酬", r => r[1] - 1, r => sgn(r[1] - 1, 1), "p", r => r[1], r => r[1] - 1],
+    ["換手率", r => r[6], r => pct(r[6], 0), "p", r => r[6], r => r[6]],
+    ["淨值", r => r[1], r => fmtAmt(r[1]), "a", r => r[1], r => Math.round(r[1] * S.cap)],
+    ["交易成本", r => r[7], r => fmtAmt(r[7]), "a", r => r[7], r => Math.round(r[7] * S.cap)],
+  ],
+  market: [
+    ["日期", r => r[0], r => r[0], "c", r => r[0], r => r[0]],
+    ["動作", r => r[1], r => `<span class="tag ${r[1] === "出場" ? "out" : "in"}">大盤${esc(r[1])}</span>`, "c", r => r[1], r => r[1]],
+    ["持股數", r => r[3], r => r[3], "c", r => r[3], r => r[3]],
+    ["累積報酬", r => r[2] - 1, r => sgn(r[2] - 1, 1), "p", r => r[2], r => r[2] - 1],
+    ["淨值", r => r[2], r => fmtAmt(r[2]), "a", r => r[2], r => Math.round(r[2] * S.cap)],
+  ],
+  monthly: [
+    ["月份", r => r[0], r => r[0], "c", r => r[0], r => r[0]],
+    ["月報酬", r => r[2], r => sgn(r[2]), "p", r => r[2] ?? -9, r => r[2] ?? ""],
+    ["累積報酬", r => r[1] - 1, r => sgn(r[1] - 1, 1), "p", r => r[1], r => r[1] - 1],
+    ["月底淨值", r => r[1], r => fmtAmt(r[1]), "a", r => r[1], r => Math.round(r[1] * S.cap)],
+  ],
+};
+const HINT = {
+  trips: "一列＝一段連續持有（買進到賣出）。中間每月換股時調回等權的加碼、減碼都算在同一列的投入和賣出金額裡；報酬率是這段期間的股價漲跌（含息），不含成本。點欄位標題可以排序。",
+  events: "每一筆買賣。加碼、減碼是每月換股時把留下來的股票調回等權；大盤出場／回場是擇時版本整批賣出、買回。",
+  rebal: "每月 11 日之後第一個交易日換股。空手＝大盤擇時版本當時在場外，原規則的換股照算但不下單。",
+  market: "大盤擇時版本的出場、回場日（前一天收盤訊號、當天收盤成交）。不擇時的做法沒有這張表。",
+  monthly: "每月最後一個交易日的淨值。",
+};
+const dateOf = { trips: r => r[2], events: r => r[0], rebal: r => r[0], market: r => r[0], monthly: r => r[0] };
+
+function rows() {
+  let R = DATA[S.view] || [];
+  const y = $("#year").value, q = $("#q").value.trim(), res = $("#res").value;
+  if (y) R = R.filter(r => String(dateOf[S.view](r)).startsWith(y) || (S.view === "trips" && r[4] && r[4].startsWith(y)));
+  if (q && (S.view === "trips" || S.view === "events")) {
+    const ci = S.view === "trips" ? [0, 1] : [2, 3];
+    R = R.filter(r => ci.some(i => String(r[i]).includes(q)));
+  }
+  if (res && S.view === "trips") {
+    const f = { win: r => r[4] && r[7] > 0, loss: r => r[4] && r[7] <= 0, open: r => !r[4], stop: r => /停損/.test(r[12]), late: r => /跌停延後/.test(r[12]), mkt: r => r[12] === "大盤出場" }[res];
+    R = R.filter(f);
+  }
+  if (sortK != null) {
+    const c = COLS[S.view].filter(c => c[4])[sortK];
+    if (c) R = [...R].sort((a, b) => { const x = c[4](a), z = c[4](b); return (x > z ? 1 : x < z ? -1 : 0) * sortD; });
+  }
+  return R;
+}
+
+function visibleCols() {
+  return COLS[S.view].filter(c => c[3] === "c" || (c[3] === "p" && showP()) || (c[3] === "a" && showA()));
+}
+
+function renderTable() {
+  const R = rows(), cols = visibleCols(), sortable = COLS[S.view].filter(c => c[4]);
+  const n = R.length, pages = Math.max(1, Math.ceil(n / PAGE));
+  page = Math.min(page, pages - 1);
+  const isL = (c, r) => { const v = r ? c[1](r) : null; return typeof v === "string" && !/^\d{4}-/.test(v); };
+  const head = cols.map(c => { const si = sortable.indexOf(c); return `<th class="s ${isL(c, R[0]) ? "l" : ""}" data-s="${si}">${c[0]}${si === sortK ? `<span class="ar">${sortD > 0 ? "▲" : "▼"}</span>` : ""}</th>`; }).join("");
+  const body = R.slice(page * PAGE, (page + 1) * PAGE).map(r => `<tr>${cols.map(c => `<td class="${isL(c, r) ? "l" : ""}">${c[2](r)}</td>`).join("")}</tr>`).join("");
+  $("#tbl").innerHTML = `<tr>${head}</tr>` + (body || `<tr><td class="l" colspan="${cols.length}">${S.view === "market" ? "這個做法不擇時，沒有大盤進出。" : "沒有符合的資料。"}</td></tr>`);
+  $("#tbl").querySelectorAll("th.s").forEach(th => th.onclick = () => {
+    const i = +th.dataset.s; if (i < 0) return;
+    sortD = sortK === i ? -sortD : 1; sortK = i; page = 0; renderTable();
+  });
+  const pg = n > PAGE ? `<button data-g="-1" ${page ? "" : "disabled"}>上一頁</button><span>第 ${page + 1}／${pages} 頁，共 ${n.toLocaleString()} 筆</span><button data-g="1" ${page < pages - 1 ? "" : "disabled"}>下一頁</button>` : `<span>共 ${n.toLocaleString()} 筆</span>`;
+  for (const id of ["#pagerTop", "#pagerBot"]) {
+    $(id).innerHTML = pg;
+    $(id).querySelectorAll("button").forEach(b => b.onclick = () => { page += +b.dataset.g; renderTable(); });
+  }
+  $("#viewHint").textContent = HINT[S.view];
+  $("#resWrap").style.display = S.view === "trips" ? "" : "none";
+}
+
+function renderSummary() {
+  const s = DATA.summary, r = DATA.recon;
+  const items = [["期間", `${s.start}～${s.end}`]];
+  if (showA()) items.push(["期初", fmtAmt(1)], ["期末", fmtAmt(s.final)]);
+  if (showP()) items.push(["累積報酬", sgn(s.total, 1)], ["年化", sgn(s.cagr, 1)], ["最大回檔", pct(s.mdd, 1)]);
+  items.push(["夏普", s.sharpe.toFixed(2)], ["持股筆數", s.n_trips.toLocaleString()], ["賺錢的比例", pct(s.win, 1)],
+    ["每筆平均報酬", sgn(s.avg_ret, 2)], ["持有天數中位數", Math.round(s.med_days) + " 天"]);
+  if (s.n_mkt) items.push(["大盤進出", s.n_mkt + " 次"]);
+  $("#strip").innerHTML = items.map(([k, v]) => `<div><span class="k">${k}</span><span class="v">${v}</span></div>`).join("");
+  const line = (k, v, cls = "") => `<tr class="${cls}"><td>${k}</td>${showA() ? `<td>${v == null ? "—" : fmtAmt(v)}</td>` : ""}${showP() ? `<td>${v == null ? "—" : pct(v, 2)}</td>` : ""}</tr>`;
+  $("#recon").innerHTML = `<tr><th class="l">項目</th>${showA() ? "<th>金額（元）</th>" : ""}${showP() ? "<th>占期初資金</th>" : ""}</tr>`
+    + line("期初資金", 1) + line("＋ 賣出合計", r.sell) + line("− 買進合計", r.buy) + line("− 交易成本（每邊 0.3%）", r.cost)
+    + line("＋ 現金利息（年利 1%）", r.int) + line("＋ 期末還沒賣的持股市值", r.mtm) + line("＝ 推算期末淨值", r.implied, "sum")
+    + line("回測期末淨值", r.final, "hl") + line("差額", r.diff);
+  const big = Math.abs(r.diff) > 1e-6;
+  $("#notes").innerHTML = [
+    `回測期末淨值和策略回測頁「${esc(DATA.label)}」${IDX.periods[S.per]}的累積報酬是同一個數字（${pct(s.total, 1)}）。`,
+    big ? `差額來自大盤擇時版本的算法：策略回測頁把「大盤出場」算成整體部位按比例縮放，這裡改寫成實際的整批賣出、買回，兩者只差交易成本的小數（${pct(r.diff / r.final, 3)}）。` : "差額只是小數點捨入，帳完全對得上。",
+    "價格是還原收盤價（含息、除權調整），所以和當時看盤軟體的成交價不同；報酬率才是重點。",
+    "每月換股時留下來的股票會調回等權，所以同一段持有裡會有加碼、減碼；每筆持股的投入和賣出金額已經含這些。",
+    "沒有日股價的公司（多半之後下市）用 TEJ 月報酬攤到每天，價格欄空白。",
+  ].map(s => `<li>${s}</li>`).join("");
+}
+
+function years() {
+  const ys = new Set();
+  for (const r of DATA.monthly) ys.add(r[0].slice(0, 4));
+  const cur = $("#year").value;
+  $("#year").innerHTML = `<option value="">全部</option>` + [...ys].sort().map(y => `<option ${y === cur ? "selected" : ""}>${y}</option>`).join("");
+}
+
+function setSeg(id, attr, val) {
+  document.querySelectorAll(`${id} button`).forEach(b => b.setAttribute("aria-pressed", b.dataset[attr] === val));
+}
+
+function hash() {
+  try { history.replaceState(null, "", `#plan=${S.plan}&p=${S.per}&m=${S.mode}&v=${S.view}`); } catch (e) {}
+}
+
+async function load() {
+  const k = `${S.per}_${S.plan}`;
+  $("#tbl").innerHTML = `<tr><td class="l">載入中…</td></tr>`;
+  try {
+    if (!CACHE[k]) { const r = await fetch(`data/risk/trades/${k}.json`); if (!r.ok) throw new Error(r.status); CACHE[k] = await r.json(); }
+  } catch (e) { $("#tbl").innerHTML = `<tr><td class="l">讀不到交易明細：${esc(e.message)}</td></tr>`; return; }
+  DATA = CACHE[k];
+  years(); renderSummary(); renderTable(); hash();
+}
+
+function csv() {
+  const R = rows(), cols = COLS[S.view].filter(c => c[5]);
+  const cell = v => { const s = String(v ?? ""); return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
+  const txt = "﻿" + [cols.map(c => c[0]).join(","), ...R.map(r => cols.map(c => cell(c[5](r))).join(","))].join("\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([txt], { type: "text/csv;charset=utf-8" }));
+  a.download = `交易明細_${DATA.label}_${IDX.periods[S.per]}_${S.view}.csv`.replace(/[\\/:*?"<>|（）＋]/g, "");
+  a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+(async () => {
+  for (const kv of location.hash.slice(1).split("&")) {
+    const [k, v] = kv.split("=");
+    if (k === "plan" && v) S.plan = v; if (k === "p" && v) S.per = v; if (k === "m" && v) S.mode = v; if (k === "v" && v) S.view = v;
+  }
+  try { const r = await fetch("data/risk/trades/index.json"); if (!r.ok) throw new Error(r.status); IDX = await r.json(); }
+  catch (e) { $("#strip").innerHTML = `<div>讀不到交易明細索引：${esc(e.message)}</div>`; return; }
+  if (!IDX.plans.some(p => p[0] === S.plan)) S.plan = IDX.plans[0][0];
+  if (!IDX.periods[S.per]) S.per = Object.keys(IDX.periods)[0];
+  $("#plan").innerHTML = IDX.plans.map(([k, n]) => `<option value="${k}" ${k === S.plan ? "selected" : ""}>${esc(n)}</option>`).join("");
+  $("#per").innerHTML = Object.entries(IDX.periods).map(([k, n]) => `<button data-p="${k}">${esc(n)}</button>`).join("");
+  setSeg("#per", "p", S.per); setSeg("#mode", "m", S.mode); setSeg("#view", "v", S.view);
+  $("#plan").onchange = () => { S.plan = $("#plan").value; page = 0; load(); };
+  document.querySelectorAll("#per button").forEach(b => b.onclick = () => { S.per = b.dataset.p; setSeg("#per", "p", S.per); page = 0; load(); });
+  document.querySelectorAll("#mode button").forEach(b => b.onclick = () => { S.mode = b.dataset.m; setSeg("#mode", "m", S.mode); renderSummary(); renderTable(); hash(); });
+  document.querySelectorAll("#view button").forEach(b => b.onclick = () => { S.view = b.dataset.v; setSeg("#view", "v", S.view); sortK = null; page = 0; renderTable(); hash(); });
+  for (const id of ["#year", "#res"]) $(id).onchange = () => { page = 0; renderTable(); };
+  $("#q").oninput = () => { page = 0; renderTable(); };
+  $("#cap").onchange = () => {
+    const v = Number($("#cap").value.replace(/[^\d.]/g, ""));
+    S.cap = v > 0 ? v : 1e6; $("#cap").value = S.cap.toLocaleString("zh-TW"); renderSummary(); renderTable();
+  };
+  $("#csv").onclick = csv;
+  load();
+})();
+</script>
+</body>
+</html>
