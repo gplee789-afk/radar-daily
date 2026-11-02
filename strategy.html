@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>實驗室｜策略回測</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22 color=%22%23f5b461%22%3E%3Cpath d=%22M256 28 452 100V236Q452 392 256 484 60 392 60 236V100Z%22 fill=%22none%22 stroke=%22currentColor%22 stroke-width=%2242%22 stroke-linejoin=%22round%22/%3E%3Cpath d=%22M150 300 222 230 276 282 362 190%22 fill=%22none%22 stroke=%22currentColor%22 stroke-width=%2242%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E">
+<meta name="description" content="看板「先看這幾家」選股規則（營收驚喜＋52 週高點各半）的逐日回測：每個換股日只用當天以前公布的資料，含下市公司。比較停損、大盤均線、資產配置，以及 300 多種算分函數擬合後的樣本外驗證。">
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #0e0c0a; --panel: #191512; --line: #2d2620; --ink: #f2ebe3; --ink-2: #c2b3a3; --ink-3: #8c7d6e; --up: #ff7a5c; --up-bg: #33190f; --warn: #e8c37a; --warn-bg: #2b2617; --down: #8fb4cc; --down-bg: #15212a; --accent: #f5b461;
+  --s0: #8c7d6e; --s1: #f5b461; --s2: #c9a2f0; --s3: #8fb4cc; --s4: #e8c37a; --s5: #ff7a5c; --s6: #7cc4b8; --s7: #f08fb4; --s8: #a8d07a; --s9: #6fa8ff; --s10: #c2b3a3;
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f7f1e8; --panel: #fffaf3; --line: #e6dccd; --ink: #1f1812; --ink-2: #5c4f43; --ink-3: #8a7b6c; --up: #c0392b; --up-bg: #fbe4df; --warn: #8a5a00; --warn-bg: #f6efe0; --down: #2f6f95; --down-bg: #e2edf4; --accent: #b5541c;
+  --s0: #8a7b6c; --s1: #b5541c; --s2: #7a3fb8; --s3: #2f6f95; --s4: #8a5a00; --s5: #c0392b; --s6: #1f7a6b; --s7: #b0306a; --s8: #4d7a1f; --s9: #2456b8; --s10: #5c4f43;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.6 system-ui, -apple-system, "Segoe UI", "Noto Sans TC", "Microsoft JhengHei", sans-serif; }
+a { color: var(--accent); }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 18px 16px 60px; }
+header { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; margin-bottom: 6px; }
+h1 { font-size: 24px; margin: 0; }
+nav { margin-left: auto; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; font-size: 14px; }
+button { font: inherit; font-size: 14px; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; cursor: pointer; }
+.sub { color: var(--ink-2); font-size: 13.5px; margin: 0 0 14px; }
+h2 { font-size: 18px; margin: 30px 0 2px; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+h2 .n { font-size: 13px; color: var(--ink-3); font-weight: 400; }
+h3 { font-size: 15px; margin: 18px 0 4px; }
+.hint { color: var(--ink-3); font-size: 12.5px; margin: 0 0 8px; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; }
+.strip { display: flex; flex-wrap: wrap; gap: 8px 22px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px 16px; margin: 12px 0 0; font-size: 13.5px; }
+.strip > div { display: flex; flex-direction: column; }
+.strip .k { font-size: 12px; color: var(--ink-3); }
+.strip .v { font-weight: 700; font-variant-numeric: tabular-nums; }
+.up { color: var(--up); } .dn { color: var(--down); }
+.tbl { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; overflow-x: auto; }
+table.t { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+table.t th, table.t td { padding: 7px 10px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+table.t th { color: var(--ink-2); font-weight: 600; font-size: 12.5px; background: var(--bg); }
+table.t tr:last-child td { border-bottom: 0; }
+table.t .l { text-align: left; }
+table.t td.w { white-space: normal; min-width: 240px; max-width: 460px; color: var(--ink-2); font-size: 12.5px; text-align: left; }
+table.t tr.grp td { background: var(--bg); color: var(--ink-3); font-size: 12px; font-weight: 600; text-align: left; padding: 5px 10px; }
+table.t tr.hl td { font-weight: 700; }
+table.t tr.ref td { color: var(--ink-3); }
+table.t input { padding: 0; margin: 0 6px 0 0; accent-color: var(--accent); vertical-align: -2px; }
+.sw { display: inline-block; width: 12px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 99px; overflow: hidden; }
+.seg button { border: 0; border-radius: 0; background: var(--panel); color: var(--ink-2); padding: 4px 14px; font-weight: 600; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--bg); }
+.concl { margin: 0; padding: 0 0 0 20px; }
+.concl li { margin: 6px 0; font-size: 14px; color: var(--ink-2); line-height: 1.75; }
+.concl li b { color: var(--ink); }
+.view { display: inline-block; font-size: 12px; font-weight: 700; padding: 0 8px; border-radius: 99px; margin-right: 6px; }
+.view.bull { background: var(--up-bg); color: var(--up); }
+.view.neu { background: var(--warn-bg); color: var(--warn); }
+.view.bear { background: var(--down-bg); color: var(--down); }
+.rules { margin: 0; padding: 0 0 0 18px; font-size: 13.5px; color: var(--ink-2); }
+.rules li { margin: 3px 0; }
+.rules b { color: var(--ink); }
+.chart { position: relative; margin-top: 6px; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; touch-action: pan-y; }
+.chart svg text { font-size: 11px; fill: var(--ink-3); font-variant-numeric: tabular-nums; }
+.tip { position: absolute; pointer-events: none; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 6px 9px; font-size: 12px; color: var(--ink); white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,.25); display: none; z-index: 2; }
+.tip .r { display: flex; justify-content: space-between; gap: 12px; }
+.tabs { display: flex; gap: 6px; margin: 8px 0 12px; flex-wrap: wrap; }
+.tabs a { text-decoration: none; color: var(--ink-2); background: var(--panel); border: 1px solid var(--line); border-radius: 99px; padding: 5px 14px; font-size: 14px; font-weight: 600; }
+.tabs a:hover { border-color: var(--ink-3); color: var(--ink); }
+.tabs a[aria-current="page"] { color: var(--bg); background: var(--accent); border-color: var(--accent); }
+.picks { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.picks .panel b { display: block; margin-bottom: 4px; }
+.picks a { text-decoration: none; margin-right: 10px; white-space: nowrap; font-size: 13.5px; line-height: 1.9; }
+.picks a:hover { text-decoration: underline; }
+.picks .code { color: var(--ink-3); font-size: 11.5px; margin-left: 2px; }
+.grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+@media (max-width: 760px) { .grid2 { grid-template-columns: 1fr; } }
+footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
+.owner { display: flex; flex-direction: column; gap: 1px; margin: 0 0 8px; font-size: 13px; line-height: 1.5; }
+.owner a { color: var(--ink-2); text-decoration: none; width: fit-content; }
+.owner a:hover { color: var(--ink); text-decoration: underline; }
+.owner .gh { display: inline-flex; align-items: center; gap: 5px; font-weight: 600; }
+.owner .mail { color: var(--ink-3); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="owner">
+    <a class="gh" href="https://github.com/gplee789-afk" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.290 6.530 5.470 7.590.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.010.37-2.530-.49-2.690-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>gplee789-afk</a>
+    <a class="mail" href="mailto:gplee789@gmail.com">聯繫我：gplee789@gmail.com</a>
+  </div>
+  <header>
+    <h1><span style="color:var(--accent)"><svg viewBox="0 0 512 512" width="1em" height="1em" aria-hidden="true" style="vertical-align:-.12em"><path d="M256 28 452 100V236Q452 392 256 484 60 392 60 236V100Z" fill="none" stroke="currentColor" stroke-width="42" stroke-linejoin="round"/><path d="M150 300 222 230 276 282 362 190" fill="none" stroke="currentColor" stroke-width="42" stroke-linecap="round" stroke-linejoin="round"/></svg></span> 實驗室</h1>
+    <nav>
+      <a href="index.html">題材看板</a>
+      <a href="reports.html">全部報告</a>
+      <button id="themeBtn" title="切換深色／淺色" aria-label="切換深色／淺色">◐</button>
+    </nav>
+  </header>
+  <nav class="tabs" aria-label="實驗室"><a href="risk.html">風控回測</a><a href="strategy.html" aria-current="page">策略回測</a></nav>
+  <p class="sub">看板「先看這幾家」的選股規則逐日回測：每個換股日只用當天以前已公布的資料，母體含之後下市的公司，買賣都扣成本。歷史回測，不是投資建議。</p>
+
+  <h2>結論</h2>
+  <div class="panel"><ul class="concl" id="concl"><li>載入中…</li></ul></div>
+  <div class="strip" id="strip"></div>
+
+  <h2>做法比較 <span class="n" id="perNote"></span></h2>
+  <div class="row" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:6px 0">
+    <span class="seg" role="group" aria-label="回測起點"><button data-p="p2021" aria-pressed="true">2021 起</button><button data-p="p2014" aria-pressed="false">2014 起</button></span>
+    <span class="hint" style="margin:0">勾選的做法畫進下面的圖。2014 起含 2015、2018、2020、2022 幾次修正。</span>
+  </div>
+  <div class="tbl"><table class="t" id="cmp"></table></div>
+  <div class="panel chart" id="navChart" style="margin-top:12px"></div>
+  <p class="hint">淨值（對數刻度，週資料）。表裡的回檔用日資料算，會比圖上深一點。</p>
+  <div class="panel chart" id="ddChart"></div>
+  <p class="hint">從前高回落的幅度。</p>
+
+  <h2>換股頻率 <span class="n">跟著上面的起點切換</span></h2>
+  <p class="hint">月營收一個月才公布一次，所以月中多換的那幾次只有「52 週高點」更新（用前一天收盤）：跌離高點的股票會更早換掉，新創高的更早買進，代價是換手和成本變多。</p>
+  <div class="tbl"><table class="t" id="freq"></table></div>
+
+  <h2>題材風潮：有沒有搭上、何時下車</h2>
+  <p class="hint">用 2014 起那一組回測，看策略在航運（2020～2022）和 AI（2023 起）兩波行情裡的持股。題材名單是事後列的，只拿來檢查，不參與選股。</p>
+  <div id="waves"></div>
+
+  <h2>回檔時怎麼做 <span class="n">跟著上面的起點切換</span></h2>
+  <p class="hint">看板規則本身沒有停損、不擇時、永遠滿倉：每月 11 日照分數重排，跌離一年高點或營收驚喜變差的股票分數掉下去就換掉，換進當時還強的公司。下面是它最深的幾次回檔、同一段時間各種防守做法的回檔，以及中間的換股。</p>
+  <div id="epi"></div>
+
+  <h2>算分函數搜尋 <span class="n">擬合 2014–2020，驗證 2021 起</span></h2>
+  <p class="hint" id="scoreIntro"></p>
+  <div class="strip" id="ofStrip" style="margin-bottom:12px"></div>
+  <h3>組合回測（同一套換股規則，只換算分）</h3>
+  <div class="tbl"><table class="t" id="port"></table></div>
+  <p class="hint">這張表的缺值一律補中位數 0.5，所以「各半」和上面做法比較表（缺值不計）差 1～2 點；學習型和事後最佳的擬合期是樣本內成績。</p>
+  <h3>各族擬合期最佳設定 → 驗證期</h3>
+  <p class="hint">每月分數前 10%（排除高基期）比母體平均多賺多少；「變化」是驗證期相對擬合期，負的代表擬合期的成績沒撐住。</p>
+  <div class="tbl"><table class="t" id="fam"></table></div>
+  <div class="grid2" style="margin-top:12px">
+    <div><h3 style="margin-top:0">為什麼學界 ML 拖累：持有期不合</h3>
+      <p class="hint">每月分數前 10% 在不同持有期的超額報酬（擬合期／驗證期）。ML 估值模型要 12 個月才看得到效果，看板每月換股。</p>
+      <div class="tbl"><table class="t" id="hz"></table></div></div>
+    <div><h3 style="margin-top:0">ML 權重加越多越差</h3>
+      <p class="hint">營收驚喜和 52 週高點各占一半，再分一部分權重給 ML，每月前 10% 的超額。</p>
+      <div class="tbl"><table class="t" id="grad"></table></div></div>
+  </div>
+  <h3>每年報酬</h3>
+  <div class="tbl"><table class="t" id="yrs"></table></div>
+  <p class="hint">* 從當年 1 月的換股日（11 日之後）起算。2014–2020 的梯度提升樹是訓練期內的成績。</p>
+
+  <h2>防窺未來稽核</h2>
+  <p class="hint">同一套規則故意把資料「晚一個月」和「偷看下個月」再跑一次。有偷看的話，正常版會很接近偷看版；正常版落在兩者之間、靠近晚一個月那端，代表時間對齊沒問題。</p>
+  <div class="tbl"><table class="t" id="audit"></table></div>
+
+  <h2>理論衝突與驗證</h2>
+  <div class="tbl"><table class="t" id="conf"></table></div>
+
+  <h2>最新一期選股 <span class="n" id="pickDate"></span></h2>
+  <div class="picks" id="picks"></div>
+
+  <h2>時間對齊規則</h2>
+  <div class="panel"><ul class="rules">
+    <li><b>換股日</b>：每月 11 日或之後第一個交易日收盤（10 日是月營收公布截止日）。</li>
+    <li><b>營收</b>：只用 TEJ 紀錄公布日在 10 日以前的；沒有公布日的當作下個月 10 日才知道。</li>
+    <li><b>營收驚喜</b>：顧廣平（2010）標準化營收驚喜，用最近一個已公布月份；<b>高基期</b>＝11 個月前的營收驚喜在前 20%（下個月比較基期很高），不給偏多。</li>
+    <li><b>52 週高點</b>：前一天收盤 ÷ 過去 11 個月底收盤和前一天收盤的最高值（George 與 Hwang 2004）。</li>
+    <li><b>月資料特徵</b>（事實四項、學界 ML、同業、共識）：用換股日前一個月底的值。</li>
+    <li><b>母體</b>：前一個月底市值前 60%，含之後下市的公司；沒有日股價的日子用 TEJ 月報酬平均攤到每天。</li>
+    <li><b>成本</b>：每次換手單邊 0.3%；現金年利 1%；停損的賣出也扣成本。</li>
+    <li><b>大盤均線</b>：用加權報酬指數前一天收盤，不用當天。</li>
+  </ul></div>
+
+  <footer>資料到 <span id="asof">—</span>。回測引擎 radar/btengine.py、規則 radar/stratlab.py、算分搜尋 scripts/folk_bt/score_search.py。歷史回測，不是投資建議。</footer>
+</div>
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const pct = (x, d = 1) => x == null || !isFinite(x) ? "—" : (x * 100).toFixed(d) + "%";
+const sgn = (x, d = 1) => x == null || !isFinite(x) ? "—" : `<span class="${x < 0 ? "dn" : "up"}">${x > 0 ? "+" : ""}${(x * 100).toFixed(d)}%</span>`;
+const getJSON = async u => { const r = await fetch(u); if (!r.ok) throw new Error(u + " " + r.status); return r.json(); };
+const quote = c => `https://tw.stock.yahoo.com/quote/${encodeURIComponent(c)}`;
+const scholar = q => `https://scholar.google.com/scholar?q=${encodeURIComponent(q)}`;
+let D = null, SC = null, PER = "p2021";
+const ON = new Set(["base", "prev", "ma200", "trail20_recycle", "taiex"]);
+
+// 鍵 → [名稱, 群組, 做法, 顏色]
+const V = {
+  base: ["看板規則", "選股本體", "每月 11 日換股；合成分數＝營收驚喜和 52 週高點的母體百分位各半，前 20%、不是高基期的公司裡，市值前 30 大取 6 檔、其他取 8 檔，等權。沒有停損、不擇時，永遠滿倉。", 1],
+  prev: ["前一版權重", "選股本體", "同一套換股規則，用 11/2 第一次調整的權重：營收驚喜 0.34、52 週高點 0.34、學界 ML 0.15、事實四項各 0.025、同業 0.035、共識 0.035。", 5],
+  slots: ["＋固定格數", "選股本體", "只有離一年高點 15% 內的才能占格，湊不滿的格數留現金。", 2],
+  freq2: ["每月換股 2 次（11、25 日）", "換股頻率", "同一套規則，月中再依最新股價重排一次；11 日以前的換股日只能用上個月的營收。", 4],
+  freq2x: ["11 日重排＋25 日只出不進", "換股頻率", "11 日照常重排前 14；25 日只把掉出偏多（前 20%）的換掉，補當時排最前面的。", 9],
+  freq3: ["每月換股 3 次（1、11、21 日）", "換股頻率", "約每 10 天重排一次。", 8],
+  freq3x: ["11 日重排＋1、21 日只出不進", "換股頻率", "11 日照常重排；1、21 日只換掉掉出偏多的。", 10],
+  freq4: ["每月換股 4 次（1、8、15、22 日）", "換股頻率", "約每週重排一次。", 10],
+  ma200: ["＋大盤 200 日線（每天看）", "大盤擇時", "加權報酬指數前一天收盤跌破 200 日均線就全部換現金，站回去隔天買回。", 3],
+  ma200_monthly: ["＋大盤 200 日線（換股日看）", "大盤擇時", "只在換股日看 200 日線，跌破就整月空手。", 9],
+  ma60_monthly: ["＋大盤 60 日線（換股日看）", "大盤擇時", "同上，改 60 日線。", 10],
+  ma120_monthly: ["＋大盤 120 日線（換股日看）", "大盤擇時", "同上，改 120 日線。", 10],
+  ma250_monthly: ["＋大盤 250 日線（換股日看）", "大盤擇時", "同上，改 250 日線。", 10],
+  ma10: ["＋大盤 10 個月線", "大盤擇時", "Faber（2007）：換股日看大盤最近 10 個月底收盤的均線，跌破就整月空手。", 4],
+  ma10_half: ["＋大盤 10 個月線（跌破減半）", "大盤擇時", "同上，跌破只減半。", 10],
+  breadth: ["＋市場廣度出場", "大盤擇時", "母體裡離一年高點 15% 內的公司不到 20% 就整月空手。", 8],
+  slots_breadth: ["固定格數＋市場廣度", "大盤擇時", "兩個一起用。", 10],
+  stop8: ["個股停損 8%", "停損", "從買進價跌 8% 隔天賣，錢放現金到下次換股。", 10],
+  stop8_recycle: ["停損 8%＋轉進下一名", "停損", "停損賣出的錢隔天買偏多名單裡下一檔沒持有的。", 10],
+  stop8_recycle_hi: ["停損 8%＋轉進下一名（要接近高點）", "停損", "同上，但下一名要離一年高點 5% 內。", 10],
+  trail20: ["移動停損 20%", "停損", "從持有期間最高價回落 20% 賣出，錢放現金。", 10],
+  trail20_recycle: ["移動停損 20%＋轉進下一名", "停損", "回落 20% 賣出，錢轉進下一名。", 6],
+  stop8_ma200: ["停損 8%＋大盤 200 日線", "組合防守", "個股跌 8% 就賣（擋大盤沒破線的急殺），大盤跌破 200 日線全部換現金（擋慢跌的空頭）。", 7],
+  slots_ma200: ["固定格數＋大盤 200 日線", "組合防守", "只有離一年高點 15% 內的能占格，再加大盤 200 日線。", 10],
+  slots_stop8: ["固定格數＋停損 8%", "組合防守", "只有離一年高點 15% 內的能占格，個股跌 8% 就賣。", 10],
+  slots_stop8_ma200: ["固定格數＋停損 8%＋200 日線", "組合防守", "三個一起用。", 9],
+  cash30: ["七成股票＋三成現金", "資產配置", "每次換股再平衡，現金年利 1%。", 10],
+  bond40: ["六成股票＋四成美國長債", "資產配置", "TLT 換成台幣計價，每次換股再平衡。", 10],
+  taiex: ["加權報酬指數", "參考", "含息大盤，同期間買進持有。", 0],
+};
+
+(function theme() {
+  let t = null;
+  try { t = localStorage.getItem("theme-warm"); } catch (e) {}
+  if (t) document.documentElement.dataset.theme = t;
+  $("#themeBtn").onclick = () => {
+    const n = document.documentElement.dataset.theme !== "light" ? "light" : "dark";
+    document.documentElement.dataset.theme = n;
+    try { localStorage.setItem("theme-warm", n); } catch (e) {}
+    if (D) draw();
+  };
+})();
+
+function conclusions() {
+  const a = D.p2021.stats, b = D.p2014.stats, au = D.audit, m = SC.meta;
+  const p = SC.portfolio.find(r => r.name.startsWith("看板現行")), c = SC.portfolio.find(r => r.name.startsWith("營收驚喜＋52"));
+  const hgb = SC.portfolio.find(r => r.name.startsWith("梯度提升樹"));
+  const yrs = Object.values(SC.years), win = yrs.filter(y => y[c.name] > y[p.name]).length;
+  const e0 = (D.p2014.episodes || [])[0];
+  $("#concl").innerHTML = [
+    `<span class="view bull">偏多</span><b>看板規則（營收驚喜＋52 週高點各半）2021 起累積 ${pct(a.base.total, 0)}、年化 ${pct(a.base.cagr)}、最大回檔 ${pct(a.base.mdd, 0)}</b>；同期加權報酬指數 ${pct(a.taiex.total, 0)}／${pct(a.taiex.cagr)}／${pct(a.taiex.mdd, 0)}。拉長到 2014 起年化 ${pct(b.base.cagr)}（大盤 ${pct(b.taiex.cagr)}）。`,
+    `<span class="view bull">偏多</span><b>比前一版權重好</b>（2026-11-02 改）：2021 起 ${pct(a.base.cagr)} 對 ${pct(a.prev.cagr)}，2014 起 ${pct(b.base.cagr)} 對 ${pct(b.prev.cagr)}，${yrs.length} 年贏 ${win} 年，2021 起每月多 ${pct(SC.paired.mean, 2)}（t ${SC.paired.t.toFixed(1)}）。代價是 2014 起回檔較深（${pct(b.base.mdd, 0)} 對 ${pct(b.prev.mdd, 0)}）；再加大盤 200 日線，2014 起 ${pct(b.ma200.cagr)}／${pct(b.ma200.mdd, 0)}，報酬和回檔都勝過前一版。`,
+    `<span class="view neu">中性</span><b>擬合沒有找到更好的函數</b>：${m.n_cfg} 種組合（冪平均、幾何平均、短板、交互、門檻）加脊迴歸、梯度提升樹，擬合期選出的最佳解在驗證期都只跟「各半」打平。梯度提升樹在擬合期看起來最好（夏普 ${hgb.is_sharpe.toFixed(2)}，各半 ${c.is_sharpe.toFixed(2)}），驗證期掉到 ${hgb.oos_sharpe.toFixed(2)}、年化 ${pct(hgb.oos_cagr)}（各半 ${c.oos_sharpe.toFixed(2)}、${pct(c.oos_cagr)}），是典型的過度擬合。整體挑選過程 PBO ${pct(m.pbo)}、通縮夏普值 ${pct(m.dsr)}，訊號本身是真的。`,
+    D.freq_gross ? `<span class="view bear">偏空</span><b>換股越頻繁越差</b>：2014 起每月換 1／2／3／4 次，年化 ${["base", "freq2", "freq3", "freq4"].map(k => pct(b[k].cagr)).join("／")}、最大回檔 ${["base", "freq2", "freq3", "freq4"].map(k => pct(b[k].mdd, 0)).join("／")}；不扣成本也是 ${["1", "2", "3", "4"].map(k => pct(D.freq_gross[k].cagr)).join("／")}，所以不只是成本。營收一個月才更新一次，月中多換的只是追前兩週漲的股票，剛好碰上短期反轉。` : "",
+    D.waves ? `<span class="view neu">中性</span><b>題材風潮只搭到一部分</b>：航運 ${D.waves.ship.start.slice(0, 7)}～${D.waves.ship.end.slice(0, 7)} 題材等權 +${(D.waves.ship.basket.ret * 100).toFixed(0)}%，策略 +${(D.waves.ship.runs.base.ret * 100).toFixed(0)}%、最多同時 ${D.waves.ship.runs.base.max_n} 檔，題材 ${D.waves.ship.basket.peak} 見高後 ${D.waves.ship.runs.base.exit} 已經只剩 ≤1 檔，躲掉之後的 ${(D.waves.ship.basket.after_peak * 100).toFixed(0)}%；AI 從 2023 起 +${(D.waves.ai.runs.base.ret * 100).toFixed(0)}%（題材等權 +${(D.waves.ai.basket.ret * 100).toFixed(0)}%、大盤 +${(D.waves.ai.taiex * 100).toFixed(0)}%），平均只有 ${pct(D.waves.ai.runs.base.avg_w, 0)} 放在 AI 股。它不押題材，只在題材股排到全市場最前面時才買。` : "",
+    e0 ? `<span class="view neu">中性</span><b>回檔時規則本身不做任何防守</b>：沒有停損、不擇時、永遠滿倉，只靠每月 11 日重排把跌離高點的股票換掉。最深一次 ${e0.peak}～${e0.trough} 跌 ${pct(e0.depth, 0)}，期間兩次換股各換掉一大半，換進的新強勢股也跟著跌（見下方「回檔時怎麼做」）。` : "",
+    `<span class="view neu">中性</span><b>回檔分兩種，各有各的解</b>：大盤慢慢跌破 200 日線的空頭（2020/3、2025/4），200 日線換現金把回檔壓到個位數；大盤沒破線的急殺（2024/8、2026/7、2021/5），200 日線完全沒動，只有個股停損 8% 擋得到（約 −19% → −12%）。`,
+    `<span class="view neu">中性</span><b>防守都是拿報酬換回檔</b>（2014 起年化／最大回檔）：不防守 ${pct(b.base.cagr)}／${pct(b.base.mdd, 0)}；固定格數 ${pct(b.slots.cagr)}／${pct(b.slots.mdd, 0)}；停損 8% ${pct(b.stop8.cagr)}／${pct(b.stop8.mdd, 0)}；格數＋停損 ${pct(b.slots_stop8.cagr)}／${pct(b.slots_stop8.mdd, 0)}；200 日線 ${pct(b.ma200.cagr)}／${pct(b.ma200.mdd, 0)}；格數＋停損＋200 日線 ${pct(b.slots_stop8_ma200.cagr)}／${pct(b.slots_stop8_ma200.mdd, 0)}。夏普都在 1.8～2.0，差別只在你能忍多深的回檔；組合是看過回檔事件後才加的，算樣本內。`,
+    `<b>沒有偷看未來</b>：資料晚一個月年化 ${pct(au.lag1.base.cagr)}、偷看下個月 ${pct(au.peek.base.cagr)}，正常版 ${pct(au.normal.base.cagr)}。`,
+  ].filter(Boolean).map(s => `<li>${s}</li>`).join("");
+  $("#strip").innerHTML = [["看板規則 2021 起", pct(a.base.total, 0)], ["年化", pct(a.base.cagr)], ["最大回檔", pct(a.base.mdd, 0)],
+    ["前一版權重", pct(a.prev.total, 0)], ["年化", pct(a.prev.cagr)], ["最大回檔", pct(a.prev.mdd, 0)], ["大盤", pct(a.taiex.total, 0)]]
+    .map(([k, v]) => `<div><span class="k">${k}</span><span class="v">${v}</span></div>`).join("");
+}
+
+function table() {
+  const P = D[PER], S = P.stats;
+  $("#perNote").textContent = `${P.start}～${P.asof}，${P.n_reb} 次換股`;
+  let h = `<tr><th class="l">做法</th><th>累積</th><th>年化</th><th>最大回檔</th><th>回檔谷底</th><th>夏普</th><th>最差月</th><th class="l">規則</th></tr>`;
+  let g = "";
+  for (const [k, [nm, grp, desc, ci]] of Object.entries(V)) {
+    const s = S[k]; if (!s) continue;
+    if (grp !== g) { g = grp; h += `<tr class="grp"><td colspan="8">${grp}</td></tr>`; }
+    const cls = k === "base" ? "hl" : k === "taiex" ? "ref" : "";
+    h += `<tr class="${cls}"><td class="l"><label><input type="checkbox" data-k="${k}" ${ON.has(k) ? "checked" : ""}><span class="sw" style="background:var(--s${ci})"></span>${esc(nm)}</label></td>`
+      + `<td>${sgn(s.total, 0)}</td><td>${sgn(s.cagr)}</td><td class="dn">${pct(s.mdd, 0)}</td><td>${esc(s.mdd_at || "")}</td><td>${s.sharpe.toFixed(2)}</td><td>${sgn(s.worst_m)}</td><td class="w">${esc(desc)}</td></tr>`;
+  }
+  $("#cmp").innerHTML = h;
+  $("#cmp").querySelectorAll("input").forEach(el => el.onchange = () => { el.checked ? ON.add(el.dataset.k) : ON.delete(el.dataset.k); draw(); });
+}
+
+function draw() {
+  const P = D[PER], days = P.nav.dates;
+  const S = [...ON].filter(k => P.nav[k]).map(k => ({ c: `var(--s${V[k][3]})`, lab: V[k][0], raw: P.nav[k] }));
+  lineChart($("#navChart"), days, S.map(s => ({ ...s, y: s.raw.map(Math.log) })), { log: true });
+  const dd = a => { let m = -Infinity; return a.map(v => (m = Math.max(m, v), v / m - 1)); };
+  lineChart($("#ddChart"), days, S.map(s => { const d = dd(s.raw); return { ...s, y: d, raw: d }; }), { dd: true });
+}
+
+function lineChart(el, days, S, opt) {
+  const W = 1000, H = opt.h || (opt.dd ? 220 : 320), ml = 52, mr = 10, mt = 10, mb = 24, n = days.length;
+  let lo = Infinity, hi = -Infinity;
+  for (const s of S) for (const v of s.y) { if (v < lo) lo = v; if (v > hi) hi = v; }
+  if (!isFinite(lo)) { el.innerHTML = '<p class="hint">勾選上表的做法。</p>'; return; }
+  if (opt.dd) hi = 0;
+  if (opt.eq) { lo = 0; hi = 1; }
+  const pad = (hi - lo) * 0.05 || 0.01; if (!opt.eq) { lo -= pad; if (!opt.dd) hi += pad; }
+  const X = i => ml + (W - ml - mr) * i / (n - 1), Y = v => mt + (H - mt - mb) * (hi - v) / (hi - lo);
+  let g = "";
+  const ticks = [];
+  if (opt.log) { for (const m of [0.5, 0.75, 1, 1.5, 2, 3, 4, 6, 8, 12, 16, 24, 32, 48, 64]) { const v = Math.log(m); if (v >= lo && v <= hi) ticks.push([v, m + "×"]); } }
+  else if (opt.eq) { for (const v of [0, 0.5, 1]) ticks.push([v, v * 100 + "%"]); }
+  else { for (let v = 0; v >= lo; v -= 0.1) ticks.push([v, Math.round(v * 100) + "%"]); }
+  for (const [v, t] of ticks) g += `<line x1="${ml}" x2="${W - mr}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)"/><text x="${ml - 6}" y="${Y(v) + 4}" text-anchor="end">${t}</text>`;
+  days.forEach((d, i) => { if (i > 0 && d.slice(0, 4) !== days[i - 1].slice(0, 4)) g += `<line x1="${X(i)}" x2="${X(i)}" y1="${mt}" y2="${H - mb}" stroke="var(--line)" stroke-dasharray="2 4"/><text x="${X(i)}" y="${H - 6}" text-anchor="middle">${d.slice(0, 4)}</text>`; });
+  for (const s of S) {
+    let d = "";
+    for (let i = 0; i < n; i++) if (s.y[i] != null && isFinite(s.y[i])) d += (d ? "L" : "M") + X(i).toFixed(1) + " " + Y(s.y[i]).toFixed(1);
+    g += `<path d="${d}" fill="none" stroke="${s.c}" stroke-width="1.7" stroke-linejoin="round"/>`;
+  }
+  g += `<line class="cur" x1="0" x2="0" y1="${mt}" y2="${H - mb}" stroke="var(--ink-3)" visibility="hidden"/>`;
+  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${opt.dd ? "回檔走勢" : "淨值走勢"}">${g}</svg><div class="tip"></div>`;
+  const svg = el.querySelector("svg"), tip = el.querySelector(".tip"), cur = el.querySelector(".cur");
+  svg.addEventListener("pointermove", ev => {
+    const r = svg.getBoundingClientRect(), x = (ev.clientX - r.left) / r.width * W;
+    const i = Math.max(0, Math.min(n - 1, Math.round((x - ml) / (W - ml - mr) * (n - 1))));
+    cur.setAttribute("x1", X(i)); cur.setAttribute("x2", X(i)); cur.setAttribute("visibility", "visible");
+    tip.innerHTML = `<b>${days[i]}</b>` + S.map(s => `<div class="r"><span><span class="sw" style="background:${s.c}"></span>${esc(s.lab)}</span><span>${opt.dd || opt.eq ? (s.raw[i] * 100).toFixed(opt.eq ? 0 : 1) + "%" : s.raw[i].toFixed(2) + "×"}</span></div>`).join("");
+    tip.style.display = "block";
+    const px = (X(i) / W) * r.width;
+    tip.style.left = (px > r.width / 2 ? px - tip.offsetWidth - 12 : px + 12) + "px";
+    tip.style.top = "8px";
+  });
+  svg.addEventListener("pointerleave", () => { tip.style.display = "none"; cur.setAttribute("visibility", "hidden"); });
+}
+
+function freq() {
+  const P = D[PER], S = P.stats, F = P.freq || {}, G = D.freq_gross || {};
+  const key = k => k === "1" ? "base" : "freq" + k;
+  const lab = k => k === "1" ? "1 次（現行）" : k.endsWith("x") ? `${k[0]} 次，月中只出不進` : `${k} 次`;
+  const yrs = (new Date(P.asof) - new Date(P.start)) / 3.156e10;
+  $("#freq").innerHTML = `<tr><th class="l">每月換股</th><th class="l">換股日</th><th>每年換股</th><th>每次換手</th><th>年化</th><th>最大回檔</th><th>夏普</th><th>年成本約</th>${PER === "p2014" ? "<th>不扣成本年化</th>" : ""}</tr>`
+    + Object.entries(F).map(([k, f]) => { const s = S[key(k)]; const n = f.n_reb / yrs, c = n * f.turnover * 0.003;
+      return `<tr class="${k === "1" ? "hl" : ""}"><td class="l">${lab(k)}</td><td class="l">${f.rule.split(",").join("、")} 日</td><td>${n.toFixed(0)} 次</td><td>${pct(f.turnover, 0)}</td><td>${sgn(s.cagr)}</td><td class="dn">${pct(s.mdd, 0)}</td><td>${s.sharpe.toFixed(2)}</td><td>${pct(c)}</td>${PER === "p2014" ? `<td>${G[k] ? sgn(G[k].cagr) : "—"}</td>` : ""}</tr>`; }).join("");
+}
+
+function waves() {
+  const W = D.waves || {};
+  const K = { base: "每月 1 次（現行）", freq2: "每月 2 次", freq2x: "2 次，月中只出不進", freq3: "每月 3 次", freq3x: "3 次，月中只出不進", freq4: "每月 4 次" };
+  $("#waves").innerHTML = Object.entries(W).map(([id, w]) => {
+    const rows = Object.entries(w.runs).map(([k, r]) => `<tr class="${k === "base" ? "hl" : ""}"><td class="l">${K[k]}</td><td>${sgn(r.ret, 0)}</td><td class="dn">${pct(r.mdd, 0)}</td><td>${r.first_in || "—"}</td><td>${r.max_n} 檔</td><td>${pct(r.avg_w, 0)}</td><td>${r.at_peak} 檔</td><td>${r.exit || "—"}</td><td>${sgn(r.contrib, 0)}</td></tr>`).join("");
+    const sp = w.runs.base.spans.map(x => `<a href="${quote(x.code)}" target="_blank" rel="noopener">${esc(x.name)}</a> <span class="hint">${x.first.slice(2)}～${x.last.slice(2)}，${x.n} 期，${x.ret >= 0 ? "+" : ""}${(x.ret * 100).toFixed(0)}%</span>`).join("；");
+    return `<div class="panel" style="margin-top:12px"><b>${esc(w.name)}</b> <span class="hint">${w.start}～${w.end}，${w.n_codes} 檔等權：區間 ${(w.basket.ret * 100).toFixed(0)}%，${w.basket.peak} 見高（從起點 +${(w.basket.to_peak * 100).toFixed(0)}%，之後 ${(w.basket.after_peak * 100).toFixed(0)}%）；同期大盤 ${(w.taiex * 100).toFixed(0)}%</span>
+      <div class="chart" id="wv-${id}"></div>
+      <div class="tbl" style="margin-top:8px"><table class="t"><tr><th class="l">換股頻率</th><th>策略區間報酬</th><th>區間最大回檔</th><th>第一次買進題材股</th><th>最多同時</th><th>平均占比</th><th>題材高點時抱</th><th>高點後降到 ≤1 檔</th><th>題材部位貢獻</th></tr>${rows}</table></div>
+      <p class="hint" style="margin-top:8px">每月 1 次（現行）抱過的題材股：${sp || "沒有"}</p></div>`;
+  }).join("");
+  for (const [id, w] of Object.entries(W)) {
+    const days = w.basket_wk.dates;
+    const step = e => { let j = -1; return days.map(d => { while (j + 1 < e.dates.length && e.dates[j + 1] <= d) j++; return j < 0 ? 0 : e.n[j] / 14; }); };
+    const b = w.basket_wk.v, mx = Math.max(...b);
+    lineChart($("#wv-" + id), days, [
+      { c: "var(--s0)", lab: "題材等權（相對高點）", raw: b.map(v => v / mx), y: b.map(v => v / mx) },
+      { c: "var(--s1)", lab: "每月 1 次：題材股占比", raw: step(w.runs.base.exp), y: step(w.runs.base.exp) },
+      { c: "var(--s8)", lab: "每月 3 次：題材股占比", raw: step(w.runs.freq3.exp), y: step(w.runs.freq3.exp) },
+    ], { eq: true, h: 200 });
+  }
+}
+
+function episodes() {
+  const E = D[PER].episodes || [];
+  const K = ["base", "ma200", "stop8", "stop8_ma200", "slots", "slots_stop8_ma200", "trail20_recycle", "breadth", "cash30", "bond40", "prev", "taiex"];
+  $("#epi").innerHTML = E.map((e, i) => {
+    const rows = K.filter(k => e.mdd[k] != null).map(k => `<tr class="${k === "base" ? "hl" : k === "taiex" ? "ref" : ""}"><td class="l"><span class="sw" style="background:var(--s${V[k][3]})"></span>${esc(V[k][0])}</td><td class="dn">${pct(e.mdd[k], 0)}</td><td>${sgn(e.move[k])}</td></tr>`).join("");
+    const ma = e.ma200_exit ? `大盤 200 日線：${e.ma200_exit} 出場（前一天大盤收在 200 日線下），${e.ma200_back ? e.ma200_back + " 站回去買回" : "到資料最後還沒站回"}。`
+      : "大盤這段沒跌破 200 日線，200 日線版本沒有出場，跟看板規則一起跌。";
+    const sw = e.swaps.map(s => `<li><b>${s.date}</b> 換股：留 ${s.kept.length} 檔；換掉 ${s.out.map(esc).join("、") || "—"}；換進 ${s.in.map(esc).join("、") || "—"}</li>`).join("");
+    return `<div class="panel" style="margin-top:12px"><b>第 ${i + 1} 深：${e.peak} → ${e.trough}，${pct(e.depth, 0)}</b> <span class="hint">${e.days} 天跌到底，${e.recover ? e.recover_days + " 天後回到前高（" + e.recover + "）" : "還沒回到前高"}</span>
+      <div class="grid2" style="margin-top:8px"><div class="tbl"><table class="t"><tr><th class="l">做法</th><th>這段最大回檔</th><th>高點到谷底</th></tr>${rows}</table></div>
+      <div><p class="hint" style="margin:2px 0 6px">${ma}</p><ul class="rules">${sw || "<li>跌到底之前沒有換股日：規則照抱，等下個 11 日。</li>"}</ul>
+      <p class="hint" style="margin-top:6px">跌之前持有：${e.held_before.map(esc).join("、")}</p></div></div></div>`;
+  }).join("") || '<p class="hint">這段期間沒有超過 10% 的回檔。</p>';
+}
+
+function scoring() {
+  const m = SC.meta;
+  $("#scoreIntro").innerHTML = `把合成分數換成 ${m.n_cfg} 種函數（營收驚喜、52 週高點、學界 ML 三項的冪平均、幾何平均、取短板、相乘交互、門檻閘道，權重每 0.1 一格），再加 3 種學習型（脊迴歸、含交互項的脊迴歸、梯度提升樹，用全部 9 項特徵）。只用 2014–2020 選參數，2021 起的資料完全沒看過。另外每年 1 月只用過去資料重選一次（走動式）。`;
+  $("#ofStrip").innerHTML = [["試過的設定", m.n_cfg + " 種"], ["過度擬合機率 PBO", pct(m.pbo)], ["通縮夏普值", pct(m.dsr)],
+    ["樣本內最佳 → 樣本外（月夏普中位）", `${m.sr_is.toFixed(2)} → ${m.sr_oos.toFixed(2)}`]]
+    .map(([k, v]) => `<div><span class="k">${k}</span><span class="v">${v}</span></div>`).join("");
+  const hl = n => n.startsWith("營收驚喜＋52") || n.startsWith("看板現行") ? "hl" : n.startsWith("加權") || n.startsWith("事後") ? "ref" : "";
+  const lab = n => n.startsWith("看板現行") ? "前一版權重（11/2 第一次調整）" : n.startsWith("營收驚喜＋52") ? "營收驚喜＋52 週高點各半（現行，不擬合）" : n;
+  $("#port").innerHTML = `<tr><th class="l">算分</th><th>擬合期年化</th><th>擬合期回檔</th><th>擬合期夏普</th><th>驗證期年化</th><th>驗證期回檔</th><th>驗證期夏普</th></tr>`
+    + SC.portfolio.map(r => `<tr class="${hl(r.name)}"><td class="l">${esc(lab(r.name))}</td><td>${sgn(r.is_cagr)}</td><td class="dn">${pct(r.is_mdd, 0)}</td><td>${r.is_sharpe != null ? r.is_sharpe.toFixed(2) : "—"}</td><td>${sgn(r.oos_cagr)}</td><td class="dn">${pct(r.oos_mdd, 0)}</td><td>${r.oos_sharpe.toFixed(2)}</td></tr>`).join("");
+  $("#fam").innerHTML = `<tr><th class="l">函數族</th><th class="l">擬合期選到</th><th>擬合期</th><th>驗證期</th><th>變化</th><th>族內設定數</th></tr>`
+    + SC.families.map(r => `<tr><td class="l">${esc(r["族"])}</td><td class="l">${esc(r["擬合期最佳設定"].replace("看板現行", "前一版權重"))}</td><td>${esc(r["擬合期月超額"])}</td><td>${esc(r["驗證期月超額"])}</td><td>${esc(r["衰退"])}</td><td>${r["族內設定數"]}</td></tr>`).join("")
+    + SC.walk.map(r => `<tr class="${r["做法"].startsWith("走動") ? "hl" : ""}"><td class="l" colspan="2">${esc(r["做法"].replace("看板現行權重", "前一版權重"))}（2016 起每月）</td><td colspan="2">${esc(r.mean)}（t ${esc(r.t)}）</td><td></td><td>${r.n} 月</td></tr>`).join("");
+  const HN = { p_academic: "學界 ML", p_sus: "營收驚喜", p_hi52: "52 週高點", c10: "營收驚喜＋52 週高點" };
+  $("#hz").innerHTML = `<tr><th class="l">訊號</th><th>1 個月</th><th>3 個月</th><th>6 個月</th><th>12 個月</th></tr>`
+    + Object.entries(SC.horizon).map(([k, v]) => `<tr class="${k === "p_academic" ? "hl" : ""}"><td class="l">${HN[k]}</td>${[1, 3, 6, 12].map(h => `<td>${sgn(v[h][0])}／${sgn(v[h][1])}</td>`).join("")}</tr>`).join("");
+  $("#grad").innerHTML = `<tr><th class="l">ML 權重</th><th>擬合期</th><th>驗證期</th></tr>`
+    + SC.ml_grad.map(r => `<tr><td class="l">${r.academic.toFixed(1)}</td><td>${sgn(r.is, 2)}</td><td>${sgn(r.oos, 2)}</td></tr>`).join("");
+  const cols = Object.keys(Object.values(SC.years)[0]);
+  const short = { "看板現行權重": "前一版權重", "營收驚喜＋52 週高點各半（C10，不擬合）": "各半（現行）", "梯度提升樹（2014–2020 訓練）": "梯度提升樹", "加權報酬指數": "加權報酬指數" };
+  $("#yrs").innerHTML = `<tr><th class="l">年</th>${cols.map(c => `<th>${short[c] || esc(c)}</th>`).join("")}</tr>`
+    + Object.entries(SC.years).map(([y, r]) => `<tr><td class="l">${y}${y === "2014" || y === "2021" ? "*" : ""}</td>${cols.map(c => `<td>${sgn(r[c])}</td>`).join("")}</tr>`).join("");
+}
+
+function audit() {
+  const A = D.audit, L = { normal: "正常", lag1: "資料晚一個月", peek: "偷看下個月" };
+  $("#audit").innerHTML = `<tr><th class="l">版本</th><th>看板規則 年化</th><th>回檔</th><th>前一版權重 年化</th><th>回檔</th></tr>`
+    + Object.entries(L).map(([k, nm]) => `<tr class="${k === "normal" ? "hl" : ""}"><td class="l">${nm}</td><td>${sgn(A[k].base.cagr)}</td><td class="dn">${pct(A[k].base.mdd, 0)}</td><td>${A[k].prev ? sgn(A[k].prev.cagr) : "—"}</td><td class="dn">${A[k].prev ? pct(A[k].prev.mdd, 0) : "—"}</td></tr>`).join("");
+}
+
+function conflicts() {
+  const a = D.p2021.stats, b = D.p2014.stats;
+  const c = SC.portfolio.find(r => r.name.startsWith("營收驚喜＋52")), hgb = SC.portfolio.find(r => r.name.startsWith("梯度提升樹"));
+  const L = (t, q) => `<a href="${scholar(q)}" target="_blank" rel="noopener">${t}</a>`;
+  const fam = f => SC.portfolio.find(r => r.name.startsWith(f + "（"));
+  const rows = [
+    ["要不要停損", `民間教學多半說一定要停損；${L("Clare 等（2013）", "Clare Seaton Smith Thomas 2013 trend following stop losses frequency of trading")}認為停損沒加分、月決策勝過頻繁交易；${L("Lo 與 Remorov（2017）", "Lo Remorov 2017 stop-loss strategies serial correlation regime switching transaction costs")}認為緊停損吃虧主要是成本，寬停損在多空切換時可能有用。`,
+      `停損 8%：2014 起 ${pct(b.stop8.cagr)}／${pct(b.stop8.mdd, 0)}（不停損 ${pct(b.base.cagr)}／${pct(b.base.mdd, 0)}），夏普 ${b.stop8.sharpe.toFixed(2)} 對 ${b.base.sharpe.toFixed(2)}；前一版權重時停損幾乎是純扣分（年化少 4～8 點、回檔只少 2 點）。`, "算分改成各半後兩邊各對一半：停損還是少賺，但回檔明顯變淺、夏普變高。分數更偏動能，跌 8% 多半代表動能反轉；而且它擋得住 200 日線擋不到的急殺。要不要用，看能接受多深的回檔。"],
+    ["大盤均線擇時", `${L("Faber（2007）", "Faber 2007 A Quantitative Approach to Tactical Asset Allocation")}的 10 個月線降低回檔；${L("Zakamulin", "Zakamulin market timing moving average real-life performance")}認為效果主要來自降波動，近年資料不顯著。`,
+      `200 日線：2021 起 ${pct(a.ma200.cagr)}／${pct(a.ma200.mdd, 0)}（不擇時 ${pct(a.base.cagr)}／${pct(a.base.mdd, 0)}）；2014 起 ${pct(b.ma200.cagr)}（不擇時 ${pct(b.base.cagr)}）。`, `兩邊都對：200 日線把 2014 起最大回檔從 ${pct(b.base.mdd, 0)} 縮到 ${pct(b.ma200.mdd, 0)}，但年化要付 ${((b.base.cagr - b.ma200.cagr) * 100).toFixed(1)} 點保費；而且它只擋得到大盤慢跌的空頭，擋不到急殺。`],
+    ["均線用幾天", "台灣有研究認為加權指數用 60 日線最好。",
+      `2014 起：60 日 ${pct(b.ma60_monthly.cagr)}、120 日 ${pct(b.ma120_monthly.cagr)}、200 日 ${pct(b.ma200_monthly.cagr)}、250 日 ${pct(b.ma250_monthly.cagr)}。`, "對一籃子月換股的強勢股，短均線來回洗太多次；250 日太慢，2020 年沒擋到；200 日在報酬和回檔之間最平衡。"],
+    ["月底均線還是最新收盤", "Faber 用月底收盤，一個月看一次。",
+      `10 個月線（月底）${pct(b.ma10.cagr)}，200 日線（前一天收盤）${pct(b.ma200.cagr)}（2014 起）。`, "資料越新越好：換股日離上個月底已經 10 天，月底均線是舊資訊。"],
+    ["算分要不要用機器學習", `${L("Gu、Kelly、Xiu（2020）", "Gu Kelly Xiu 2020 Empirical Asset Pricing via Machine Learning")}認為 ML 預測報酬勝過線性；${L("Avramov 等（2023）", "Avramov Cheng Metzker 2023 Machine Learning vs. Economic Restrictions stock return predictability")}發現排除微型股、無信用評等和財務困難股後，四種非線性 ML 訊號的超額少掉 48%～94%、都不再顯著，線性模型幾乎不變。${L("DeMiguel 等（2009）", "DeMiguel Garlappi Uppal 2009 Optimal Versus Naive Diversification")}：估計誤差讓擬合權重常輸給等權，往等權收縮通常最好。`,
+      `梯度提升樹夏普 ${hgb.is_sharpe.toFixed(2)}（擬合期最高）→ ${hgb.oos_sharpe.toFixed(2)}；不擬合的營收驚喜＋52 週高點各半 ${c.is_sharpe.toFixed(2)} → ${c.oos_sharpe.toFixed(2)}。驗證期年化 ${pct(hgb.oos_cagr)} 對 ${pct(c.oos_cagr)}。`, "這裡的母體是市值前 60%（沒有微型股），結果和 Avramov 等一致：複雜模型擬合期好看、樣本外衰退最多。擬合出來的最佳權重（0.4／0.6）也幾乎就是等權，簡單排名平均最穩。"],
+    ["兩個訊號相加還是相乘", `美國、韓國的研究：股價靠近 52 週高點時，盈餘驚喜後的漂移更強（互相放大）；台灣的${L("Lin 與 Wu（2021）", "Lin Wu 2021 52-week high earnings surprise Taiwan")}發現相反，靠近高點時未預期盈餘的異常報酬反而變小。`,
+      `2021 起：相加（擬合期最佳 0.4／0.6）${pct(fam("冪平均").oos_cagr)}；相乘交互 ${pct(fam("交互").oos_cagr)}、取短板 ${pct(fam("短板").oos_cagr)}、兩個都過門檻 ${pct(fam("門檻").oos_cagr)}。`, "站台灣那邊：兩個訊號在台股是相加、不是相乘；要求「兩個都強」反而變差，排名平均就好。"],
+    ["學界估值 ML 該占多少", "先前的估值研究：學界模型（HVZ、GLS、ML）預測 12 個月報酬勝過現行模型，看板因此給它 0.15。",
+      `ML 前 10% 的超額：1 個月 ${pct(SC.horizon.p_academic[1][1], 1)}、12 個月 ${pct(SC.horizon.p_academic[12][1], 1)}（驗證期）；ML 權重 0→0.2→0.4，月超額 ${SC.ml_grad.map(r => pct(r.oos, 2)).join("→")}。`, "兩個結論都對，持有期不同：ML 是 12 個月的估值訊號，放進每月換股的分數只會稀釋。適合拿來定目標價、不適合拿來挑這個月買什麼。"],
+    ["過度擬合怎麼判斷", `${L("Bailey 等（2017）PBO", "Bailey Borwein Lopez de Prado Zhu 2017 The Probability of Backtest Overfitting")}、${L("通縮夏普值（2014）", "Bailey Lopez de Prado 2014 The Deflated Sharpe Ratio")}、${L("Harvey、Liu、Zhu（2016）", "Harvey Liu Zhu 2016 and the Cross-Section of Expected Returns")}：試越多次，門檻要越高。`,
+      `${SC.meta.n_cfg} 種設定：PBO ${pct(SC.meta.pbo)}、通縮夏普值 ${pct(SC.meta.dsr)}；但用「每月前 10% 夏普」選出的事後最佳，做成 14 檔組合只有 ${pct(SC.portfolio.find(r => r.name.startsWith("事後")).oos_cagr)}。`, "訊號沒有過度擬合；真正的風險是「用 A 指標選、用 B 方式持有」，評估指標要跟實際持有方式一致。"],
+  ];
+  $("#conf").innerHTML = `<tr><th class="l">衝突點</th><th class="l">說法與文獻</th><th class="l">這裡的回測</th><th class="l">結論</th></tr>`
+    + rows.map(r => `<tr><td class="l"><b>${r[0]}</b></td><td class="w">${r[1]}</td><td class="w">${r[2]}</td><td class="w">${r[3]}</td></tr>`).join("");
+}
+
+function picks() {
+  const L = D.p2021.latest;
+  $("#pickDate").textContent = `${L.date} 換股`;
+  const box = (t, p) => `<div class="panel"><b>${t}</b>${p.picks.map((c, i) => `<a href="${quote(c)}" target="_blank" rel="noopener">${esc(p.names[i])}<span class="code">${esc(c)}</span></a>`).join("")}</div>`;
+  $("#picks").innerHTML = box("看板規則（各半）", L) + (L.prev ? box("前一版權重", L.prev) : "");
+}
+
+(async () => {
+  try { [D, SC] = await Promise.all([getJSON("data/risk/strategy.json"), getJSON("data/risk/strategy_score.json")]); }
+  catch (e) { $("#concl").innerHTML = `<li>讀不到回測資料：${esc(e.message)}</li>`; return; }
+  $("#asof").textContent = D.p2021.asof;
+  document.querySelectorAll(".seg button").forEach(bt => bt.onclick = () => {
+    PER = bt.dataset.p;
+    document.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-pressed", x === bt));
+    table(); draw(); episodes(); freq();
+  });
+  conclusions(); table(); draw(); freq(); waves(); episodes(); scoring(); audit(); conflicts(); picks();
+})();
+</script>
+</body>
+</html>
