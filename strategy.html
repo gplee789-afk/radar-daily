@@ -101,7 +101,7 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
     </nav>
   </header>
   <nav class="tabs" aria-label="實驗室"><a href="risk.html">風控回測</a><a href="strategy.html" aria-current="page">策略回測</a></nav>
-  <p class="sub">看板「先看這幾家」的選股規則逐日回測：每個換股日只用當天以前已公布的資料，母體含之後下市的公司，買賣都扣成本。歷史回測，不是投資建議。</p>
+  <p class="sub">看板「先看這幾家」的選股規則逐日回測：每個換股日只用當天以前已公布的資料，母體含之後下市的公司，買賣都扣成本，收漲停買不到、收跌停賣不掉。歷史回測，不是投資建議。</p>
 
   <h2>結論</h2>
   <div class="panel"><ul class="concl" id="concl"><li>載入中…</li></ul></div>
@@ -170,6 +170,7 @@ footer { color: var(--ink-3); font-size: 12px; margin-top: 26px; }
     <li><b>月資料特徵</b>（事實四項、學界 ML、同業、共識）：用換股日前一個月底的值。</li>
     <li><b>母體</b>：前一個月底市值前 60%，含之後下市的公司；沒有日股價的日子用 TEJ 月報酬平均攤到每天。</li>
     <li><b>成本</b>：每次換手單邊 0.3%；現金年利 1%；停損的賣出也扣成本。</li>
+    <li><b>漲跌停</b>：換股日收漲停的股票買不到（手上沒有的就跳過，遞補下一名）；收跌停的賣不掉，換股或停損都延到第一個沒收跌停的收盤。漲跌幅 2015 年 6 月前 7%、之後 10%。</li>
     <li><b>大盤均線</b>：用加權報酬指數前一天收盤，不用當天。</li>
   </ul></div>
 
@@ -205,7 +206,7 @@ const V = {
   ma10_half: ["＋大盤 10 個月線（跌破減半）", "大盤擇時", "同上，跌破只減半。", 10],
   breadth: ["＋市場廣度出場", "大盤擇時", "母體裡離一年高點 15% 內的公司不到 20% 就整月空手。", 8],
   slots_breadth: ["固定格數＋市場廣度", "大盤擇時", "兩個一起用。", 10],
-  stop8: ["個股停損 8%", "停損", "從買進價跌 8% 隔天賣，錢放現金到下次換股。", 10],
+  stop8: ["個股停損 8%", "停損", "收盤比買進價跌 8% 就用收盤價賣（盤後定價），收跌停賣不掉就延到下一個收盤；錢放現金到下次換股。", 10],
   stop8_recycle: ["停損 8%＋轉進下一名", "停損", "停損賣出的錢隔天買偏多名單裡下一檔沒持有的。", 10],
   stop8_recycle_hi: ["停損 8%＋轉進下一名（要接近高點）", "停損", "同上，但下一名要離一年高點 5% 內。", 10],
   trail20: ["移動停損 20%", "停損", "從持有期間最高價回落 20% 賣出，錢放現金。", 10],
@@ -237,15 +238,23 @@ function conclusions() {
   const hgb = SC.portfolio.find(r => r.name.startsWith("梯度提升樹"));
   const yrs = Object.values(SC.years), win = yrs.filter(y => y[c.name] > y[p.name]).length;
   const e0 = (D.p2014.episodes || [])[0];
+  const pw = SC.portfolio.find(r => r.name.startsWith("冪平均"));
+  const pt = r => { const k = "冪平均|" + (r ? r.name.match(/w=\([^)]*\) k=-?\d+/)[0] : "w=(0.5,0.5,0.0) k=1"); const x = SC.pair_top10.find(p => p["設定"] === k); return x ? x["驗證期月超額差"] : "—"; };
+  // 回檔兩種：大盤跌破 200 日線（200 日線有出場）vs 沒破線的急殺（只有停損擋得到）；兩個起點的事件合併
+  const eps = Object.values(Object.fromEntries([...(D.p2014.episodes || []), ...(D.p2021.episodes || [])].map(e => [e.peak, e])));
+  const ym = e => `${e.trough.slice(0, 4)}/${+e.trough.slice(5, 7)}`;
+  const slow = eps.filter(e => e.ma200_exit), fast = eps.filter(e => !e.ma200_exit);
+  const dd = (e, k) => `${pct(e.depth, 0)}→${pct(e.mdd[k], 0)}`;
+  const defs = ["base", "slots", "stop8", "slots_stop8", "ma200", "slots_stop8_ma200"].map(k => b[k].sharpe);
   $("#concl").innerHTML = [
     `<span class="view bull">偏多</span><b>看板規則（營收驚喜＋52 週高點各半）2021 起累積 ${pct(a.base.total, 0)}、年化 ${pct(a.base.cagr)}、最大回檔 ${pct(a.base.mdd, 0)}</b>；同期加權報酬指數 ${pct(a.taiex.total, 0)}／${pct(a.taiex.cagr)}／${pct(a.taiex.mdd, 0)}。拉長到 2014 起年化 ${pct(b.base.cagr)}（大盤 ${pct(b.taiex.cagr)}）。`,
     `<span class="view bull">偏多</span><b>比前一版權重好</b>（2026-11-02 改）：2021 起 ${pct(a.base.cagr)} 對 ${pct(a.prev.cagr)}，2014 起 ${pct(b.base.cagr)} 對 ${pct(b.prev.cagr)}，${yrs.length} 年贏 ${win} 年，2021 起每月多 ${pct(SC.paired.mean, 2)}（t ${SC.paired.t.toFixed(1)}）。代價是 2014 起回檔較深（${pct(b.base.mdd, 0)} 對 ${pct(b.prev.mdd, 0)}）；再加大盤 200 日線，2014 起 ${pct(b.ma200.cagr)}／${pct(b.ma200.mdd, 0)}，報酬和回檔都勝過前一版。`,
-    `<span class="view neu">中性</span><b>擬合沒有找到更好的函數</b>：${m.n_cfg} 種組合（冪平均、幾何平均、短板、交互、門檻）加脊迴歸、梯度提升樹，擬合期選出的最佳解在驗證期都只跟「各半」打平。梯度提升樹在擬合期看起來最好（夏普 ${hgb.is_sharpe.toFixed(2)}，各半 ${c.is_sharpe.toFixed(2)}），驗證期掉到 ${hgb.oos_sharpe.toFixed(2)}、年化 ${pct(hgb.oos_cagr)}（各半 ${c.oos_sharpe.toFixed(2)}、${pct(c.oos_cagr)}），是典型的過度擬合。整體挑選過程 PBO ${pct(m.pbo)}、通縮夏普值 ${pct(m.dsr)}，訊號本身是真的。`,
+    `<span class="view neu">中性</span><b>擬合沒有找到明顯更好的函數</b>：${m.n_cfg} 種組合（冪平均、幾何平均、短板、交互、門檻）加脊迴歸、梯度提升樹，擬合期最佳的${esc(pw.name.replace(/（.*/, ""))}（${esc(pw.name.match(/w=\([^)]*\) k=-?\d+/)[0])}，偏重較弱的一項）驗證期組合 ${pct(pw.oos_cagr)}，「各半」${pct(c.oos_cagr)}；但每月前 10% 的超額兩者幾乎一樣（相對前一版 ${pt(pw)} 對 ${pt(null)}），差距在雜訊內。梯度提升樹在擬合期看起來最好（夏普 ${hgb.is_sharpe.toFixed(2)}，各半 ${c.is_sharpe.toFixed(2)}），驗證期掉到 ${hgb.oos_sharpe.toFixed(2)}、年化 ${pct(hgb.oos_cagr)}（各半 ${c.oos_sharpe.toFixed(2)}、${pct(c.oos_cagr)}），是典型的過度擬合。整體挑選過程 PBO ${pct(m.pbo)}、通縮夏普值 ${pct(m.dsr)}，訊號本身是真的。`,
     D.freq_gross ? `<span class="view bear">偏空</span><b>換股越頻繁越差</b>：2014 起每月換 1／2／3／4 次，年化 ${["base", "freq2", "freq3", "freq4"].map(k => pct(b[k].cagr)).join("／")}、最大回檔 ${["base", "freq2", "freq3", "freq4"].map(k => pct(b[k].mdd, 0)).join("／")}；不扣成本也是 ${["1", "2", "3", "4"].map(k => pct(D.freq_gross[k].cagr)).join("／")}，所以不只是成本。營收一個月才更新一次，月中多換的只是追前兩週漲的股票，剛好碰上短期反轉。` : "",
     D.waves ? `<span class="view neu">中性</span><b>題材風潮只搭到一部分</b>：航運 ${D.waves.ship.start.slice(0, 7)}～${D.waves.ship.end.slice(0, 7)} 題材等權 +${(D.waves.ship.basket.ret * 100).toFixed(0)}%，策略 +${(D.waves.ship.runs.base.ret * 100).toFixed(0)}%、最多同時 ${D.waves.ship.runs.base.max_n} 檔，題材 ${D.waves.ship.basket.peak} 見高後 ${D.waves.ship.runs.base.exit} 已經只剩 ≤1 檔，躲掉之後的 ${(D.waves.ship.basket.after_peak * 100).toFixed(0)}%；AI 從 2023 起 +${(D.waves.ai.runs.base.ret * 100).toFixed(0)}%（題材等權 +${(D.waves.ai.basket.ret * 100).toFixed(0)}%、大盤 +${(D.waves.ai.taiex * 100).toFixed(0)}%），平均只有 ${pct(D.waves.ai.runs.base.avg_w, 0)} 放在 AI 股。它不押題材，只在題材股排到全市場最前面時才買。` : "",
     e0 ? `<span class="view neu">中性</span><b>回檔時規則本身不做任何防守</b>：沒有停損、不擇時、永遠滿倉，只靠每月 11 日重排把跌離高點的股票換掉。最深一次 ${e0.peak}～${e0.trough} 跌 ${pct(e0.depth, 0)}，期間兩次換股各換掉一大半，換進的新強勢股也跟著跌（見下方「回檔時怎麼做」）。` : "",
-    `<span class="view neu">中性</span><b>回檔分兩種，各有各的解</b>：大盤慢慢跌破 200 日線的空頭（2020/3、2025/4），200 日線換現金把回檔壓到個位數；大盤沒破線的急殺（2024/8、2026/7、2021/5），200 日線完全沒動，只有個股停損 8% 擋得到（約 −19% → −12%）。`,
-    `<span class="view neu">中性</span><b>防守都是拿報酬換回檔</b>（2014 起年化／最大回檔）：不防守 ${pct(b.base.cagr)}／${pct(b.base.mdd, 0)}；固定格數 ${pct(b.slots.cagr)}／${pct(b.slots.mdd, 0)}；停損 8% ${pct(b.stop8.cagr)}／${pct(b.stop8.mdd, 0)}；格數＋停損 ${pct(b.slots_stop8.cagr)}／${pct(b.slots_stop8.mdd, 0)}；200 日線 ${pct(b.ma200.cagr)}／${pct(b.ma200.mdd, 0)}；格數＋停損＋200 日線 ${pct(b.slots_stop8_ma200.cagr)}／${pct(b.slots_stop8_ma200.mdd, 0)}。夏普都在 1.8～2.0，差別只在你能忍多深的回檔；組合是看過回檔事件後才加的，算樣本內。`,
+    `<span class="view neu">中性</span><b>回檔分兩種，各有各的解</b>：大盤跌破 200 日線的空頭（${slow.map(e => `${ym(e)} ${dd(e, "ma200")}`).join("、")}），200 日線換現金能壓低回檔，但要等大盤真的破線才出場；大盤沒破線的急殺（${fast.map(e => `${ym(e)} ${dd(e, "stop8")}`).join("、")}），200 日線完全沒動，只有個股停損 8% 擋得到一部分。`,
+    `<span class="view neu">中性</span><b>防守都是拿報酬換回檔</b>（2014 起年化／最大回檔）：不防守 ${pct(b.base.cagr)}／${pct(b.base.mdd, 0)}；固定格數 ${pct(b.slots.cagr)}／${pct(b.slots.mdd, 0)}；停損 8% ${pct(b.stop8.cagr)}／${pct(b.stop8.mdd, 0)}；格數＋停損 ${pct(b.slots_stop8.cagr)}／${pct(b.slots_stop8.mdd, 0)}；200 日線 ${pct(b.ma200.cagr)}／${pct(b.ma200.mdd, 0)}；格數＋停損＋200 日線 ${pct(b.slots_stop8_ma200.cagr)}／${pct(b.slots_stop8_ma200.mdd, 0)}。夏普都在 ${Math.min(...defs).toFixed(2)}～${Math.max(...defs).toFixed(2)}，差別只在你能忍多深的回檔；組合是看過回檔事件後才加的，算樣本內。`,
     `<b>沒有偷看未來</b>：資料晚一個月年化 ${pct(au.lag1.base.cagr)}、偷看下個月 ${pct(au.peek.base.cagr)}，正常版 ${pct(au.normal.base.cagr)}。`,
   ].filter(Boolean).map(s => `<li>${s}</li>`).join("");
   $("#strip").innerHTML = [["看板規則 2021 起", pct(a.base.total, 0)], ["年化", pct(a.base.cagr)], ["最大回檔", pct(a.base.mdd, 0)],
@@ -399,7 +408,7 @@ function conflicts() {
   const fam = f => SC.portfolio.find(r => r.name.startsWith(f + "（"));
   const rows = [
     ["要不要停損", `民間教學多半說一定要停損；${L("Clare 等（2013）", "Clare Seaton Smith Thomas 2013 trend following stop losses frequency of trading")}認為停損沒加分、月決策勝過頻繁交易；${L("Lo 與 Remorov（2017）", "Lo Remorov 2017 stop-loss strategies serial correlation regime switching transaction costs")}認為緊停損吃虧主要是成本，寬停損在多空切換時可能有用。`,
-      `停損 8%：2014 起 ${pct(b.stop8.cagr)}／${pct(b.stop8.mdd, 0)}（不停損 ${pct(b.base.cagr)}／${pct(b.base.mdd, 0)}），夏普 ${b.stop8.sharpe.toFixed(2)} 對 ${b.base.sharpe.toFixed(2)}；前一版權重時停損幾乎是純扣分（年化少 4～8 點、回檔只少 2 點）。`, "算分改成各半後兩邊各對一半：停損還是少賺，但回檔明顯變淺、夏普變高。分數更偏動能，跌 8% 多半代表動能反轉；而且它擋得住 200 日線擋不到的急殺。要不要用，看能接受多深的回檔。"],
+      `停損 8%：2014 起 ${pct(b.stop8.cagr)}／${pct(b.stop8.mdd, 0)}（不停損 ${pct(b.base.cagr)}／${pct(b.base.mdd, 0)}），夏普 ${b.stop8.sharpe.toFixed(2)} 對 ${b.base.sharpe.toFixed(2)}；停損日收跌停賣不掉的，延到下一個收盤才賣。`, "算分改成各半後兩邊各對一半：停損還是少賺，但回檔明顯變淺、夏普變高。分數更偏動能，跌 8% 多半代表動能反轉；而且它擋得住 200 日線擋不到的急殺。要不要用，看能接受多深的回檔。"],
     ["大盤均線擇時", `${L("Faber（2007）", "Faber 2007 A Quantitative Approach to Tactical Asset Allocation")}的 10 個月線降低回檔；${L("Zakamulin", "Zakamulin market timing moving average real-life performance")}認為效果主要來自降波動，近年資料不顯著。`,
       `200 日線：2021 起 ${pct(a.ma200.cagr)}／${pct(a.ma200.mdd, 0)}（不擇時 ${pct(a.base.cagr)}／${pct(a.base.mdd, 0)}）；2014 起 ${pct(b.ma200.cagr)}（不擇時 ${pct(b.base.cagr)}）。`, `兩邊都對：200 日線把 2014 起最大回檔從 ${pct(b.base.mdd, 0)} 縮到 ${pct(b.ma200.mdd, 0)}，但年化要付 ${((b.base.cagr - b.ma200.cagr) * 100).toFixed(1)} 點保費；而且它只擋得到大盤慢跌的空頭，擋不到急殺。`],
     ["均線用幾天", "台灣有研究認為加權指數用 60 日線最好。",
@@ -407,9 +416,9 @@ function conflicts() {
     ["月底均線還是最新收盤", "Faber 用月底收盤，一個月看一次。",
       `10 個月線（月底）${pct(b.ma10.cagr)}，200 日線（前一天收盤）${pct(b.ma200.cagr)}（2014 起）。`, "資料越新越好：換股日離上個月底已經 10 天，月底均線是舊資訊。"],
     ["算分要不要用機器學習", `${L("Gu、Kelly、Xiu（2020）", "Gu Kelly Xiu 2020 Empirical Asset Pricing via Machine Learning")}認為 ML 預測報酬勝過線性；${L("Avramov 等（2023）", "Avramov Cheng Metzker 2023 Machine Learning vs. Economic Restrictions stock return predictability")}發現排除微型股、無信用評等和財務困難股後，四種非線性 ML 訊號的超額少掉 48%～94%、都不再顯著，線性模型幾乎不變。${L("DeMiguel 等（2009）", "DeMiguel Garlappi Uppal 2009 Optimal Versus Naive Diversification")}：估計誤差讓擬合權重常輸給等權，往等權收縮通常最好。`,
-      `梯度提升樹夏普 ${hgb.is_sharpe.toFixed(2)}（擬合期最高）→ ${hgb.oos_sharpe.toFixed(2)}；不擬合的營收驚喜＋52 週高點各半 ${c.is_sharpe.toFixed(2)} → ${c.oos_sharpe.toFixed(2)}。驗證期年化 ${pct(hgb.oos_cagr)} 對 ${pct(c.oos_cagr)}。`, "這裡的母體是市值前 60%（沒有微型股），結果和 Avramov 等一致：複雜模型擬合期好看、樣本外衰退最多。擬合出來的最佳權重（0.4／0.6）也幾乎就是等權，簡單排名平均最穩。"],
+      `梯度提升樹夏普 ${hgb.is_sharpe.toFixed(2)}（擬合期最高）→ ${hgb.oos_sharpe.toFixed(2)}；不擬合的營收驚喜＋52 週高點各半 ${c.is_sharpe.toFixed(2)} → ${c.oos_sharpe.toFixed(2)}。驗證期年化 ${pct(hgb.oos_cagr)} 對 ${pct(c.oos_cagr)}。`, "這裡的母體是市值前 60%（沒有微型股），結果和 Avramov 等一致：複雜模型擬合期好看、樣本外衰退最多。擬合出來的最佳權重（0.5／0.5、0.4／0.6，ML 都是 0）也幾乎就是等權，簡單排名平均最穩。"],
     ["兩個訊號相加還是相乘", `美國、韓國的研究：股價靠近 52 週高點時，盈餘驚喜後的漂移更強（互相放大）；台灣的${L("Lin 與 Wu（2021）", "Lin Wu 2021 52-week high earnings surprise Taiwan")}發現相反，靠近高點時未預期盈餘的異常報酬反而變小。`,
-      `2021 起：相加（擬合期最佳 0.4／0.6）${pct(fam("冪平均").oos_cagr)}；相乘交互 ${pct(fam("交互").oos_cagr)}、取短板 ${pct(fam("短板").oos_cagr)}、兩個都過門檻 ${pct(fam("門檻").oos_cagr)}。`, "站台灣那邊：兩個訊號在台股是相加、不是相乘；要求「兩個都強」反而變差，排名平均就好。"],
+      `2021 起：相加（各半）${pct(c.oos_cagr)}、冪平均（擬合期最佳，略偏重較弱的一項）${pct(fam("冪平均").oos_cagr)}；相乘交互 ${pct(fam("交互").oos_cagr)}、取短板 ${pct(fam("短板").oos_cagr)}、兩個都過門檻 ${pct(fam("門檻").oos_cagr)}。`, "站台灣那邊：兩個訊號在台股基本上是相加、不是相乘；稍微偏重較弱的一項還行，但硬性要求「兩個都強」（相乘、短板、門檻）都變差，排名平均就好。"],
     ["學界估值 ML 該占多少", "先前的估值研究：學界模型（HVZ、GLS、ML）預測 12 個月報酬勝過現行模型，看板因此給它 0.15。",
       `ML 前 10% 的超額：1 個月 ${pct(SC.horizon.p_academic[1][1], 1)}、12 個月 ${pct(SC.horizon.p_academic[12][1], 1)}（驗證期）；ML 權重 0→0.2→0.4，月超額 ${SC.ml_grad.map(r => pct(r.oos, 2)).join("→")}。`, "兩個結論都對，持有期不同：ML 是 12 個月的估值訊號，放進每月換股的分數只會稀釋。適合拿來定目標價、不適合拿來挑這個月買什麼。"],
     ["過度擬合怎麼判斷", `${L("Bailey 等（2017）PBO", "Bailey Borwein Lopez de Prado Zhu 2017 The Probability of Backtest Overfitting")}、${L("通縮夏普值（2014）", "Bailey Lopez de Prado 2014 The Deflated Sharpe Ratio")}、${L("Harvey、Liu、Zhu（2016）", "Harvey Liu Zhu 2016 and the Cross-Section of Expected Returns")}：試越多次，門檻要越高。`,
